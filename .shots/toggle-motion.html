@@ -1,0 +1,108 @@
+<!doctype html><html><head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f7fb;--fg:#14173d;--mut:#6b7090;--card:#fff;--bd:#e3e6ef;--in:#e6e8f0;--ok:#047857;--gold:#b08d4a;--ios:cubic-bezier(.32,.72,0,1);--spring:cubic-bezier(.34,1.56,.64,1);--quint:cubic-bezier(.22,1,.36,1);--t:1}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.6 "Noto Sans Lao",system-ui,sans-serif;padding:28px}
+h1{font-size:22px;margin:0}h2{font-size:15px;margin:0 0 4px}.sub{color:var(--mut);font-size:13px}
+.top{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:18px}
+.slow{display:flex;gap:6px;background:#e9ebf3;padding:4px;border-radius:12px}.slow button{border:0;background:none;padding:6px 12px;border-radius:9px;font:600 13px inherit;color:var(--mut);cursor:pointer}.slow button.on{background:#fff;color:var(--fg);box-shadow:0 1px 3px #0002}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:18px}
+.tag{display:inline-block;font:700 11px system-ui;padding:2px 8px;border-radius:99px;margin-bottom:6px}.old{background:#fde8e8;color:#b91c1c}.new{background:#e2f3ec;color:var(--ok)}
+.stage{height:150px;border-radius:12px;background:radial-gradient(#d9dce7 1px,transparent 1px) 0 0/16px 16px,#fafbfd;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;margin:10px 0}
+.row{display:flex;align-items:center;gap:12px;font-size:15px;user-select:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
+ul{margin:6px 0 0;padding-left:18px;color:var(--mut);font-size:13px}li b{color:var(--fg)}
+/* ---------- OLD (current build) ---------- */
+.o-sw{position:relative;width:51px;height:31px;border-radius:99px;background:var(--in);transition:background-color calc(.3s*var(--t)) var(--ios)}
+.o-sw.on{background:var(--ok)}
+.o-k{position:absolute;top:2px;left:0;width:27px;height:27px;border-radius:99px;background:#fff;box-shadow:0 3px 8px #00000026,0 3px 1px #0000000f;translate:2px 0} /* Tailwind v4 = translate prop, transition only covers transform -> SNAP */
+.o-sw.on .o-k{translate:22px 0}
+.o-sw:active .o-k{scale:1.22 1;transform-origin:left}
+.o-cb{position:relative;width:24px;height:24px;border-radius:7px;border:1.5px solid #cfd3df;background:#fff;transition:background-color calc(.2s*var(--t)),border-color calc(.2s*var(--t)),transform calc(.35s*var(--t)) var(--spring)}
+.o-cb:active{transform:scale(.88)}
+.o-cb.on{background:var(--ok);border-color:var(--ok)}
+.o-cb svg{position:absolute;inset:0;margin:auto;width:18px}.o-cb path{stroke-dasharray:24;stroke-dashoffset:24;transition:stroke-dashoffset calc(.18s*var(--t))}.o-cb.on path{stroke-dashoffset:0;transition:stroke-dashoffset calc(.32s*var(--t)) var(--quint)}
+/* ---------- NEW ---------- */
+.n-sw{position:relative;width:51px;height:31px;border-radius:99px;background:var(--in);transition:background-color calc(.28s*var(--t)) var(--ios),box-shadow calc(.3s*var(--t))}
+.n-sw::before{content:"";position:absolute;inset:0;border-radius:inherit;background:var(--ok);transform:scale(.4);opacity:0;transition:transform calc(.38s*var(--t)) var(--ios),opacity calc(.22s*var(--t))}
+.n-sw.on::before{transform:scale(1);opacity:1}
+.n-sw.press:not(.on){background:#dcdfe9}
+.n-sw.on{box-shadow:0 4px 14px -6px #047857bf}
+/* knob = pill made of 3 transform-only parts so it stretches without width */
+.n-k{position:absolute;top:2px;left:2px;width:27px;height:27px;transform:translateX(0);transition:transform calc(.46s*var(--t)) var(--spring)}
+.n-sw.on .n-k{transform:translateX(20px)}
+.n-sw.press.on .n-k{transform:translateX(13px)} /* when stretched while ON, grow leftward */
+.n-k i{position:absolute;inset:0;border-radius:99px;background:#fff;box-shadow:0 3px 8px #00000026,0 3px 1px #0000000f}
+.n-k .r{transition:transform calc(.2s*var(--t)) var(--quint)}
+.n-k .m{inset:0 auto 0 13px;width:1px;border-radius:0;box-shadow:none;transform-origin:left;transform:scaleX(0);transition:transform calc(.2s*var(--t)) var(--quint)}
+.n-sw.press .n-k .r{transform:translateX(7px)}.n-sw.press .n-k .m{transform:scaleX(8)}
+.n-sw.press .n-k .r,.n-sw.press .n-k .m{transition-duration:calc(.14s*var(--t))}
+.n-sw .ring{position:absolute;inset:-4px;border-radius:99px;border:2px solid var(--ok);opacity:0;pointer-events:none}
+.n-sw.pop .ring{animation:ring calc(.45s*var(--t)) var(--quint)}
+@keyframes ring{from{opacity:.45;transform:scale(.92)}to{opacity:0;transform:scale(1.18)}}
+.n-cb{position:relative;width:24px;height:24px;transition:transform calc(.42s*var(--t)) var(--spring)}
+.n-cb .box{position:absolute;inset:0;border-radius:7px;border:1.5px solid #cfd3df;background:#fff;transition:border-color calc(.15s*var(--t))}
+.n-cb .fill{position:absolute;inset:0;border-radius:7px;background:var(--ok);transform:scale(0);transition:transform calc(.18s*var(--t)) ease-in}
+.n-cb.on .fill{transform:scale(1);transition:transform calc(.24s*var(--t)) var(--spring)}
+.n-cb .halo{position:absolute;inset:-10px;border-radius:99px;background:var(--ok);opacity:0;transform:scale(.6);transition:opacity calc(.15s*var(--t)),transform calc(.2s*var(--t)) var(--quint)}
+.n-cb.press{transform:scale(.86);transition-duration:calc(.09s*var(--t))}
+.n-cb.press .halo{opacity:.12;transform:scale(1)}
+.n-cb.press .box{border-color:var(--ok)}
+.n-cb.pop .halo{animation:halo calc(.42s*var(--t)) var(--quint)}
+@keyframes halo{from{opacity:.22;transform:scale(.9)}to{opacity:0;transform:scale(1.5)}}
+.n-cb svg{position:absolute;inset:0;margin:auto;width:18px}.n-cb path{stroke-dasharray:24;stroke-dashoffset:24;transition:stroke-dashoffset calc(.14s*var(--t)) ease-in}
+.n-cb.on path{stroke-dashoffset:0;transition:stroke-dashoffset calc(.26s*var(--t)) calc(.07s*var(--t)) var(--quint)}
+.lbl{transition:opacity calc(.15s*var(--t))}.row.pressed .lbl{opacity:.6}
+/* timeline */
+.tl{margin-top:16px}.tl h2{margin-bottom:10px}
+.lane{display:grid;grid-template-columns:150px 1fr;align-items:center;gap:10px;margin:6px 0;font-size:12.5px}
+.bar{position:relative;height:22px;background:#eef0f6;border-radius:6px}
+.seg{position:absolute;top:3px;height:16px;border-radius:4px;font:600 10.5px system-ui;color:#fff;padding:0 6px;white-space:nowrap;overflow:hidden;line-height:16px}
+.p{background:#14173d}.s{background:var(--ok)}.g{background:var(--gold)}.x{background:#9aa0b8}
+.axis{display:grid;grid-template-columns:150px 1fr;gap:10px;font:11px system-ui;color:var(--mut)}.axis div:last-child{display:flex;justify-content:space-between}
+.note{margin-top:14px;padding:12px 14px;border-radius:12px;background:#fff7e6;border:1px solid #f0dfb8;font-size:13px}
+</style></head><body>
+<div class="top"><div><h1>Checkbox &amp; Switch · press in / press out</h1><div class="sub">Press and HOLD, then release. Drag off before releasing = cancel (no toggle). Try slow-mo.</div></div>
+<div class="slow"><button class="on" data-t="1">1×</button><button data-t="3">3× slow</button><button data-t="8">8× slow</button></div></div>
+<div class="grid">
+ <div class="card"><span class="tag old">NOW</span><h2>Current build</h2>
+  <div class="stage">
+   <label class="row" data-k="o-cb"><span class="o-cb on"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 12.5l4.2 4.2 8.8-9.4" pathLength="24"/></svg></span><span class="lbl">ມີຮູບປະກອບ</span></label>
+   <label class="row" data-k="o-sw"><span class="o-sw on"><span class="o-k"></span></span><span class="lbl">ແຈ້ງເຕືອນ</span></label>
+  </div>
+  <ul><li><b>Switch knob snaps.</b> Tailwind v4 moves it with the <code>translate</code> property, but the CSS only transitions <code>transform</code>, so the slide never animates.</li>
+  <li>Knob stretch uses <code>scale</code> → the white circle squashes into an oval.</li>
+  <li>Checkbox: press shrink is OK, but the green fill just fades in; no feedback on the label; release has no "landing".</li></ul>
+ </div>
+ <div class="card"><span class="tag new">PROPOSED</span><h2>v0.4 press in → release</h2>
+  <div class="stage">
+   <label class="row" data-k="n-cb"><span class="n-cb on"><i class="halo"></i><i class="box"></i><i class="fill"></i><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 12.5l4.2 4.2 8.8-9.4" pathLength="24"/></svg></span><span class="lbl">ມີຮູບປະກອບ</span></label>
+   <label class="row" data-k="n-sw"><span class="n-sw on"><span class="ring"></span><span class="n-k"><i class="l"></i><i class="m"></i><i class="r"></i></span></span><span class="lbl">ແຈ້ງເຕືອນ</span></label>
+  </div>
+  <ul><li><b>Press in (90-140 ms):</b> checkbox sinks to 86 %, a soft green halo appears, border turns green. Switch knob <b>stretches into a pill</b> toward where it will go; off-track darkens a touch. Label dims to 60 %.</li>
+  <li><b>Release:</b> checkbox fill <b>grows from the centre</b> with a spring, tick draws right after, box bounces back past 100 %, halo ripples out once. Switch knob <b>springs across</b> (slight overshoot) while shrinking back to a circle; green <b>floods out from the middle</b> of the track; one ring pulse.</li>
+  <li><b>Uncheck</b> is quicker and quieter: tick un-draws, fill shrinks, no ripple.</li>
+  <li>Transform + opacity only · ≤ 460 ms · 4 ms haptic on release · lite mode drops halo/ring/glow.</li></ul>
+ </div>
+</div>
+<div class="card tl"><h2>Proposed timeline (ms, 1×)</h2>
+ <div class="axis"><div></div><div><span>0 press</span><span>100</span><span>200 release</span><span>300</span><span>400</span><span>500</span><span>600</span></div></div>
+ <div class="lane"><b>Checkbox box</b><div class="bar"><span class="seg p" style="left:0;width:15%">sink .86</span><span class="seg s" style="left:33%;width:40%">spring back 1 → 1.06 → 1</span></div></div>
+ <div class="lane">Halo<div class="bar"><span class="seg x" style="left:0;width:25%">fade in 12 %</span><span class="seg g" style="left:33%;width:40%">ripple out 1.5×</span></div></div>
+ <div class="lane">Fill + tick<div class="bar"><span class="seg s" style="left:33%;width:30%">fill grows</span><span class="seg p" style="left:45%;width:38%">tick draws (70 ms delay)</span></div></div>
+ <div class="lane"><b>Switch knob</b><div class="bar"><span class="seg p" style="left:0;width:23%">stretch → pill</span><span class="seg s" style="left:33%;width:57%">spring across + un-stretch</span></div></div>
+ <div class="lane">Track<div class="bar"><span class="seg x" style="left:0;width:15%">darken</span><span class="seg s" style="left:33%;width:47%">green floods from centre</span><span class="seg g" style="left:40%;width:40%;top:3px;opacity:.0"></span></div></div>
+ <div class="lane">Ring pulse<div class="bar"><span class="seg g" style="left:33%;width:50%">one ring, fades</span></div></div>
+ <div class="note">Timing: the hold time is up to the user. Everything above "200 release" starts the moment the finger lifts, so a quick tap feels like one smooth motion and a long press shows the "loaded" state first.</div>
+</div>
+<script>
+document.querySelectorAll('.slow button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.slow button').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.documentElement.style.setProperty('--t',b.dataset.t)});
+document.querySelectorAll('.row').forEach(row=>{
+ const el=row.firstElementChild,isNew=row.dataset.k.startsWith('n');let down=false,inside=false;
+ row.addEventListener('click',e=>e.preventDefault());
+ row.addEventListener('pointerdown',e=>{down=inside=true;row.setPointerCapture(e.pointerId);if(isNew){el.classList.add('press');row.classList.add('pressed')}});
+ row.addEventListener('pointermove',e=>{if(!down)return;const r=row.getBoundingClientRect();inside=e.clientX>=r.left-8&&e.clientX<=r.right+8&&e.clientY>=r.top-8&&e.clientY<=r.bottom+8;if(isNew){el.classList.toggle('press',inside);row.classList.toggle('pressed',inside)}});
+ const up=()=>{if(!down)return;down=false;el.classList.remove('press');row.classList.remove('pressed');if(!inside)return;el.classList.toggle('on');
+  if(isNew&&el.classList.contains('on')){el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop')}};
+ row.addEventListener('pointerup',up);row.addEventListener('pointercancel',()=>{down=false;el.classList.remove('press');row.classList.remove('pressed')});
+});
+</script></body></html>

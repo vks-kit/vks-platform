@@ -1,0 +1,3 @@
+@import "@vks/ui/theme.css";
+@source "./";
+html { scroll-behavior: smooth; }

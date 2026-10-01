@@ -1,0 +1,146 @@
+/*
+ * VKS design tokens. THE ONLY place colours live.
+ * Theme A = light (navy + gold, "Status White").  Theme E = dark ("Night Watch").
+ * Apps must use tokens (bg-primary, text-muted-foreground ...), never raw hex.
+ */
+@import "tailwindcss";
+@import "./print.css";
+@import "tw-animate-css";
+@import "@fontsource-variable/noto-sans-lao";
+@import "./animations.css";
+@source "../";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --radius: 0.75rem;
+  --background: #f6f7fb;
+  --foreground: #14173d;
+  --card: #ffffff;
+  --card-foreground: #14173d;
+  --popover: #ffffff;
+  --popover-foreground: #14173d;
+  --primary: #14173d;
+  --primary-foreground: #ffffff;
+  --secondary: #eef0f6;
+  --secondary-foreground: #14173d;
+  --muted: #eef0f6;
+  --muted-foreground: #5a5f7a;
+  --accent: #e6e9f3;
+  --accent-foreground: #14173d;
+  --success: #047857;
+  --success-foreground: #ffffff;
+  --warning: #b45309;
+  --warning-foreground: #ffffff;
+  --destructive: #b91c1c;
+  --destructive-foreground: #ffffff;
+  --gold: #b08d4a;
+  --gold-foreground: #14173d;
+  --border: #dfe3ea;
+  --input: #cfd4e0;
+  --ring: #b08d4a;
+  --logo-ring: #14173d;
+  --bar: #14173d;
+  --chart-1: #14173d; --chart-2: #047857; --chart-3: #b08d4a; --chart-4: #b45309; --chart-5: #b91c1c;
+  --bar-foreground: #ffffff;
+  --logo-field: #f1f1f4;
+  /* official logo colours: fixed in both themes (the mark is a badge with its own field) */
+  --logo-navy: #16173a;
+  --logo-gold: #d8bf8c;
+  --logo-steel: #c9cad4;
+  --logo-steel-2: #e2e2e8;
+  --logo-letter: #ffffff;
+  /* file types (FileIcon): one hue per family, same meaning everywhere */
+  --file-pdf: #c2410c; --file-sheet: #047857; --file-doc: #1d4ed8; --file-slide: #b45309;
+  --file-image: #7c3aed; --file-video: #be185d; --file-audio: #0e7490; --file-archive: #6b5a2e; --file-other: #5a5f7a;
+}
+
+.dark {
+  --background: #0b1020;
+  --foreground: #eef0f8;
+  --card: #151b33;
+  --card-foreground: #eef0f8;
+  --popover: #151b33;
+  --popover-foreground: #eef0f8;
+  --primary: #c9a45c;
+  --primary-foreground: #0b1020;
+  --secondary: #1c2444;
+  --secondary-foreground: #eef0f8;
+  --muted: #1c2444;
+  --muted-foreground: #9aa3c4;
+  --accent: #232c52;
+  --accent-foreground: #eef0f8;
+  --success: #34d399;
+  --success-foreground: #0b1020;
+  --warning: #fbbf24;
+  --warning-foreground: #0b1020;
+  --destructive: #f87171;
+  --destructive-foreground: #0b1020;
+  --gold: #c9a45c;
+  --gold-foreground: #0b1020;
+  --border: #262e50;
+  --input: #303a63;
+  --ring: #c9a45c;
+  --logo-ring: #c9a45c;
+  --bar: #0b1020;
+  --chart-1: #c9a45c; --chart-2: #34d399; --chart-3: #60a5fa; --chart-4: #f87171; --chart-5: #a78bfa;
+  --bar-foreground: #eef0f8;
+  --logo-field: #f1f1f4;
+  --file-pdf: #fb923c; --file-sheet: #34d399; --file-doc: #60a5fa; --file-slide: #fbbf24;
+  --file-image: #a78bfa; --file-video: #f472b6; --file-audio: #22d3ee; --file-archive: #c9a45c; --file-other: #9aa3c4;
+}
+
+@theme inline {
+  --font-sans: "Noto Sans Lao Variable", "Segoe UI", system-ui, sans-serif;
+  --font-mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-gold: var(--gold);
+  --color-bar: var(--bar);
+  --color-bar-foreground: var(--bar-foreground);
+  --color-gold-foreground: var(--gold-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * { @apply border-border; }
+  html { -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; }
+  button, a, [role=button], summary, label { touch-action: manipulation; }
+  body { overscroll-behavior-y: none; }
+  input, textarea, select { font-size: max(16px, 1em); } /* iOS zooms the page on focus below 16px */
+  img, video, canvas, svg { max-width: 100%; }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    line-height: 1.7; /* Lao tone marks need room: never go below 1.5 */
+    transition: background-color .2s, color .2s;
+  }
+}
+
+/* Leaflet controls are 30px by default; make them thumb-sized on touch screens */
+@media (pointer: coarse) {
+  .leaflet-touch .leaflet-bar a { width: 44px; height: 44px; line-height: 44px; }
+}

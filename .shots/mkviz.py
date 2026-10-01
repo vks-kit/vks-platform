@@ -1,0 +1,7 @@
+import base64,os
+D=r"C:/Users/VKS-001/Desktop/Trading TEST/vks-platform/.shots/docs/"
+def img(n,w): return f'<figure><img src="data:image/png;base64,{base64.b64encode(open(D+n+".png","rb").read()).decode()}" style="width:{w}px"/><figcaption>{n}</figcaption></figure>'
+html=f'''<!doctype html><html><head><meta charset="utf-8"><style>body{{margin:0;padding:24px;background:#0b1020;color:#eef0f8;font-family:system-ui}}h1{{font-size:20px;margin:0 0 4px}}p{{color:#9aa3c7;margin:0 0 18px;font-size:14px}}.row{{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap}}figure{{margin:0}}img{{border-radius:10px;border:1px solid #2a3358;display:block}}figcaption{{font-size:12px;color:#9aa3c7;margin-top:4px}}</style></head><body>
+<h1>VKS UI docs · apps/docs (baseui-cn layout, company themes)</h1><p>Top bar + grouped sidebar + Preview/Code + Installation + Examples + API + On-this-page. Theme A light / Theme E dark. Phones get a fullscreen menu and a bottom-sheet search.</p>
+<div class="row">{img("desk-light-button",620)}{img("desk-dark-shell",620)}</div><div class="row" style="margin-top:16px">{img("desk-light-charts",620)}{img("phone-dark-datatable",200)}{img("phone-menu",200)}{img("phone-search",200)}</div></body></html>'''
+open(D+"viz.html","w",encoding="utf-8").write(html)

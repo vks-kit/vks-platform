@@ -1,0 +1,136 @@
+# VKS UI (@vks/ui)
+
+> Shared React 19 + Tailwind v4 design system for VKS Security apps (Guard Navy + Gold, Lao-first, mobile-first). Search this list before building any UI: reuse a part if it fits, extend it with a prop/variant if it almost fits, and only then add a new part to packages/ui + apps/gallery + apps/docs.
+
+Rules: import only from "@vks/ui" (icons from "@vks/ui/icons", heavy parts from "@vks/ui/charts" | "/map" | "/kanban" | "/scan"); colours only via theme tokens; see AGENTS.md.
+
+## Foundations
+
+- [Logo](ai/logo.md): The official VKS badge, redrawn as a vector from the brand file used in the QC dashboard. Same colours in both themes, because the badge carries its own field. Exports: Logo, LogoTile, BRAND
+- [Performance tiers](ai/performance.md): High-end vs low-end phone mode. Lite drops blur, looping motion and heavy shadows. Exports: PerfProvider, initPerf, PerfToggle, usePerf
+- [Hover effects](ai/hover-effects.md): Premium mouse effects for desktop: spotlight, edge trace and 3D tilt on cards, mouse parallax, a sliding row highlight, icon nudge and a cursor ring for landing pages. Phones, lite mode and reduced motion get none of it. Exports: HoverFx, Parallax, ParallaxLayer, SlideHighlight, CursorRing, usePointerVars
+
+## Actions
+
+- [Button](ai/button.md): The one button. Layered fill, inner highlight, tinted lift shadow and a sheen on hover. Presses land on an iOS spring. h-11 (44 px) on every size. Exports: Button
+- [Badge](ai/badge.md): Small status pill. Tinted background + full-strength text so it passes contrast in both themes. Exports: Badge
+- [Toggle](ai/toggle.md): A button that stays pressed. ToggleGroup picks one (or many) of a few options; the segmented variant is the iOS control with a pill that springs under your choice. Exports: Toggle, ToggleGroup, ToggleGroupItem
+- [Kbd, copy & separator](ai/kbd-copy.md): Small helpers: keyboard hint, copy-to-clipboard with a tick, divider. Exports: Kbd, CopyButton, Separator
+- [Button group](ai/button-group.md): Joined buttons for a small set of related actions or views. Exports: ButtonGroup
+
+## Form
+
+- [Slider](ai/slider.md): iOS-size 28 px thumb. While dragging the track thickens, a halo grows round the thumb, a value bubble springs up and Android phones tick on every step. Tick marks light up as the fill passes. Exports: Slider
+- [Input & Textarea](ai/input.md): 44 px tall, 16 px text (iOS never zooms), red border + shake when invalid. Exports: Input, Textarea, Label
+- [Select](ai/select.md): Radix Select with a 44 px trigger. For long lists or search, use Combobox. Exports: Select, SelectTrigger, SelectValue, SelectContent, SelectItem
+- [Checkbox & Switch](ai/checkbox-switch.md): Press in and hold: the box sinks with a soft halo, the switch knob stretches into a pill. Let go: green grows out from the centre, the tick draws, the knob springs across and one ring pulses. Unticking is quicker and quiet. Both have a 44 px hit area and a tiny haptic on Android. Exports: Checkbox, Switch, Label
+- [Tabs](ai/tabs.md): Segmented tabs. Keep to 2-4 on a phone. Exports: Tabs, TabsList, TabsTrigger, TabsContent
+- [Combobox](ai/combobox.md): Searchable picker. Bottom sheet on a phone, popover on desktop; inside a Dialog on a phone it pushes a view in the same sheet. Single or multi. Exports: Combobox, Option
+- [Filter chips](ai/filter-chips.md): Scrollable one-row chips for filtering lists. Better than a dropdown on a phone. Exports: FilterChips
+- [Search box](ai/search-box.md): Input with a search icon and a clear button. Exports: SearchBox
+- [Radio group](ai/radio-group.md): Pick exactly one of a few options, all visible at once. 44 px rows, the dot springs in. Exports: RadioGroup, RadioGroupItem
+- [Stepper](ai/stepper.md): − / + number control for small counts (qty, guards per shift). The digit rolls up or down. Exports: Stepper
+- [OTP input](ai/otp-input.md): One box per digit, numeric keyboard, pastes a whole code, shakes on error. Exports: OtpInput
+- [Floating & password input](ai/floating-input.md): Label floats up on focus; password has an animated show/hide eye. Exports: FloatingInput, PasswordInput
+- [Chip](ai/chip.md): Selectable filter pills and removable tags. Tap x: the x spins, the chip shrinks away, then the chips after it glide into the gap (including wrapping up to the line above). Exports: Chip
+- [Dropzone](ai/dropzone.md): Drag files in or click to pick. Checks type and size before upload. Exports: Dropzone, fmtBytes
+- [Tag input](ai/tag-input.md): Type and press Enter or comma. Paste a list, backspace to remove, suggestions below. Exports: TagInput, parseTags
+
+## Dates
+
+- [Date picker](ai/date-picker.md): Lao month names, Monday first. Bottom sheet with a wheel on a phone, calendar popover on desktop. Exports: DatePicker, Calendar, DateWheel
+- [Date range picker](ai/date-range-picker.md): Report ranges with presets (today, last 7 days, this month…). One month on a phone sheet, two side by side on desktop. Exports: DateRangePicker, RangeCalendar, formatRange, Range
+
+## Feedback
+
+- [Alert](ai/alert.md): Inline warning strip with a coloured left edge. Info, success, warning, danger. Exports: Alert
+- [Close button](ai/close-button.md): The one round X. 44 px hit area, quiet muted hover, a small press, Lao label ປິດ. Alert, Banner, Dialog, Sheet and Drawer all use it. Exports: CloseButton, CLOSE_BUTTON
+- [Confirm popup](ai/confirm-dialog.md): Warning popup before anything you cannot undo. Hold-to-confirm for the really dangerous ones, so a pocket tap can't delete. Exports: ConfirmDialog
+- [Toast](ai/toast.md): Sonner restyled to match IOSAlert: glass card with a gold hairline, round tone badge, spring entrance and a bar that drains while it stays. Top-center, away from the thumb. Success, error and finished promises buzz the phone. Exports: toast, Toaster
+- [Loading & success](ai/loading.md): Skeleton shimmer while loading, a spinner for short waits, and the animated check after a scan. Exports: Skeleton, Spinner, SuccessCheck, LiveDot
+- [Offline & empty](ai/offline-empty.md): Offline banner shows the number of scans waiting (classic bar, or the navy Dynamic-Island pill). Empty state with a floating icon orb for lists with nothing in them; Combobox, CommandPalette, NotificationList, IndexedList and DataTable use it too. Exports: OfflineBanner, Empty
+- [Notification banner](ai/banner.md): iOS push-style banner that springs down from the top. Swipe up or wait to dismiss, tap to open. Exports: Banner
+- [Skeletons](ai/skeletons.md): Shaped placeholders (text, avatar, list, card, table) so nothing jumps when data lands. Exports: SkeletonText, SkeletonList, SkeletonCard, SkeletonTable, SkeletonAvatar
+- [Progress HUD](ai/progress-hud.md): Centred dark square: spinner → tick or cross. Blocks taps while a save runs. Exports: useProgressHUD, ProgressHUD
+- [Notification centre](ai/notification-list.md): Grouped notifications with unread dots, mark-all and dismiss. Exports: NotificationList
+
+## Overlays
+
+- [Dialog](ai/dialog.md): Bottom sheet on a phone (thumb reach), centred box on desktop. Gold top edge. Exports: Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose, InSheetView, useInSheet
+- [Sheet](ai/sheet.md): Slides in from the bottom, the right, or covers the whole screen. Exports: Sheet, SheetTrigger, SheetContent, SheetTitle, SheetDescription
+- [Drawer](ai/drawer.md): Record detail panel. Full screen with a back arrow on a phone, side panel on desktop. Exports: Drawer
+- [Tooltip](ai/tooltip.md): Desktop hint only. Never put anything a phone user needs inside a tooltip. Three looks: dark (navy chip, default), light (card for longer help), glass (over maps, photos, charts). Optional arrow, key-shortcut hint and a bold title line. Tip is the one-line shortcut. Exports: TooltipProvider, Tip, Tooltip, TooltipTrigger, TooltipContent
+- [Lightbox](ai/lightbox.md): Full screen photo viewer with swipe, arrows and a caption. For patrol photos. Exports: Lightbox, PhotoGrid
+- [Detail popover](ai/detail-popover.md): Popup detail information. Hover (or tap) a name, row or map pin and a rich card grows out of it from the side it opens on; rows stagger in. On a phone the same content rises as a bottom sheet. Exports: DetailPopover, DetailField
+- [iOS alert](ai/ios-alert.md): iOS alert behaviour in VKS style: spring zoom, round tone badge (info / success / warning / danger), gold glow + hairline, pill buttons. 2 buttons side by side, 3+ stacked. Exports: IOSAlert
+- [Action sheet](ai/action-sheet.md): iOS grouped buttons from the bottom with a separate Cancel. Exports: ActionSheet
+- [Menu & popover](ai/menu.md): Frosted iOS menu and a content popover. On desktop they spring out of their trigger; on a phone (under 640 px) both dock to the bottom as a sheet with a grabber, dimmed backdrop and 48 px rows. Exports: Menu, MenuTrigger, MenuContent, MenuItem, MenuLabel, MenuSeparator, Popover, PopoverTrigger, PopoverContent
+- [Snap sheet](ai/snap-sheet.md): Maps-style bottom sheet with detents (half / full). Drag the grabber; flick down to close. Exports: SnapSheet
+- [Share sheet](ai/share-sheet.md): Native OS share on phones; an iOS-style sheet (WhatsApp, LINE, Telegram, Facebook, copy link) on desktop. Exports: useShareSheet, ShareSheet
+- [Hover card](ai/hover-card.md): Rich preview when you hover a name or ID. Opens after 350 ms so it never flickers. Exports: HoverCard
+- [Context menu](ai/context-menu.md): Desktop-first: right-click menu (long-press works on phones but nobody discovers it, so give phones a visible ⋯ Menu or ActionSheet). Right-click (or long-press) menu with icons, shortcuts, sub-menus and a red destructive item. Exports: ContextMenu
+
+## Data display
+
+- [Card](ai/card.md): The basic box. White on light, navy-ink on dark. Exports: Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter
+- [Data table](ai/data-table.md): A table on desktop that turns into cards on a phone when there are more than 4 columns. Loading, error and empty states built in. Exports: DataTable, Column
+- [Table](ai/table.md): Plain table parts with a navy header. Every column can sort: pass sortKey + sort + onSort to TH. Exports: Table, THead, TBody, TR, TH, TD
+- [KPI hero card](ai/kpi-hero.md): The phone version of KpiStrip: ONE big number with a trend pill and sparkline, plus up to 3 small figures underneath. Takes about a quarter of the screen instead of the whole first page. Exports: KpiHero
+- [KPI strip](ai/kpi-strip.md): Top-of-dashboard numbers for DESKTOP: 4 tiles in a row. On a phone use KpiHero (one hero card), because 4 tiles eat the first screen. Money uses ກີບ, never ₭. Exports: KpiStrip
+- [Timeline](ai/timeline.md): What happened on a shift, newest first. Exports: Timeline
+- [Avatar & progress](ai/avatar-progress.md): Initials avatar (works with Lao names) and a labelled progress bar. Exports: Avatar, AvatarGroup, UserChip, Progress, ProgressRing
+- [Accordion](ai/accordion.md): FAQ and long forms broken into parts. Exports: Accordion, AccordionItem, AccordionTrigger, AccordionContent
+- [Star rating & pagination](ai/rating-pagination.md): Inspection scores and paged lists. Both 44 px targets. Exports: StarRating, Pagination
+- [Settings list](ai/list-group.md): iOS Settings-style grouped rows with coloured icon tiles, switches and chevrons. Exports: ListGroup, ListRow
+- [Number ticker](ai/number-ticker.md): Counts smoothly to a new value. Jumps straight there on low-end phones. Exports: NumberTicker
+- [Tree view](ai/tree-view.md): Nested sites/folders. Arrow keys walk and open/close, rows slide in. Exports: TreeView, flattenTree
+- [Stat card](ai/stat-card.md): Dashboard KPI tile: number, coloured delta and a drawn-in trend line. Exports: StatCard, TrendLine
+- [File icon](ai/file-icon.md): Coloured file-type tile (PDF, Excel, Word, image…) and a file row with size, progress and remove. Exports: FileIcon, FileItem, fileKind, fileBadge
+
+## Layout & navigation
+
+- [App shell](ai/app-shell.md): Whole-app frame. Navy sidebar on desktop, bottom nav + FAB on a phone. One breakpoint: 768 px. Pages slide in the direction you moved and a gold bar sweeps the header. Exports: AppShell, Fab, NavItem
+- [Sidebar](ai/sidebar.md): Navy rail. The active pill springs between items with a gold edge and a glow behind the icon; icons pop when clicked; the logo spins in once. Collapses to a 72 px icon rail with tooltips. Exports: Sidebar, SidebarSheet
+- [Bottom nav & FAB](ai/bottom-nav.md): 56 px tall tabs above the phone's home bar. The FAB sits above it on the right. Exports: BottomNav, Fab
+- [Page header](ai/page-header.md): Title, subtitle and actions. Actions hide on a phone: put the main one in the FAB. Exports: PageHeader, LargeTitleBar
+- [Login card](ai/login-card.md): Compact centred sign-in card with the logo shine, for simple apps and phones. For a full-page split-screen login with a brand panel use LoginScreen instead. Exports: LoginCard
+- [Login screen](ai/login-screen.md): Premium full-page sign-in (for the compact centred card use LoginCard instead). Desktop: navy aurora brand panel with feature list beside the form. Phone: logo on top, form centred, safe-area padding. Exports: LoginScreen
+- [Profile view](ai/profile-view.md): Employee / account profile. Desktop: sticky identity card on the left, grouped settings on the right. Phone: an iOS-contact-style header (big avatar, round call / message / edit buttons) edge to edge, then one stacked column. Exports: ProfileView, ProfileSection, ProfileRow, ProfileQuickAction
+- [Wizard](ai/wizard.md): Multi-step form with a step bar. Long forms on a phone should always be a wizard. Exports: Wizard
+- [Step progress](ai/step-progress.md): Compact 'Step 2 of 4' bar for long phone forms where the full wizard header won't fit. Exports: StepProgress
+- [Bottom toolbar](ai/bottom-toolbar.md): Frosted row of actions for the current screen. Actions, not places (that is BottomNav). Exports: BottomToolbar
+- [Command palette (⌘K)](ai/command-palette.md): Ctrl/⌘ K opens a fuzzy search over pages and actions. Arrow keys + Enter. Works in Lao. Exports: CommandPalette, useCommandK
+- [Breadcrumb](ai/breadcrumb.md): Where am I, one click up. Long paths collapse the middle into … Exports: Breadcrumb
+- [Split pane](ai/split-pane.md): List | detail with a draggable divider. Remembers its size. Exports: SplitPane
+- [Scroll area](ai/scroll-area.md): Thin overlay scrollbar that matches the theme on Windows desktops. Exports: ScrollArea
+
+## Mobile & touch
+
+- [Pull to refresh & swipe row](ai/touch.md): The two gestures guards already know from other apps. Both have a button fallback for accessibility. Exports: PullToRefresh, SwipeRow
+- [Search bar](ai/search-bar.md): iOS search pill: clear button while typing, Cancel slides in on focus. Exports: SearchBar
+- [Carousel](ai/carousel.md): CSS scroll-snap cards with the next one peeking. Dots on phone, arrows on desktop. No JS animation. Exports: Carousel
+- [Indexed list](ai/indexed-list.md): Contacts-style list with sticky letters and a scrub rail. Lao lead vowels sort correctly (ເພັດ under ພ). Exports: IndexedList, groupByIndex, indexKey
+- [Long press](ai/long-press.md): Hold-to-act hook. Cancels if the finger moves, so it never fights scrolling. Exports: useLongPress
+
+## Heavy (lazy)
+
+- [Charts · Trends](ai/charts.md): Recharts wrapped in theme colours (chart-1…5 flip with the theme): gradient fills, VKS card tooltip, tap-to-hide legend pills, entry animation (off for reduced motion / lite). Bar, Line, Area, Combo and Sparkline: values over time. ~105 KB gzip, so load it only on report pages. Phone: they simply fill the card width, axes stay 12 px; keep to 7 or fewer x labels. Siblings: Charts · Share & compare, Charts · Schedules & grids. Exports: BarSeries, LineSeries, AreaSeries, ComboSeries, Sparkline, ChartTip, ChartLegend
+- [Charts · Share & compare](ai/charts-share.md): Parts of a whole and comparisons: Donut, RadialBars, Scatter / bubble and Radar. Phone: Donut and RadialBars scale as they are; RadarSeries switches by its own width to a bar-per-axis comparison list, because radar labels collide on a 320 px card (industry practice: radar is desktop, bars are the phone equivalent). Pass compact to force either form. Exports: Donut, RadialBars, ScatterSeries, RadarSeries
+- [Charts · Schedules & grids](ai/charts-schedule.md): Calendar-shaped charts from the VKS apps: Heatmap, DateGrid (QC site profile), LatencyTimeline (patrol latency site profile) and AttendanceBoard (HRM ຕິດຕາມການມາວຽກ). Each has a real phone form chosen by its own width, not the screen: DateGrid becomes one tappable row per round (mini status strip) that opens a bottom sheet with the days, Heatmap scales, LatencyTimeline becomes a month calendar with gap chips and tapping a visited day opens a bottom sheet, AttendanceBoard becomes one tappable row per guard that opens a bottom sheet with the month. Phone tap targets are 44 px. Exports: Heatmap, DateGrid, LatencyTimeline, AttendanceBoard
+- [Map](ai/map.md): Leaflet + OpenStreetMap with VKS controls: glass 44 px zoom + 'fit all pins' buttons, pulsing token pins (danger pulses faster), Noto Sans Lao card tooltips (tone dot, title, sub line, time), an optional pin card that springs up when a pin is tapped (phones have no hover, so this is how they read details), always-on labels, and a tiny © OSM credit (required by the OSM licence). Defaults to Vientiane. ~43 KB gzip. Exports: MapView, Pin
+- [Kanban](ai/kanban.md): Task board. Desktop: drag cards between columns (keyboard: Space + arrows). Phone: no dragging — one column per screen with count tabs, swipe between columns, tap a card to move it from a bottom sheet. ~17 KB gzip. Exports: Kanban, moveCard, KanbanCard
+- [QR scan & photo](ai/scan.md): Camera QR scanner (jsQR) and a photo button that shrinks to 1280 px / 70 % JPEG before upload. ~48 KB gzip. Exports: QrScanner, PhotoCapture
+- [Capture stamp (photo & video)](ai/capture-stamp.md): The time / site / GPS card the Patrol app burns into photos and video frames: top-left capture time, bottom-right site + GPS, top-right brand pill. One drawing function, so the live preview and the saved file look identical. Lao text wraps without splitting tone marks. Exports: drawCaptureStamp, stampPhoto, stampTime, CaptureStamp, CaptureStampData
+- [Signature pad](ai/signature-pad.md): Finger signature for hand-overs. Read it back as a PNG. Exports: SignaturePad, SignaturePadHandle
+
+## Optional
+
+- [Introduction](ai/introduction.md): What @vks/ui is and why it looks the way it does.
+- [Installation](ai/installation.md): Add the design system to a new app in the monorepo.
+- [Theming](ai/theming.md): Theme A (Guard Navy + Gold) and Theme E (Night Watch).
+- [Typography & Lao](ai/typography.md): Font, scale and the Lao text rules.
+- [Motion](ai/motion.md): The animation kit: small, fast, transform-only.
+- [Mobile rules](ai/mobile.md): The ten rules every VKS screen follows.
+- [Layout rules](ai/layout-rules.md): Desktop vs mobile anatomy, the 768 px breakpoint and the motion rules.
+- [Desktop ↔ Mobile](ai/responsive.md): When a table becomes cards, a sidebar becomes a bottom nav, a dialog becomes a sheet. Live, at real widths.
+- [Changelog](ai/changelog.md): What changed in each version.

@@ -1,0 +1,10 @@
+/* Print: hide chrome, plain black on white, keep table rows whole. Add class .no-print to anything else to hide. */
+@media print {
+  aside, nav, header, .no-print, [role="dialog"] .no-print, button:not(.print-keep) { display: none !important; }
+  body { background: #fff !important; color: #000 !important; font-size: 12pt; }
+  main { padding: 0 !important; }
+  * { animation: none !important; box-shadow: none !important; }
+  tr, li, .avoid-break { break-inside: avoid; }
+  a[href]::after { content: none !important; }
+  @page { margin: 14mm; }
+}

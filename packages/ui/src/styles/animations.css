@@ -1,0 +1,534 @@
+/* VKS motion kit. Only transform/opacity move. Guard phones: nothing over 400 ms. */
+@keyframes vks-check-pop { 0%{transform:scale(.6);opacity:0} 60%{transform:scale(1.08)} 100%{transform:scale(1);opacity:1} }
+@keyframes vks-check-draw { to { stroke-dashoffset: 0 } }
+@keyframes vks-ripple { from{transform:scale(1);opacity:.8} to{transform:scale(1.8);opacity:0} }
+@keyframes vks-shimmer { to { background-position: -200% 0 } }
+@keyframes vks-shake { 20%,60%{transform:translateX(-6px)} 40%,80%{transform:translateX(6px)} }
+@keyframes vks-fade-up { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+@keyframes vks-slide-down { from{transform:translateY(-100%)} to{transform:none} }
+@keyframes vks-shine { from{left:-40%} to{left:120%} }
+@keyframes vks-spin { to { transform: rotate(360deg) } }
+
+.vks-press { transition: transform .1s ease, background-color .15s; }
+.vks-press:active:not(:disabled) { transform: scale(.96); }
+.vks-check-pop { animation: vks-check-pop .4s ease-out both; }
+.vks-check-draw { stroke-dasharray: 40; stroke-dashoffset: 40; animation: vks-check-draw .4s .15s ease-out forwards; }
+.vks-ripple::after { content:""; position:absolute; inset:-3px; border-radius:inherit; border:3px solid var(--gold); animation: vks-ripple 1.6s infinite; pointer-events:none; }
+.vks-shimmer { background: linear-gradient(90deg, var(--border) 25%, var(--card) 50%, var(--border) 75%); background-size: 200% 100%; animation: vks-shimmer 1.2s linear infinite; }
+.vks-shake { animation: vks-shake .35s; }
+.vks-fade-up { animation: vks-fade-up .3s ease-out both; }
+.vks-slide-down { animation: vks-slide-down .3s ease-out both; }
+.vks-spin { animation: vks-spin 1s linear infinite; }
+.vks-shine { position: relative; overflow: hidden; }
+.vks-shine::after { content:""; position:absolute; top:0; bottom:0; width:30%; background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent); transform:skewX(-20deg); animation: vks-shine .9s ease-in-out .3s 1 both; }
+/* list stagger: add style="--i:0..7" on each row, max 8 rows */
+.vks-stagger > * { animation: vks-fade-up .3s ease-out both; animation-delay: calc(var(--i, 0) * 40ms); }
+
+@keyframes vks-pop { 0%{transform:scale(.85);opacity:0} 70%{transform:scale(1.04)} 100%{transform:scale(1);opacity:1} }
+@keyframes vks-wiggle { 0%,100%{transform:rotate(0)} 20%{transform:rotate(-14deg)} 40%{transform:rotate(12deg)} 60%{transform:rotate(-8deg)} 80%{transform:rotate(5deg)} }
+@keyframes vks-pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.35);opacity:.55} }
+@keyframes vks-bounce-in { 0%{transform:translateY(24px) scale(.9);opacity:0} 60%{transform:translateY(-4px) scale(1.02)} 100%{transform:none;opacity:1} }
+@keyframes vks-swipe-hint { 0%,100%{transform:translateX(0)} 50%{transform:translateX(6px)} }
+.vks-pop { animation: vks-pop .25s ease-out both; }
+.vks-wiggle { animation: vks-wiggle .6s ease-in-out 1; transform-origin: 50% 0; }
+.vks-pulse { animation: vks-pulse 1.4s ease-in-out infinite; }
+.vks-bounce-in { animation: vks-bounce-in .4s cubic-bezier(.2,.9,.3,1.2) both; }
+.vks-swipe-hint { animation: vks-swipe-hint 1.2s ease-in-out 3; }
+/* lift on hover, only where a real hover exists (never on touch) */
+.vks-cursor-ring, .vks-cursor-dot { position: absolute; left: 0; top: 0; pointer-events: none; opacity: 0; }
+/* ---- Desktop hover kit (HoverFx, Parallax, SlideHighlight, CursorRing in hover-fx.tsx). JS writes --mx/--my/--px/--py only. ---- */
+@media (hover: hover) and (pointer: fine) {
+  .vks-fx { --mx: -400px; --my: -400px; --px: .5; --py: .5; }
+  .vks-fx > * { position: relative; z-index: 1; }
+  .vks-fx::before, .vks-fx::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity .35s ease; z-index: 2; }
+  .vks-fx:hover::before, .vks-fx:hover::after { opacity: 1; }
+  /* spotlight: soft gold glow under the cursor */
+  .vks-fx[data-fx=spotlight]::before { background: radial-gradient(220px circle at var(--mx) var(--my), color-mix(in oklab, var(--gold) 24%, transparent), transparent 65%); }
+  /* trace: only the border lights up near the cursor */
+  .vks-fx[data-fx=trace]::before { padding: 1.5px; background: radial-gradient(160px circle at var(--mx) var(--my), var(--gold), transparent 70%); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+  .vks-fx[data-fx=trace]::after { background: radial-gradient(260px circle at var(--mx) var(--my), color-mix(in oklab, var(--gold) 9%, transparent), transparent 70%); }
+  /* tilt: ≤5° toward the cursor + a light sheen */
+  .vks-fx[data-fx=tilt] { transform: perspective(800px) rotateX(calc((.5 - var(--py)) * 10deg)) rotateY(calc((var(--px) - .5) * 10deg)); transition: transform .2s ease-out; will-change: transform; }
+  .vks-fx[data-fx=tilt]:not(:hover) { transition-duration: .5s; transform: none; }
+  .vks-fx[data-fx=tilt]::before { background: radial-gradient(260px circle at var(--mx) var(--my), rgb(255 255 255 / .2), transparent 60%); }
+  /* parallax: layers drift by --depth px */
+  .vks-parallax { --px: .5; --py: .5; }
+  .vks-parallax-layer { transform: translate3d(calc((var(--px) - .5) * var(--depth) * 2px), calc((var(--py) - .5) * var(--depth) * 2px), 0); transition: transform .5s var(--ease-out-quint); }
+  /* sliding highlight: one pill glides between rows */
+  .vks-slide-pill { position: absolute; left: 0; top: 0; z-index: -1; border-radius: .6rem; background: color-mix(in oklab, var(--foreground) 7%, transparent); opacity: 0; pointer-events: none; transition: transform .28s var(--ease-out-quint), width .28s var(--ease-out-quint), height .28s var(--ease-out-quint), opacity .2s; }
+  .vks-slide[data-slide-on] .vks-slide-pill { opacity: 1; }
+  /* cursor ring: landing/login only */
+  .vks-cursor-area, .vks-cursor-area * { cursor: none; }
+  .vks-cursor-area :is(input, textarea, [contenteditable]) { cursor: text; }
+  .vks-cursor-ring, .vks-cursor-dot { position: absolute; left: 0; top: 0; z-index: 60; pointer-events: none; opacity: 0; transition: opacity .2s; }
+  .vks-cursor-area[data-cursor-on] > .vks-cursor-ring, .vks-cursor-area[data-cursor-on] > .vks-cursor-dot { opacity: 1; }
+  .vks-cursor-ring > i { display: block; width: 30px; height: 30px; margin: -15px 0 0 -15px; border: 1.5px solid var(--gold); border-radius: 9999px; transition: transform .25s var(--ease-out-quint), background-color .25s; }
+  .vks-cursor-ring[data-big="1"] > i { transform: scale(2); background: color-mix(in oklab, var(--gold) 14%, transparent); border-width: 1px; }
+  .vks-cursor-dot { width: 5px; height: 5px; margin: -2.5px 0 0 -2.5px; border-radius: 9999px; background: var(--gold); }
+  /* icon nudge: arrows slide, other icons give a tiny wiggle. Add vks-nudge to any button/link. */
+  .vks-nudge svg { transition: transform .25s cubic-bezier(.2,.9,.3,1.4); }
+  .vks-nudge:hover svg:is(.lucide-arrow-right, .lucide-chevron-right, .lucide-move-right) { transform: translateX(4px); }
+  .vks-nudge:hover svg:not(.lucide-arrow-right, .lucide-chevron-right, .lucide-move-right) { transform: scale(1.15) rotate(-8deg); }
+}
+[data-perf=lite] .vks-fx::before, [data-perf=lite] .vks-fx::after, [data-perf=lite] .vks-slide-pill, [data-perf=lite] .vks-cursor-ring, [data-perf=lite] .vks-cursor-dot { display: none; }
+[data-perf=lite] .vks-fx[data-fx=tilt], [data-perf=lite] .vks-parallax-layer { transform: none !important; }
+[data-perf=lite] .vks-cursor-area, [data-perf=lite] .vks-cursor-area * { cursor: auto; }
+@media (prefers-reduced-motion: reduce) { .vks-fx[data-fx=tilt], .vks-parallax-layer { transform: none !important; } }
+@media (hover: hover) { .vks-lift { transition: transform .15s ease, box-shadow .15s ease; } .vks-lift:hover { transform: translateY(-2px); box-shadow: 0 6px 18px -8px rgb(0 0 0 / .35); } }
+/* collapse: grid rows 0fr -> 1fr. Full motion set only (animates layout, fine on desktop) */
+.vks-collapse { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .25s ease; }
+.vks-collapse[data-open="true"] { grid-template-rows: 1fr; }
+.vks-collapse > div { overflow: hidden; min-height: 0; }
+
+/* ---------- iOS motion ----------
+ * --ease-ios    : UIKit sheet curve (fast start, long soft landing). Enter AND exit.
+ * --ease-spring : small overshoot, for things that pop (dialogs, thumbs, toggles).
+ * Radix waits for animationend before unmounting, so exits always play fully.   */
+:root { --ease-ios: cubic-bezier(.32,.72,0,1); --ease-spring: cubic-bezier(.34,1.4,.64,1); --ease-out-quint: cubic-bezier(.22,1,.36,1); }
+@keyframes vks-scrim-in  { from { opacity: 0 } }
+@keyframes vks-scrim-out { to { opacity: 0 } }
+@keyframes vks-up-in     { from { transform: translate3d(0,100%,0) } }
+@keyframes vks-up-out    { to { transform: translate3d(0,100%,0) } }
+@keyframes vks-side-in   { from { transform: translate3d(100%,0,0) } }
+@keyframes vks-side-out  { to { transform: translate3d(100%,0,0) } }
+@keyframes vks-zoom-in   { from { opacity: 0; transform: scale(.92) translate3d(0,8px,0) } }
+@keyframes vks-zoom-out  { to { opacity: 0; transform: scale(.96) } }
+@keyframes vks-pop-in    { from { opacity: 0; transform: scale(.96) translate3d(0,-4px,0) } }
+@keyframes vks-pop-out   { to { opacity: 0; transform: scale(.97) } }
+
+.vks-scrim { will-change: opacity; }
+.vks-scrim[data-state=open]   { animation: vks-scrim-in .38s var(--ease-ios) both; }
+.vks-scrim[data-state=closed] { animation: vks-scrim-out .3s var(--ease-ios) both; }
+/* modal: bottom sheet on phones, centred card with a spring from 768 px */
+.vks-modal { will-change: transform; }
+.vks-modal[data-state=open]   { animation: vks-up-in .44s var(--ease-ios) both; }
+.vks-modal[data-state=closed] { animation: vks-up-out .32s var(--ease-ios) both; }
+@media (min-width: 768px) {
+  .vks-modal[data-state=open]   { animation: vks-zoom-in .42s var(--ease-spring) both; }
+  .vks-modal[data-state=closed] { animation: vks-zoom-out .2s var(--ease-ios) both; }
+}
+.vks-sheet-up[data-state=open]     { animation: vks-up-in .44s var(--ease-ios) both; }
+.vks-sheet-up[data-state=closed]   { animation: vks-up-out .32s var(--ease-ios) both; }
+.vks-sheet-side[data-state=open]   { animation: vks-side-in .44s var(--ease-ios) both; }
+.vks-sheet-side[data-state=closed] { animation: vks-side-out .32s var(--ease-ios) both; }
+/* pushed view inside an open sheet (picker in a dialog): slides over from the right, back = slides out */
+@keyframes vks-fade-in  { from { opacity: 0 } }
+@keyframes vks-push-in  { from { transform: translate3d(100%,0,0) } }
+@keyframes vks-push-out { to { transform: translate3d(100%,0,0) } }
+.vks-push { will-change: transform; animation: vks-push-in .34s var(--ease-ios) both; }
+.vks-push[data-leaving] { animation: vks-push-out .24s var(--ease-ios) both; }
+/* popovers / menus / selects: tiny scale from their anchor */
+.vks-float { transform-origin: var(--radix-popper-transform-origin, var(--radix-select-content-transform-origin, top)); }
+.vks-float[data-state=open], .vks-float[data-state=delayed-open], .vks-float[data-state=instant-open] { animation: vks-pop-in .22s var(--ease-out-quint) both; }
+.vks-float[data-state=closed] { animation: vks-pop-out .14s ease-in both; }
+/* chip remove: x spins away, pill springs down + fades (transform/opacity only) */
+@keyframes vks-chip-out { 0% { opacity: 1; transform: scale(1) } 30% { opacity: 1; transform: scale(1.06) } 100% { opacity: 0; transform: scale(.55) translate3d(0,4px,0) } }
+@keyframes vks-chip-x-out { to { opacity: 0; transform: rotate(90deg) scale(.4) } }
+@keyframes vks-fade-out { to { opacity: 0 } }
+/* chip tick: stays mounted, so picking / un-picking opens and closes its slot instead of jumping the pill's width */
+.vks-chip-check { display: inline-grid; grid-template-columns: 0fr; margin-right: -.375rem; opacity: 0; transform: scale(.5); transition: grid-template-columns .4s cubic-bezier(.65,0,.35,1), margin-right .4s cubic-bezier(.65,0,.35,1), opacity .4s ease-in-out, transform .4s cubic-bezier(.65,0,.35,1); }
+.vks-chip-check > span { min-width: 0; overflow: hidden; display: flex; }
+.vks-chip-check[data-on] { grid-template-columns: 1fr; margin-right: 0; opacity: 1; transform: none; }
+[data-perf=lite] .vks-chip-check { transition-duration: .1s; }
+@media (prefers-reduced-motion: reduce) { .vks-chip-check { transition: none; } }
+.vks-chip[data-leaving] { animation: vks-chip-out .28s var(--ease-ios) both; pointer-events: none; }
+.vks-chip[data-leaving] .vks-chip-x { animation: vks-chip-x-out .2s ease-in both; }
+/* tag input: new tag pops in from where you typed it (the caret side), removed tag shrinks away, the rest glide (useFlip) */
+@keyframes vks-tag-in { 0% { opacity: 0; transform: translate3d(10px,0,0) scale(.72) } 60% { opacity: 1 } 100% { opacity: 1; transform: none } }
+@keyframes vks-tag-out { 0% { opacity: 1; transform: scale(1) } 30% { opacity: 1; transform: scale(1.04) } 100% { opacity: 0; transform: scale(.6) } }
+.vks-tag { transform-origin: left center; animation: vks-tag-in .36s var(--ease-spring) both; }
+.vks-tag[data-leaving] { transform-origin: center; animation: vks-tag-out .24s var(--ease-ios) both; pointer-events: none; }
+/* dropzone file row: slides toward the X side and shrinks away; neighbours glide up (useFlip) */
+@keyframes vks-file-out { 0% { opacity: 1; transform: none } 100% { opacity: 0; transform: translate3d(24px,0,0) scale(.94) } }
+.vks-file[data-leaving] { animation: vks-file-out .24s var(--ease-ios) both; pointer-events: none; }
+[data-perf=lite] .vks-file[data-leaving] { animation: vks-fade-out .15s ease-in both; }
+.vks-tag[data-leaving] .vks-chip-x { animation: vks-chip-x-out .18s ease-in both; }
+/* combobox rows: quick cascade when the list opens */
+.vks-rows-in > li { animation: vks-row-in .32s var(--ease-out-quint) both; animation-delay: calc(min(var(--i, 0), 8) * 22ms); }
+/* banner auto-hide progress line */
+@keyframes vks-drain { from { transform: scaleX(1) } to { transform: scaleX(0) } }
+.vks-drain { animation: vks-drain linear both; }
+/* map pins: token dot + white ring + soft pulse ring (transform/opacity only) */
+.vks-pin-wrap { background: none; border: 0; }
+.vks-pin { position: relative; display: block; width: 30px; height: 30px; }
+.vks-pin i { position: absolute; inset: 7px; border-radius: 50%; background: var(--pin); border: 3px solid var(--card); box-shadow: 0 3px 8px -2px rgb(0 0 0 / .45); transition: transform .3s var(--ease-spring); }
+.vks-pin::before { content: ""; position: absolute; inset: 3px; border-radius: 50%; background: var(--pin); opacity: 0; animation: vks-pin-ring 2.4s var(--ease-out-quint) infinite; }
+.vks-pin-live::before { animation-duration: 1.4s; }
+.vks-pin:hover i { transform: scale(1.18); }
+@keyframes vks-pin-ring { 0% { opacity: .45; transform: scale(.5) } 100% { opacity: 0; transform: scale(1.6) } }
+/* leaflet.css loads after the theme and sets Helvetica 12px on .leaflet-container, so win on specificity. */
+.vks-map { background: var(--muted); }
+.vks-map.leaflet-container, .vks-map .leaflet-tooltip { font-family: var(--font-sans); font-size: 13px; line-height: 1.5; }
+.vks-map-tip { display: grid; gap: 1px; min-width: 0; max-width: 220px; white-space: normal; padding: 6px 10px !important; border-radius: 12px !important; border: 1px solid var(--border) !important; background: var(--card) !important; color: var(--foreground) !important; box-shadow: 0 10px 24px -12px rgb(20 23 61 / .5) !important; }
+.vks-map-tip::before { display: none; }
+.vks-map-tip-row { display: flex; align-items: center; gap: 6px; font-weight: 600; white-space: nowrap; }
+.vks-map-tip-row b { width: 7px; height: 7px; flex: none; border-radius: 50%; background: var(--pin); }
+.vks-map-tip-row em { margin-left: auto; padding-left: 8px; font-style: normal; font-weight: 500; font-size: 11px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.vks-map-tip small { font-size: 12px; color: var(--muted-foreground); padding-left: 13px; }
+.leaflet-tooltip-top.vks-map-tip:not(.vks-map-tip-fixed) { animation: vks-map-tip-in .18s var(--ease-out-quint) both; }
+@keyframes vks-map-tip-in { from { opacity: 0 } }
+.vks-map-tip-fixed { padding: 3px 9px !important; border-radius: 999px !important; }
+.vks-map-tip-fixed small, .vks-map-tip-fixed .vks-map-tip-row em { display: none; }
+.vks-pin-on i { transform: scale(1.3); box-shadow: 0 0 0 3px color-mix(in oklab, var(--pin) 35%, transparent), 0 4px 10px -2px rgb(0 0 0 / .45); }
+.vks-map-card { transform-origin: bottom center; animation: vks-map-card-in .32s var(--ease-spring) both; }
+.vks-map-card[data-state=closed] { pointer-events: none; animation: vks-map-card-out .22s var(--ease-ios) both; }
+@keyframes vks-map-card-out { to { opacity: 0; transform: translate3d(0, 14px, 0) scale(.97) } }
+@keyframes vks-map-card-in { from { opacity: 0; transform: translate3d(0, 16px, 0) scale(.97) } }
+/* heatmap cells: diagonal wave-in */
+@keyframes vks-heat-in { from { opacity: 0; transform: scale(.4) } }
+.vks-heat-cell { animation: vks-heat-in .45s var(--ease-out-quint) both; }
+/* grab handle on phone sheets */
+.vks-grabber { width: 40px; height: 5px; border-radius: 99px; background: var(--border); margin: -8px auto 4px; }
+@media (min-width: 768px) { .vks-modal .vks-grabber { display: none } }
+
+/* ---------- premium button ----------
+ * layered: token fill + top light gradient + 1px inner highlight + tinted lift shadow.
+ * Press = spring scale. Hover sheen only on real hover devices. Only transform/opacity animate. */
+.vks-btn { position: relative; isolation: isolate; overflow: hidden; transition: transform .45s var(--ease-spring), filter .2s ease, background-color .2s ease, color .2s ease; }
+.vks-btn:active:not(:disabled) { transform: scale(.965); transition-duration: .08s; transition-timing-function: ease-out; }
+.vks-btn-solid { background-image: linear-gradient(180deg, rgb(255 255 255 / .16), rgb(255 255 255 / 0) 55%, rgb(0 0 0 / .06)); box-shadow: inset 0 1px 0 rgb(255 255 255 / .22), inset 0 -1px 0 rgb(0 0 0 / .12), 0 1px 2px rgb(20 23 61 / .18), 0 6px 16px -8px var(--vks-btn-glow, rgb(20 23 61 / .45)); }
+.vks-btn-solid::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / .28) 50%, transparent 65%); transform: translate3d(-120%,0,0); }
+@media (hover: hover) {
+  .vks-btn-solid:hover:not(:disabled) { filter: brightness(1.06); }
+  .vks-btn-solid:hover:not(:disabled)::after { transform: translate3d(120%,0,0); transition: transform .75s var(--ease-out-quint); }
+}
+.vks-btn-soft { box-shadow: inset 0 1px 0 rgb(255 255 255 / .6), 0 1px 2px rgb(20 23 61 / .06); }
+.dark .vks-btn-soft { box-shadow: inset 0 1px 0 rgb(255 255 255 / .05), 0 1px 2px rgb(0 0 0 / .3); }
+
+/* sonner ships its own font stack; force Noto Sans Lao and a softer iOS card */
+[data-sonner-toaster], [data-sonner-toaster] [data-sonner-toast], [data-sonner-toast] [data-title], [data-sonner-toast] [data-description], [data-sonner-toast] button { font-family: var(--font-sans) !important; }
+/* VKS toast: glass card + gold hairline, round tone badge (same as IOSAlert), spring in, drain bar, pill action */
+[data-sonner-toaster] [data-sonner-toast].vks-toast { --tone: var(--muted-foreground); border-radius: 1.125rem; line-height: 1.6; padding: .75rem 2.25rem .875rem .875rem; gap: .75rem; align-items: flex-start;
+  background-color: color-mix(in oklab, var(--popover) 90%, transparent);
+  background-image: linear-gradient(90deg, transparent, color-mix(in oklab, var(--gold) 75%, transparent), transparent);
+  background-size: calc(100% - 2rem) 1px; background-position: 1rem 0; background-repeat: no-repeat;
+  -webkit-backdrop-filter: blur(16px) saturate(1.6); backdrop-filter: blur(16px) saturate(1.6);
+  box-shadow: 0 18px 40px -18px rgb(20 23 61 / .45), 0 1px 2px rgb(20 23 61 / .08);
+  transition: transform .5s cubic-bezier(.22, 1.25, .36, 1), opacity .3s ease, height .4s var(--ease-out-quint), box-shadow .2s; }
+.dark [data-sonner-toaster] [data-sonner-toast].vks-toast { box-shadow: 0 18px 40px -18px rgb(0 0 0 / .7), 0 0 0 1px rgb(255 255 255 / .04); }
+[data-sonner-toaster] [data-sonner-toast].vks-toast[data-type=success] { --tone: var(--success); }
+[data-sonner-toaster] [data-sonner-toast].vks-toast[data-type=error] { --tone: var(--destructive); }
+[data-sonner-toaster] [data-sonner-toast].vks-toast[data-type=warning] { --tone: var(--warning); }
+[data-sonner-toaster] [data-sonner-toast].vks-toast[data-type=info] { --tone: var(--primary); }
+[data-sonner-toaster] [data-sonner-toast].vks-toast [data-content] { align-self: center; min-width: 0; }
+[data-sonner-toaster] [data-sonner-toast].vks-toast [data-title] { font-weight: 600; font-size: .875rem; }
+[data-sonner-toaster] [data-sonner-toast].vks-toast [data-description] { color: var(--muted-foreground); font-size: .8125rem; }
+/* badge: [data-icon] goes static so the drain bar can sit at the toast's bottom edge */
+[data-sonner-toaster] [data-sonner-toast].vks-toast [data-icon] { position: static; width: 2rem; height: 2rem; margin: 0; }
+[data-sonner-toaster] [data-sonner-toast].vks-toast .vks-tb { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 999px; color: #fff; background: var(--tone);
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--tone) 16%, transparent); animation: vks-tb-pop .5s .08s cubic-bezier(.3, 1.6, .4, 1) both; }
+[data-sonner-toaster] [data-sonner-toast].vks-toast[data-type=loading] .vks-tb { background: var(--muted); color: var(--foreground); box-shadow: none; }
+[data-sonner-toaster] [data-sonner-toast].vks-toast .vks-tb svg { width: 1rem; height: 1rem; margin: 0; }
+[data-sonner-toaster] [data-sonner-toast].vks-toast .vks-tbar { position: absolute; left: 1rem; right: 1rem; bottom: 0; height: 2px; border-radius: 2px; background: var(--tone); opacity: .55; transform-origin: left;
+  animation: vks-tbar var(--vks-toast-dur, 4s) linear both; }
+[data-sonner-toaster]:hover [data-sonner-toast] .vks-tbar, [data-sonner-toast][data-expanded=true] .vks-tbar { animation-play-state: paused; }
+[data-sonner-toaster] [data-sonner-toast].vks-toast [data-button] { align-self: center; height: 2.25rem; padding: 0 .875rem; border-radius: 999px; font-size: .8125rem; font-weight: 600; position: relative;
+  background: var(--card); color: var(--foreground); border: 1px solid var(--border); box-shadow: 0 1px 2px rgb(20 23 61 / .08); }
+[data-sonner-toaster] [data-sonner-toast].vks-toast [data-button]::after { content: ""; position: absolute; inset: -4px; } /* 44 px hit area */
+[data-sonner-toaster] [data-sonner-toast].vks-toast [data-close-button] { left: auto; right: .5rem; top: .5rem; transform: none; width: 1.5rem; height: 1.5rem; border: 0; background: transparent; color: var(--muted-foreground); }
+[data-sonner-toaster] [data-sonner-toast].vks-toast [data-close-button]::after { content: ""; position: absolute; inset: -10px; }
+@keyframes vks-tb-pop { from { transform: scale(0) } }
+@keyframes vks-tbar { to { transform: scaleX(0) } }
+[data-perf=lite] [data-sonner-toaster] [data-sonner-toast].vks-toast { background-color: var(--popover); -webkit-backdrop-filter: none; backdrop-filter: none; transition-timing-function: ease; }
+[data-perf=lite] [data-sonner-toaster] [data-sonner-toast].vks-toast .vks-tb { animation: none; }
+@media (prefers-reduced-motion: reduce) {
+  [data-sonner-toaster] [data-sonner-toast].vks-toast { transition: opacity .2s ease, height .2s ease; }
+  [data-sonner-toaster] [data-sonner-toast].vks-toast .vks-tb { animation: none; }
+}
+
+/* ---------- premium surfaces (token-only, no images, cheap to paint) ---------- */
+/* preview stage: faint dot grid + soft gold glow from the top */
+.vks-stage { position: relative; isolation: isolate; background:
+  radial-gradient(120% 70% at 50% -10%, color-mix(in oklab, var(--gold) 14%, transparent), transparent 60%),
+  radial-gradient(circle at 1px 1px, color-mix(in oklab, var(--foreground) 9%, transparent) 1px, transparent 0) 0 0 / 18px 18px,
+  var(--card);
+  box-shadow: inset 0 1px 0 color-mix(in oklab, white 60%, transparent), 0 1px 2px rgb(20 23 61 / .04), 0 12px 32px -20px rgb(20 23 61 / .25); }
+.dark .vks-stage { box-shadow: inset 0 1px 0 rgb(255 255 255 / .04), 0 12px 32px -20px rgb(0 0 0 / .6); }
+/* app bar: navy with a slow gold aurora and a gold hairline that fades at the ends */
+.vks-bar { background:
+  radial-gradient(60% 140% at 12% 0%, color-mix(in oklab, var(--gold) 16%, transparent), transparent 70%),
+  linear-gradient(180deg, color-mix(in oklab, var(--bar) 92%, white), var(--bar)); }
+.vks-hairline { height: 1px; background: linear-gradient(90deg, transparent, var(--gold) 20%, var(--gold) 80%, transparent); opacity: .8; }
+/* hero card for landing pages */
+.vks-hero { position: relative; overflow: hidden; isolation: isolate; color: var(--bar-foreground); background:
+  radial-gradient(80% 120% at 85% 10%, color-mix(in oklab, var(--gold) 28%, transparent), transparent 55%),
+  radial-gradient(60% 90% at 0% 100%, color-mix(in oklab, var(--gold) 10%, transparent), transparent 60%),
+  linear-gradient(160deg, color-mix(in oklab, var(--bar) 88%, white), var(--bar) 60%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / .1), 0 24px 60px -30px rgb(20 23 61 / .6); }
+.vks-hero::before { content: ""; position: absolute; inset: 0; z-index: -1; opacity: .5; background: radial-gradient(circle at 1px 1px, rgb(255 255 255 / .12) 1px, transparent 0) 0 0 / 22px 22px; mask-image: linear-gradient(180deg, black, transparent 80%); }
+.vks-logo-lift { filter: drop-shadow(0 18px 30px rgb(0 0 0 / .45)); }
+@keyframes vks-float-y { 50% { transform: translate3d(0,-6px,0) } }
+.vks-float-y { animation: vks-float-y 6s ease-in-out infinite; }
+/* staggered page enter: children rise one after another */
+.vks-rise > * { animation: vks-rise .6s var(--ease-out-quint) both; }
+.vks-rise > *:nth-child(2) { animation-delay: .05s } .vks-rise > *:nth-child(3) { animation-delay: .1s } .vks-rise > *:nth-child(4) { animation-delay: .15s } .vks-rise > *:nth-child(n+5) { animation-delay: .2s }
+@keyframes vks-rise { from { opacity: 0; transform: translate3d(0,10px,0) } }
+
+/* ---- LoginScreen entrance: one choreographed sequence, transform + opacity only. Delay per piece via --d. ---- */
+.vks-li { animation: var(--li-a, vks-li-up) var(--li-t, .7s) var(--ease-out-quint) both; animation-delay: var(--d, 0ms); }
+.vks-li-left { --li-a: vks-li-left; } .vks-li-fade { --li-a: vks-fade-in; --li-t: .9s; } .vks-li-pop { --li-a: vks-li-pop; --li-t: .8s; }
+@keyframes vks-li-up { from { opacity: 0; transform: translate3d(0,18px,0) } }
+@keyframes vks-li-left { from { opacity: 0; transform: translate3d(-16px,0,0) } }
+@keyframes vks-li-pop { 0% { opacity: 0; transform: scale(.55) rotate(-10deg) } 60% { opacity: 1; transform: scale(1.06) rotate(1.5deg) } 100% { transform: none } }
+/* brand panel: aurora wash settles in, gold orbs drift slowly (lite: still) */
+.vks-li-aurora { animation: vks-li-aurora 1.4s var(--ease-out-quint) both; transform-origin: 85% 0%; }
+@keyframes vks-li-aurora { from { opacity: 0; transform: scale(1.15) } }
+.vks-li-orb { position: absolute; border-radius: 9999px; pointer-events: none; background: radial-gradient(circle, color-mix(in oklab, var(--gold) 38%, transparent), transparent 68%); animation: vks-fade-in 1.6s ease-out both, vks-li-drift 16s ease-in-out 1.6s infinite alternate; }
+@keyframes vks-li-drift { 0% { transform: translate3d(0,0,0) } 50% { transform: translate3d(28px,-18px,0) scale(1.08) } 100% { transform: translate3d(-18px,14px,0) scale(.95) } }
+/* gold hairline draws out from the centre */
+.vks-li-line { transform-origin: 50% 50%; animation: vks-li-line 1.1s var(--ease-out-quint) both; animation-delay: var(--d, 0ms); }
+@keyframes vks-li-line { from { transform: scaleX(0); opacity: 0 } }
+/* one gold ring breathes out of the logo once it lands */
+.vks-li-ring { position: absolute; inset: -4px; border-radius: 9999px; border: 1.5px solid var(--gold); opacity: 0; pointer-events: none; animation: vks-li-ring 1.3s var(--ease-out-quint) both; animation-delay: var(--d, 0ms); }
+.vks-li-ring + .vks-li-ring { animation-delay: calc(var(--d, 0ms) + 220ms); }
+@keyframes vks-li-ring { 0% { opacity: .9; transform: scale(.85) } 100% { opacity: 0; transform: scale(1.75) } }
+/* one light sweep across the sign-in button after everything has landed */
+.vks-li-cta button[type=submit] { position: relative; overflow: hidden; }
+.vks-li-cta button[type=submit]::after { content: ""; position: absolute; inset: 0 auto 0 0; width: 40%; background: linear-gradient(100deg, transparent, rgb(255 255 255 / .38), transparent); transform: translate3d(-120%,0,0) skewX(-18deg); animation: vks-li-sweep .9s var(--ease-out-quint) 1.25s both; pointer-events: none; }
+@keyframes vks-li-sweep { to { transform: translate3d(320%,0,0) skewX(-18deg) } }
+/* form fields cascade in, whatever the app passes as children */
+.vks-li-fields > * > *, .vks-li-fields > :not(form) { animation: vks-li-up .6s var(--ease-out-quint) both; animation-delay: calc(var(--d, 0ms) + var(--k, 0) * 70ms); }
+.vks-li-fields > * > :nth-child(2) { --k: 1 } .vks-li-fields > * > :nth-child(3) { --k: 2 } .vks-li-fields > * > :nth-child(4) { --k: 3 } .vks-li-fields > * > :nth-child(n+5) { --k: 4 }
+/* phones: same story, shorter (≤ 400 ms per piece) */
+@media (max-width: 767px) {
+  .vks-li, .vks-li-fields > * > *, .vks-li-fields > :not(form) { --li-t: .4s; animation-duration: .4s; }
+  .vks-li-pop { --li-t: .55s; }
+}
+[data-perf=lite] .vks-li-orb { animation: vks-fade-in .3s ease-out both; }
+[data-perf=lite] .vks-li-ring, [data-perf=lite] .vks-li-cta button[type=submit]::after { display: none; }
+[data-perf=lite] .vks-li, [data-perf=lite] .vks-li-aurora, [data-perf=lite] .vks-li-line, [data-perf=lite] .vks-li-fields > * > *, [data-perf=lite] .vks-li-fields > :not(form) { animation-duration: .2s; animation-delay: 0s !important; }
+
+/* switch / toggle spring */
+.vks-thumb { transition: transform .45s var(--ease-spring); }
+
+/* =====================================================================
+ * v3 motion: iOS-grade micro-interactions. transform/opacity only, except
+ * tiny SVG stroke draws and accordion height (both cheap, both off in lite).
+ * ===================================================================== */
+/* ---- checkbox (v0.4 press in / release) ----
+ * press: box sinks, halo fades in, border goes green (label:active covers taps on the text)
+ * release: fill grows from centre, tick draws, box bounces, halo ripples once */
+@keyframes vks-cb-pop { 0% { transform: scale(.86) } 55% { transform: scale(1.07) } 100% { transform: scale(1) } }
+@keyframes vks-cb-ripple { from { opacity: .22; transform: scale(.9) } to { opacity: 0; transform: scale(1.5) } }
+.vks-cb { transition: background-color .2s ease, border-color .15s ease, transform .42s var(--ease-spring); -webkit-tap-highlight-color: transparent; }
+.vks-cb:active:not(:disabled), label:active > .vks-cb:not(:disabled) { transform: scale(.86); transition-duration: .15s, .15s, .09s; border-color: var(--success); }
+.vks-cb[data-state=checked], .vks-cb[data-state=indeterminate] { animation: vks-cb-pop .42s var(--ease-spring); }
+.vks-cb-halo { position: absolute; inset: -10px; z-index: -1; border-radius: 9999px; background: var(--success); opacity: 0; transform: scale(.6); pointer-events: none; transition: opacity .15s ease, transform .2s var(--ease-out-quint); }
+.vks-cb:active:not(:disabled) > .vks-cb-halo, label:active > .vks-cb:not(:disabled) > .vks-cb-halo { opacity: .12; transform: scale(1); }
+.vks-cb[data-state=checked] > .vks-cb-halo, .vks-cb[data-state=indeterminate] > .vks-cb-halo { animation: vks-cb-ripple .42s var(--ease-out-quint); }
+.vks-cb-fill { position: absolute; inset: -1.5px; border-radius: inherit; background: var(--success); transform: scale(0); pointer-events: none; transition: transform .18s ease-in, box-shadow .2s ease; }
+.vks-cb[data-state=checked] > .vks-cb-fill, .vks-cb[data-state=indeterminate] > .vks-cb-fill { transform: scale(1); transition: transform .26s var(--ease-spring), box-shadow .2s ease; box-shadow: 0 4px 12px -4px color-mix(in oklab, var(--success) 70%, transparent); }
+.vks-cb-tick, .vks-cb-dash { stroke-dasharray: 24; stroke-dashoffset: 24; transition: stroke-dashoffset .14s ease-in; }
+.vks-cb[data-state=checked] .vks-cb-tick { stroke-dashoffset: 0; transition: stroke-dashoffset .26s .07s var(--ease-out-quint); }
+.vks-cb[data-state=indeterminate] .vks-cb-dash { stroke-dashoffset: 0; transition: stroke-dashoffset .24s .05s var(--ease-out-quint); }
+/* the label text dims a touch while held */
+label:has(> .vks-cb:not(:disabled)), label:has(> .vks-switch:not(:disabled)) { transition: color .15s ease; -webkit-tap-highlight-color: transparent; }
+label:has(> .vks-cb:not(:disabled)):active, label:has(> .vks-switch:not(:disabled)):active { color: color-mix(in oklab, currentColor 60%, transparent); }
+
+/* ---- switch (v0.4) ----
+ * the knob is 3 white pieces (circle | bar | circle) so it can stretch into a
+ * pill with transforms only. Knob slides with transform (NOT the translate
+ * property Tailwind v4 emits, which the old transition never animated). */
+@keyframes vks-sw-ring { from { opacity: .45; transform: scale(.92) } to { opacity: 0; transform: scale(1.18) } }
+.vks-switch { isolation: isolate; transition: background-color .28s var(--ease-ios), box-shadow .3s ease; -webkit-tap-highlight-color: transparent; }
+.vks-switch::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: var(--success); opacity: 0; transform: scale(.4); pointer-events: none; transition: transform .38s var(--ease-ios), opacity .22s ease; }
+.vks-switch[data-state=checked]::before { opacity: 1; transform: scale(1); }
+.vks-switch[data-state=checked] { box-shadow: inset 0 0 0 1px color-mix(in oklab, black 6%, transparent), 0 4px 14px -6px color-mix(in oklab, var(--success) 75%, transparent); }
+.vks-switch[data-state=unchecked]:active:not(:disabled), label:active > .vks-switch[data-state=unchecked]:not(:disabled) { background: color-mix(in oklab, var(--input) 88%, var(--foreground)); }
+.vks-sw-ring { position: absolute; inset: -4px; border-radius: 9999px; border: 2px solid var(--success); opacity: 0; pointer-events: none; }
+.vks-switch[data-state=checked] > .vks-sw-ring { animation: vks-sw-ring .45s var(--ease-out-quint); }
+.vks-sw-thumb { position: absolute; top: 2px; left: 2px; width: 27px; height: 27px; transform: translate3d(0,0,0); transition: transform .46s var(--ease-spring); }
+.vks-sw-thumb[data-state=checked] { transform: translate3d(20px,0,0); }
+.vks-sw-l, .vks-sw-r { position: absolute; inset: 0; border-radius: 9999px; background: white; box-shadow: 0 3px 8px rgb(0 0 0 / .15), 0 3px 1px rgb(0 0 0 / .06), 0 0 0 .5px rgb(0 0 0 / .04); }
+.vks-sw-r { transition: transform .2s var(--ease-out-quint); }
+.vks-sw-m { position: absolute; top: 0; bottom: 0; left: 13px; width: 1px; background: white; transform-origin: left center; transform: scaleX(0); transition: transform .2s var(--ease-out-quint); }
+.vks-switch:active:not(:disabled) .vks-sw-r, label:active > .vks-switch:not(:disabled) .vks-sw-r { transform: translate3d(7px,0,0); transition-duration: .14s; }
+.vks-switch:active:not(:disabled) .vks-sw-m, label:active > .vks-switch:not(:disabled) .vks-sw-m { transform: scaleX(8); transition-duration: .14s; }
+/* held while ON: the pill grows leftward so its right edge stays put */
+.vks-switch:active:not(:disabled) .vks-sw-thumb[data-state=checked], label:active > .vks-switch:not(:disabled) .vks-sw-thumb[data-state=checked] { transform: translate3d(13px,0,0); }
+
+/* ---- sliding indicator (tabs, pagination, sidebar, bottom nav) ---- */
+.vks-ind { position: absolute; left: 0; top: 0; pointer-events: none; will-change: transform; }
+.vks-ind[data-anim=true] { transition: transform .5s var(--ease-spring), width .5s var(--ease-spring), height .5s var(--ease-spring); }
+.vks-tab-panel[data-state=active] { animation: vks-fade-up .32s var(--ease-out-quint) both; }
+
+/* ---- popovers that carry real content (date pickers, menus) ---- */
+@keyframes vks-panel-in  { from { opacity: 0; transform: scale(.9) translate3d(0,-8px,0) } }
+@keyframes vks-panel-out { to   { opacity: 0; transform: scale(.95) translate3d(0,-4px,0) } }
+.vks-panel { transform-origin: var(--radix-popper-transform-origin, top left); }
+.vks-panel[data-state=open]   { animation: vks-panel-in .36s var(--ease-spring) both; }
+.vks-panel[data-state=closed] { animation: vks-panel-out .16s ease-in both; }
+.vks-panel[data-side=top][data-state=open] { animation-name: vks-panel-in-up; }
+@keyframes vks-panel-in-up { from { opacity: 0; transform: scale(.9) translate3d(0,8px,0) } }
+/* month change inside a calendar */
+@keyframes vks-month-next { from { opacity: 0; transform: translate3d(24px,0,0) } }
+@keyframes vks-month-prev { from { opacity: 0; transform: translate3d(-24px,0,0) } }
+.vks-month-next { animation: vks-month-next .32s var(--ease-out-quint) both; }
+.vks-month-prev { animation: vks-month-prev .32s var(--ease-out-quint) both; }
+@keyframes vks-day-pick { 0% { transform: scale(.6) } 60% { transform: scale(1.12) } 100% { transform: scale(1) } }
+.vks-day-pick { animation: vks-day-pick .36s var(--ease-spring); }
+
+/* ---- stars ---- */
+@keyframes vks-star { 0% { transform: scale(1) rotate(0) } 40% { transform: scale(1.45) rotate(-12deg) } 70% { transform: scale(.92) rotate(4deg) } 100% { transform: scale(1) rotate(0) } }
+.vks-star { animation: vks-star .5s var(--ease-spring) both; animation-delay: calc(var(--i, 0) * 45ms); }
+.vks-star-btn svg { transition: transform .25s var(--ease-spring), color .2s, fill .2s; }
+@media (hover: hover) { .vks-star-btn:hover svg { transform: scale(1.18); } }
+
+/* ---- accordion: real height, iOS curve ---- */
+@keyframes vks-acc-down { from { height: 0; opacity: 0 } to { height: var(--radix-accordion-content-height); opacity: 1 } }
+@keyframes vks-acc-up   { from { height: var(--radix-accordion-content-height); opacity: 1 } to { height: 0; opacity: 0 } }
+.vks-acc[data-state=open]   { animation: vks-acc-down .34s var(--ease-ios); }
+.vks-acc[data-state=closed] { animation: vks-acc-up .24s var(--ease-ios); }
+.vks-acc-chev { transition: transform .4s var(--ease-spring); }
+[data-state=open] > .vks-acc-chev { transform: rotate(180deg); }
+
+/* ---- table sort arrow ---- */
+.vks-sort { transition: transform .4s var(--ease-spring), opacity .2s; }
+.vks-sort[data-dir=desc] { transform: rotate(180deg); }
+.vks-sort[data-dir=none] { opacity: .35; }
+@media (hover: hover) { .vks-sort-btn:hover .vks-sort[data-dir=none] { opacity: .8; } }
+@keyframes vks-row-in { from { opacity: 0; transform: translate3d(0,4px,0) } }
+.vks-rows > tr { animation: vks-row-in .3s var(--ease-out-quint) both; }
+.vks-rows > tr:nth-child(2) { animation-delay: 20ms } .vks-rows > tr:nth-child(3) { animation-delay: 40ms } .vks-rows > tr:nth-child(4) { animation-delay: 60ms } .vks-rows > tr:nth-child(n+5) { animation-delay: 80ms }
+
+/* ---- avatar ---- */
+@keyframes vks-img-in { from { opacity: 0; transform: scale(1.08) } }
+.vks-av-img { animation: vks-img-in .4s var(--ease-out-quint) both; }
+.vks-av-0 { background: linear-gradient(135deg, #2b3170, #14173d); color: #fff; }
+.vks-av-1 { background: linear-gradient(135deg, #10a37f, #047857); color: #fff; }
+.vks-av-2 { background: linear-gradient(135deg, #e3cd9d, #b08d4a); color: #14173d; }
+.vks-av-3 { background: linear-gradient(135deg, #e08a2c, #b45309); color: #fff; }
+.vks-av-4 { background: linear-gradient(135deg, #6b7390, #3d4460); color: #fff; }
+.vks-av-5 { background: linear-gradient(135deg, #e0565b, #9f1d2b); color: #fff; }
+.vks-av-ring { background: conic-gradient(from 210deg, var(--gold), color-mix(in oklab, var(--gold) 40%, white), var(--gold), color-mix(in oklab, var(--gold) 55%, var(--bar)), var(--gold)); }
+.vks-av-group > * { transition: transform .35s var(--ease-spring); }
+@media (hover: hover) { .vks-av-group:hover > * { transform: translate3d(calc(var(--i, 0) * 6px),0,0); } }
+@keyframes vks-status { 0% { transform: scale(1); opacity: .7 } 100% { transform: scale(2.4); opacity: 0 } }
+.vks-status-live::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: inherit; animation: vks-status 1.8s ease-out infinite; }
+
+/* ---- lightbox (iOS Photos) ---- */
+@keyframes vks-lb-in  { from { opacity: 0; transform: scale(.82) } }
+@keyframes vks-lb-out { to { opacity: 0; transform: scale(.9) } }
+@keyframes vks-lb-next { from { opacity: 0; transform: translate3d(48px,0,0) scale(.97) } }
+@keyframes vks-lb-prev { from { opacity: 0; transform: translate3d(-48px,0,0) scale(.97) } }
+@keyframes vks-lb-chrome { from { opacity: 0; transform: translate3d(0,8px,0) } }
+.vks-lb[data-state=open] { animation: vks-scrim-in .3s var(--ease-ios) both; }
+.vks-lb[data-state=closed] { animation: vks-scrim-out .26s var(--ease-ios) both; }
+.vks-lb[data-state=open] .vks-lb-stage { animation: vks-lb-in .46s var(--ease-spring) both; }
+.vks-lb[data-state=closed] .vks-lb-stage { animation: vks-lb-out .24s var(--ease-ios) both; }
+.vks-lb[data-state=open] .vks-lb-chrome { animation: vks-lb-chrome .4s .12s var(--ease-out-quint) both; }
+.vks-lb-next { animation: vks-lb-next .38s var(--ease-out-quint) both; }
+.vks-lb-prev { animation: vks-lb-prev .38s var(--ease-out-quint) both; }
+.vks-lb-img { transition: transform .38s var(--ease-ios); will-change: transform; }
+.vks-lb-img[data-dragging=true] { transition: none; }
+.vks-lb-thumb { transition: transform .35s var(--ease-spring), opacity .2s, box-shadow .2s; }
+
+/* ---- iOS alert / action sheet / notification banner ---- */
+@keyframes vks-alert-in  { from { opacity: 0; transform: scale(1.14) } }
+@keyframes vks-alert-out { to { opacity: 0; transform: scale(.94) } }
+.vks-alert[data-state=open]   { animation: vks-alert-in .36s var(--ease-spring) both; }
+.vks-alert[data-state=closed] { animation: vks-alert-out .18s ease-in both; }
+@keyframes vks-banner-in  { from { opacity: 0; transform: translate3d(0,-120%,0) scale(.96) } }
+@keyframes vks-banner-out { to { opacity: 0; transform: translate3d(0,-120%,0) scale(.96) } }
+.vks-banner[data-open=true]  { animation: vks-banner-in .55s var(--ease-spring) both; }
+.vks-banner[data-open=false] { animation: vks-banner-out .3s var(--ease-ios) both; }
+
+/* ---- navigation ---- */
+@keyframes vks-tab-bounce { 0% { transform: scale(1) } 30% { transform: scale(.8) translate3d(0,2px,0) } 65% { transform: scale(1.18) translate3d(0,-3px,0) } 100% { transform: scale(1) } }
+.vks-tab-bounce { animation: vks-tab-bounce .5s var(--ease-spring); }
+@keyframes vks-rise-x { from { opacity: 0; transform: translate3d(-10px,0,0) } }
+.vks-rise-x > * { animation: vks-rise-x .5s var(--ease-out-quint) both; animation-delay: calc(var(--i, 0) * 35ms); }
+@keyframes vks-badge-pop { 0% { transform: scale(0) } 70% { transform: scale(1.25) } 100% { transform: scale(1) } }
+.vks-badge-pop { animation: vks-badge-pop .45s var(--ease-spring) both; }
+.vks-nav-icon { transition: transform .35s var(--ease-spring); }
+@media (hover: hover) { .vks-nav-item:hover .vks-nav-icon { transform: translate3d(2px,0,0) scale(1.08); } }
+/* wizard connector fill */
+.vks-fill-x { transform-origin: left center; transition: transform .6s var(--ease-ios); }
+@keyframes vks-step-next { from { opacity: 0; transform: translate3d(28px,0,0) } }
+@keyframes vks-step-prev { from { opacity: 0; transform: translate3d(-28px,0,0) } }
+.vks-step-next { animation: vks-step-next .38s var(--ease-out-quint) both; }
+.vks-step-prev { animation: vks-step-prev .38s var(--ease-out-quint) both; }
+
+/* ---- glass + aurora surfaces ---- */
+.vks-glass { background: color-mix(in oklab, var(--card) 72%, transparent); -webkit-backdrop-filter: blur(20px) saturate(1.7); backdrop-filter: blur(20px) saturate(1.7); }
+.vks-glass-dark { background: rgb(28 28 30 / .55); color: #fff; -webkit-backdrop-filter: blur(24px) saturate(1.6); backdrop-filter: blur(24px) saturate(1.6); }
+.vks-aurora { position: relative; isolation: isolate; overflow: hidden; background: var(--background); }
+.vks-aurora::before, .vks-aurora::after { content: ""; position: absolute; z-index: -1; width: 70vmax; height: 70vmax; border-radius: 50%; filter: blur(60px); opacity: .55; will-change: transform; }
+.vks-aurora::before { top: -30vmax; left: -20vmax; background: radial-gradient(circle, color-mix(in oklab, var(--gold) 55%, transparent), transparent 65%); animation: vks-drift-a 18s ease-in-out infinite alternate; }
+.vks-aurora::after { bottom: -35vmax; right: -25vmax; background: radial-gradient(circle, color-mix(in oklab, var(--primary) 45%, transparent), transparent 65%); animation: vks-drift-b 22s ease-in-out infinite alternate; }
+@keyframes vks-drift-a { to { transform: translate3d(12vmax, 8vmax, 0) scale(1.1) } }
+@keyframes vks-drift-b { to { transform: translate3d(-10vmax, -6vmax, 0) scale(1.15) } }
+.vks-glow-ring { box-shadow: 0 0 0 1px color-mix(in oklab, var(--gold) 40%, transparent), 0 18px 40px -18px color-mix(in oklab, var(--gold) 80%, transparent); }
+
+/* ---- form polish ---- */
+.vks-field { transition: border-color .2s ease, box-shadow .25s ease; }
+.vks-field:focus-visible, .vks-field:focus { box-shadow: 0 0 0 4px color-mix(in oklab, var(--ring) 22%, transparent); }
+.vks-radio-dot { transition: transform .35s var(--ease-spring); transform: scale(0); }
+[data-state=checked] > .vks-radio-dot { transform: scale(1); }
+.vks-slider-thumb { transition: transform .3s var(--ease-spring), box-shadow .2s; }
+.vks-slider-thumb:active { transform: scale(1.15); }
+@keyframes vks-tick { from { opacity: 0; transform: translate3d(0, 40%, 0) } }
+.vks-tick-up { animation: vks-tick .28s var(--ease-out-quint) both; }
+@keyframes vks-tick-down { from { opacity: 0; transform: translate3d(0, -40%, 0) } }
+.vks-tick-down { animation: vks-tick-down .28s var(--ease-out-quint) both; }
+.vks-ring-arc { transition: stroke-dashoffset .9s var(--ease-ios); }
+
+/* ---- desktop kit ---- */
+@keyframes vks-spark { from { stroke-dashoffset: 1 } to { stroke-dashoffset: 0 } }
+.vks-spark { stroke-dasharray: 1; animation: vks-spark 1.1s var(--ease-ios) both; }
+@keyframes vks-tree-row { from { grid-template-rows: 0fr; opacity: 0; transform: translate3d(-8px,-6px,0) } to { grid-template-rows: 1fr } }
+.vks-tree-row { animation: vks-tree-row .32s var(--ease-out-quint) both; }
+@keyframes vks-tree-out { from { grid-template-rows: 1fr } to { grid-template-rows: 0fr; opacity: 0; transform: translate3d(-8px,-6px,0) } }
+.vks-tree-out { animation: vks-tree-out .26s var(--ease-out-quint) both; }
+
+/* ---- v0.4 · sidebar rail (collapse) ---- */
+/* The rail width is the one layout property we animate: desktop only, 1 element, 320 ms. Lite snaps. */
+.vks-rail { transition: width .32s var(--ease-ios); }
+.vks-rail-fade { transition: opacity .2s ease, transform .32s var(--ease-ios); }
+[data-collapsed=true] .vks-rail-fade { opacity: 0; transform: translate3d(-6px,0,0); pointer-events: none; }
+.vks-rail-dot { transform: scale(0); transition: transform .3s var(--ease-spring); }
+[data-collapsed=true] .vks-rail-dot { transform: scale(1); }
+.vks-rail-chev { transition: transform .4s var(--ease-spring); }
+[data-collapsed=true] .vks-rail-chev { transform: rotate(180deg); }
+@keyframes vks-logo-in { 0% { opacity: 0; transform: scale(.6) rotate(-14deg) } 70% { opacity: 1; transform: scale(1.06) rotate(2deg) } 100% { transform: none } }
+.vks-logo-in { animation: vks-logo-in .4s var(--ease-spring) both; }
+@keyframes vks-icon-pop { 0% { transform: scale(1) } 35% { transform: scale(.8) } 70% { transform: scale(1.18) } 100% { transform: scale(1) } }
+.vks-icon-pop { animation: vks-icon-pop .4s var(--ease-spring); }
+.vks-nav-glow { position: relative; isolation: isolate; }
+.vks-nav-glow::after { content: ""; position: absolute; inset: -9px; z-index: -1; border-radius: 50%; pointer-events: none; background: radial-gradient(circle, color-mix(in oklab, var(--gold) 42%, transparent), transparent 68%); opacity: 0; transform: scale(.5); transition: opacity .3s ease, transform .4s var(--ease-spring); }
+[aria-current=page] .vks-nav-glow::after { opacity: 1; transform: scale(1); }
+@keyframes vks-left-in  { from { transform: translate3d(-100%,0,0) } }
+@keyframes vks-left-out { to   { transform: translate3d(-100%,0,0) } }
+.vks-sheet-left[data-state=open]   { animation: vks-left-in .4s var(--ease-ios) both; }
+.vks-sheet-left[data-state=closed] { animation: vks-left-out .3s var(--ease-ios) both; }
+
+/* ---- v0.4 · page transitions (AppShell) ---- */
+@keyframes vks-page-fwd  { from { opacity: 0; transform: translate3d(18px,0,0) } }
+@keyframes vks-page-back { from { opacity: 0; transform: translate3d(-18px,0,0) } }
+.vks-page-fwd  { animation: vks-page-fwd .32s var(--ease-out-quint) both; }
+.vks-page-back { animation: vks-page-back .32s var(--ease-out-quint) both; }
+@keyframes vks-route { 0% { transform: scaleX(0); opacity: 1 } 70% { transform: scaleX(1); opacity: 1 } 100% { transform: scaleX(1); opacity: 0 } }
+.vks-route-bar { transform-origin: left center; animation: vks-route .4s var(--ease-out-quint) both; }
+@keyframes vks-nav-up { from { transform: translate3d(0,100%,0) } }
+.vks-nav-up { animation: vks-nav-up .4s var(--ease-ios) both; }
+@keyframes vks-draw-x { from { transform: scaleX(0) } }
+.vks-draw-x { transform-origin: center; animation: vks-draw-x .4s var(--ease-out-quint) .08s both; }
+
+/* ---- v0.4 · slider (bubble, halo, ticks) ---- */
+.vks-slider-track { transition: transform .3s var(--ease-spring); }
+.vks-slider[data-drag=true] .vks-slider-track { transform: scaleY(1.5); }
+.vks-slider-thumb { position: relative; }
+.vks-slider-thumb::after { content: ""; position: absolute; inset: -7px; border-radius: 50%; pointer-events: none; background: color-mix(in oklab, var(--slider-tone, var(--success)) 24%, transparent); opacity: 0; transform: scale(.5); transition: opacity .2s ease, transform .35s var(--ease-spring); }
+.vks-slider[data-drag=true] .vks-slider-thumb { transform: scale(1.15); }
+.vks-slider[data-drag=true] .vks-slider-thumb::after, .vks-slider-thumb:focus-visible::after { opacity: 1; transform: scale(1); }
+.vks-slider-bubble { position: absolute; left: 50%; bottom: calc(100% + 10px); transform-origin: 50% 100%; transform: translate3d(-50%,6px,0) scale(.6); opacity: 0; pointer-events: none; transition: transform .3s var(--ease-spring), opacity .15s ease; }
+.vks-slider-bubble::after { content: ""; position: absolute; left: 50%; top: 100%; width: 8px; height: 8px; border-radius: 2px; background: inherit; transform: translate(-50%,-60%) rotate(45deg); }
+.vks-slider[data-drag=true] .vks-slider-bubble, .vks-slider-thumb:focus-visible .vks-slider-bubble, .vks-slider-bubble[data-always=true] { transform: translate3d(-50%,0,0) scale(1); opacity: 1; }
+.vks-slider-tick { transition: background-color .2s ease, transform .3s var(--ease-spring); }
+.vks-slider-tick[data-hit=true] { transform: scale(1.8); }
+
+/* ---- v0.4 · detail popover ---- */
+@keyframes vks-detail-in-down { from { opacity: 0; transform: scale(.9) translate3d(0,-8px,0) } }
+@keyframes vks-detail-in-up   { from { opacity: 0; transform: scale(.9) translate3d(0,8px,0) } }
+@keyframes vks-detail-in-l    { from { opacity: 0; transform: scale(.9) translate3d(8px,0,0) } }
+@keyframes vks-detail-in-r    { from { opacity: 0; transform: scale(.9) translate3d(-8px,0,0) } }
