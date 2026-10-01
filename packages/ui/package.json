@@ -10,7 +10,8 @@
     "./map": "./src/heavy/map.tsx",
     "./kanban": "./src/heavy/kanban.tsx",
     "./scan": "./src/heavy/scan.tsx",
-    "./icons": "./src/icons.ts"
+    "./icons": "./src/icons.ts",
+    "./guard": "./bin/guard-lib.mjs"
   },
   "dependencies": {
     "@fontsource-variable/noto-sans-lao": "^5.2.0",
@@ -27,7 +28,7 @@
     "@dnd-kit/utilities": "^3.2.2",
     "leaflet": "^1.9.4",
     "jsqr": "^1.4.0",
-    "@vks/core": "*",
+    "@vks/core": "^0.1.0",
     "react-is": "^19.0.0"
   },
   "peerDependencies": {
@@ -38,5 +39,17 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "@types/leaflet": "^1.9.12"
+  },
+  "files": [
+    "src",
+    "bin",
+    "docs",
+    "templates"
+  ],
+  "bin": {
+    "vks-guard": "./bin/vks-guard.mjs"
+  },
+  "scripts": {
+    "prepack": "node ../../scripts/copy-kit-docs.mjs"
   }
 }

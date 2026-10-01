@@ -10,6 +10,7 @@
     "dev:docs": "npm run dev -w @vks/docs",
     "build:docs": "npm run build -w @vks/docs",
     "test": "vitest run",
+    "kit:pack": "node scripts/pack-kit.mjs",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "ai:index": "vite-node --config vitest.config.ts scripts/ai-index.ts"
   },
@@ -27,3 +28,4 @@
     "vitest": "^3.2.0"
   }
 }
+

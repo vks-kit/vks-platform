@@ -57,7 +57,7 @@ export function Carousel({ children, className, slideClassName = "w-[86%] md:w-[
     const f = () => {
       cancelAnimationFrame(raf)
       raf = requestAnimationFrame(() => {
-        const kids = [...el.children] as HTMLElement[]; if (!kids.length) return
+        const kids = Array.from(el.children) as HTMLElement[]; if (!kids.length) return
         const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4
         let best = 0, bd = Infinity
         kids.forEach((k, j) => { const d = Math.abs(k.offsetLeft - kids[0].offsetLeft - el.scrollLeft); if (d < bd) { bd = d; best = j } })
@@ -69,13 +69,13 @@ export function Carousel({ children, className, slideClassName = "w-[86%] md:w-[
   }, [n])
   const go = (j: number) => {
     const el = ref.current; if (!el) return
-    const kids = [...el.children] as HTMLElement[], k = kids[Math.max(0, Math.min(n - 1, j))]; if (!k) return
+    const kids = Array.from(el.children) as HTMLElement[], k = kids[Math.max(0, Math.min(n - 1, j))]; if (!k) return
     el.scrollTo({ left: k.offsetLeft - kids[0].offsetLeft, behavior: "smooth" })
   }
   /** Step from the real scroll position (not the dot index): at the track end the dot index is ahead of the scroll, which made "back" a no-op. */
   const step = (dir: 1 | -1) => {
     const el = ref.current; if (!el) return
-    const kids = [...el.children] as HTMLElement[], o = kids[0].offsetLeft, x = el.scrollLeft, max = el.scrollWidth - el.clientWidth
+    const kids = Array.from(el.children) as HTMLElement[], o = kids[0].offsetLeft, x = el.scrollLeft, max = el.scrollWidth - el.clientWidth
     const lefts = kids.map((k) => Math.min(k.offsetLeft - o, max))
     const t = dir > 0 ? lefts.find((l) => l > x + 4) : [...lefts].reverse().find((l) => l < x - 4)
     el.scrollTo({ left: t ?? (dir > 0 ? max : 0), behavior: "smooth" })

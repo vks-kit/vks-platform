@@ -2,3 +2,5 @@ node_modules
 dist
 .npmcache
 *.log
+release
+packages/ui/docs

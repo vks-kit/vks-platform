@@ -1,1 +1,15 @@
-{ "name": "@vks/core", "version": "0.1.0", "private": true, "type": "module", "exports": { ".": "./src/index.ts" }, "dependencies": { "@vks/types": "*" } }
+{
+  "name": "@vks/core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@vks/types": "^0.1.0"
+  },
+  "files": [
+    "src"
+  ]
+}

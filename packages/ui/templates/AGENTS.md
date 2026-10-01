@@ -1,0 +1,26 @@
+# Rules for this app (VKS UI kit consumer)
+
+Copy this file to the root of your app as AGENTS.md.
+
+## House rules
+- No raw colours (hex, rgb) or one-off shadows. Use tokens: `bg-primary`, `text-muted-foreground`, `var(--success)`.
+- Never import Radix, cva, lucide or sonner directly. Import from `@vks/ui` (icons: `@vks/ui/icons`).
+- Heavy parts are lazy subpaths: `@vks/ui/charts`, `/map`, `/kanban`, `/scan`.
+- Lao text: line-height >= 1.5, `normalizeLao()` before comparing names. Free text: `cleanText()` before saving.
+- Motion: transform/opacity only, <= 400 ms on phones. Touch targets >= 44 px. Inputs 16 px.
+- Currency: write "ກີບ", never the symbol.
+
+## Find a part before building one
+1. Read `node_modules/@vks/ui/docs/llms.txt` (every part, one line each).
+2. Open `node_modules/@vks/ui/docs/ai/<slug>.md` (import line, when to use, code, props).
+3. Reuse, then extend (ask for a prop in the kit), then add. Do not copy kit components into the app.
+
+## Checks
+- `npm run guard` (runs `vks-guard src`) must pass before every commit.
+- `npm run build` and `npm run typecheck` must pass.
+
+## tsconfig
+Use `"lib": ["ES2022", "DOM", "DOM.Iterable"]`, `"moduleResolution": "bundler"`, `"jsx": "react-jsx"`.
+
+## Updating the kit
+Bump the three tarball/tag references together (`@vks/ui`, `@vks/core`, `@vks/types`), run `npm install`, then `npm run guard && npm run build`.
