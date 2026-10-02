@@ -43,7 +43,7 @@ variant="banner" keeps the navy banner with the avatar overlapping it; add flush
 | name / role / code / src / status | string / AvatarStatus |  | Identity card; avatar falls back to initials. |
 | stats | { label; value }[] |  | Up to 4 numbers under the name. |
 | flush | boolean |  | Phone only: the identity header runs edge to edge and lists keep one 16 px margin. Desktop is unchanged. |
-| variant | "banner" \| "actions" | "banner" | Phone only: "actions" drops the navy banner for a soft header with a big avatar and round quick-action buttons. Implies flush. Desktop is unchanged. |
+| variant | "banner" \| "actions" | "banner" | Phone only: "actions" drops the navy banner for a soft header with a big avatar and implies flush. Round quick-action buttons also show in the desktop identity card. Everything else on desktop is unchanged. |
 | quickActions | { icon; label; onPress? }[] |  | Round 56 px icon buttons with a label under the name (call, message, edit…). Keep to 3-4. |
 | sections | { title?; rows: ProfileRow[] }[] |  | Row = icon, label, value, trailing (e.g. Switch) or onPress (shows a chevron). |
 | actions | ReactNode |  | Buttons in the identity card. |

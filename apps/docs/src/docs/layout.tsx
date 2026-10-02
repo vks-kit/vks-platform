@@ -262,7 +262,7 @@ export const layoutDocs: Doc[] = [
       { name: "name / role / code / src / status", type: "string / AvatarStatus", desc: "Identity card; avatar falls back to initials." },
       { name: "stats", type: "{ label; value }[]", desc: "Up to 4 numbers under the name." },
       { name: "flush", type: "boolean", desc: "Phone only: the identity header runs edge to edge and lists keep one 16 px margin. Desktop is unchanged." },
-      { name: "variant", type: '"banner" | "actions"', def: '"banner"', desc: "Phone only: \"actions\" drops the navy banner for a soft header with a big avatar and round quick-action buttons. Implies flush. Desktop is unchanged." },
+      { name: "variant", type: '"banner" | "actions"', def: '"banner"', desc: "Phone only: \"actions\" drops the navy banner for a soft header with a big avatar and implies flush. Round quick-action buttons also show in the desktop identity card. Everything else on desktop is unchanged." },
       { name: "quickActions", type: "{ icon; label; onPress? }[]", desc: "Round 56 px icon buttons with a label under the name (call, message, edit…). Keep to 3-4." },
       { name: "sections", type: "{ title?; rows: ProfileRow[] }[]", desc: "Row = icon, label, value, trailing (e.g. Switch) or onPress (shows a chevron)." },
       { name: "actions", type: "ReactNode", desc: "Buttons in the identity card." }, { name: "onSignOut / signOutLabel", type: "() => void / string", desc: "Red sign-out row at the bottom." },

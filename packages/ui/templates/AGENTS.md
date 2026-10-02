@@ -27,4 +27,4 @@ Charts pull in a CommonJS helper that Vite's dev pre-bundler misses, so the char
 `optimizeDeps: { include: ["@vks-kit/ui > recharts", "@vks-kit/ui > leaflet", "use-sync-external-store/shim/with-selector"] }`
 
 ## Updating the kit
-Bump the three tarball/tag references together (`@vks-kit/ui`, `@vks-kit/core`, `@vks-kit/types`), run `npm install`, then `npm run guard && npm run build`.
+Bump the three versions together (`@vks-kit/ui`, `@vks-kit/core`, `@vks-kit/types`, same number), with `VKS_NPM_TOKEN` set (read:packages) run `npm install @vks-kit/ui@x.y.z @vks-kit/core@x.y.z @vks-kit/types@x.y.z`, then `npm run guard && npm run typecheck && npm run build`.

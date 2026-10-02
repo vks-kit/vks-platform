@@ -48,12 +48,18 @@ export function ScanDone() {
 export function Installation() {
   const t = useT()
   return <div className="space-y-6">
-    <Lead>{t("ທຸກແອັບຢູ່ໃນ monorepo vks-platform ແລະ ດຶງລະບົບອອກແບບມາເປັນ workspace package. ບໍ່ຕ້ອງ copy-paste component.", "Every app lives in the vks-platform monorepo and pulls the design system as a workspace package. No copy-paste of components.")}</Lead>
-    <H2 id="new-app">{t("1 · ແອັບໃໝ່", "1 · New app")}</H2>
-    <CodeBlock lang="bash" code={`# inside vks-platform/
-mkdir apps/my-app && cd apps/my-app
-npm create vite@latest . -- --template react-ts
-npm install @vks-kit/ui @vks-kit/core @vks-kit/types -w apps/my-app`} />
+    <Lead>{t("ແອັບໃໝ່ຢູ່ແຍກຈາກ monorepo ນີ້ ແລະ ຕິດຕັ້ງຊຸດ @vks-kit ຈາກ GitHub Packages (private). ບໍ່ຕ້ອງ copy-paste component.", "A new app lives outside this monorepo and installs the @vks-kit packages from GitHub Packages (private). No copy-paste of components.")}</Lead>
+    <H2 id="registry">{t("1 · ເຊື່ອມຕໍ່ registry", "1 · Connect to the registry")}</H2>
+    <P>{t("ສ້າງ token (classic) ທີ່ມີສິດ read:packages ແລ້ວຕັ້ງເປັນຕົວແປ VKS_NPM_TOKEN. ຢ່າໃສ່ token ໃນໄຟລ໌.", "Create a classic token with read:packages and export it as VKS_NPM_TOKEN. Never write the token into a file.")}</P>
+    <CodeBlock lang="bash" code={`# .npmrc (commit this, it holds no secret)
+@vks-kit:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=\${VKS_NPM_TOKEN}`} />
+    <H2 id="new-app">{t("2 · ແອັບໃໝ່", "2 · New app")}</H2>
+    <CodeBlock lang="bash" code={`npm create vite@latest my-app -- --template react-ts
+cd my-app
+npm install @vks-kit/ui @vks-kit/core @vks-kit/types
+npx vks-guard src        # house-rule check, run before every commit`} />
+    <P>{t("ໃນ vite dev ໜ້າ chart ອາດຂາວ; ເພີ່ມ optimizeDeps ໃນ vite.config.ts (ເບິ່ງ AGENTS.md ໃນແພັກເກັດ). build ຈິງບໍ່ມີບັນຫາ.", "In vite dev the chart page can go blank; add optimizeDeps to vite.config.ts (see the AGENTS.md shipped in the package). Production builds are fine.")}</P>
     <H2 id="vite">2 · Vite + Tailwind</H2>
     <CodeBlock code={`// vite.config.ts
 import { defineConfig } from "vite"
@@ -332,6 +338,7 @@ const mobile = useIsMobile()   // (max-width: 768px)`} />
 export function Changelog() {
   const tr = useTr()
   const log: [string, string, string[]][] = [
+    ["0.2.1", "Registry release", ["The kit is now published as @vks-kit/ui, @vks-kit/core and @vks-kit/types on GitHub Packages (private). @types/leaflet moved to dependencies so apps using the map typecheck. No API change."]],
     ["0.7.7", "Profile view: phone header", ["ProfileView on a phone is now edge to edge with a single 16 px margin. New optional flush, variant=\"actions\" (soft header, big avatar, no banner) and quickActions (round call / message / edit buttons) props. Defaults and desktop are unchanged."]],
     ["0.7.3", "Login screen + Profile view", ["New LoginScreen: desktop = navy brand panel + form, phone = centred form with logo. New ProfileView: desktop = sticky identity card + grouped rows, phone = one stacked column. Both use the Desktop | Phone | Both switcher."]],
     ["0.7.3", "Map and Stat card on phones", ["MapView on a phone shows an Uber-style bottom sheet (peek, drag up to list every pin; tap a row to fly there and open its card); optional list prop. New flush prop draws the map edge to edge on phones. StatCard turns into a compact row on phones (icon, label + number, delta chip, small trend); optional layout prop, plus flush to drop the card chrome so rows form one full-width grouped list. Docs: Phone preview now shows full-bleed demos (map, stat card, KPI hero, settings list, notifications, search, carousel, indexed list, toolbar) with no page padding, like a real app screen. Hover lift on StatCard only applies on devices that hover."]],
