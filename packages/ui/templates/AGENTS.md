@@ -22,5 +22,9 @@ Copy this file to the root of your app as AGENTS.md.
 ## tsconfig
 Use `"lib": ["ES2022", "DOM", "DOM.Iterable"]`, `"moduleResolution": "bundler"`, `"jsx": "react-jsx"`.
 
+## vite.config.ts (dev server)
+Charts pull in a CommonJS helper that Vite's dev pre-bundler misses, so the chart page goes blank in `vite` (production builds are fine). Add:
+`optimizeDeps: { include: ["@vks-kit/ui > recharts", "@vks-kit/ui > leaflet", "use-sync-external-store/shim/with-selector"] }`
+
 ## Updating the kit
 Bump the three tarball/tag references together (`@vks-kit/ui`, `@vks-kit/core`, `@vks-kit/types`), run `npm install`, then `npm run guard && npm run build`.
