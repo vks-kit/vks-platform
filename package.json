@@ -10,7 +10,7 @@
     "dev:docs": "npm run dev -w @vks-kit/docs",
     "build:docs": "npm run build -w @vks-kit/docs",
     "test": "vitest run",
-    "kit:pack": "node scripts/pack-kit.mjs",
+    "kit:publish": "node scripts/publish-kit.mjs",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "ai:index": "vite-node --config vitest.config.ts scripts/ai-index.ts"
   },

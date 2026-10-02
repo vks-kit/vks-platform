@@ -1,12 +1,12 @@
 {
   "name": "@vks-kit/core",
-  "version": "0.2.0",
+  "version": "0.2.2",
   "type": "module",
   "exports": {
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@vks-kit/types": "^0.2.0"
+    "@vks-kit/types": "^0.2.2"
   },
   "files": [
     "src"
