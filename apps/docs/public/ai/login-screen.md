@@ -7,7 +7,7 @@
 - Live docs: #/docs/login-screen
 
 ```ts
-import { LoginScreen } from "@vks/ui"
+import { LoginScreen } from "@vks-kit/ui"
 ```
 
 ## When to use

@@ -7,12 +7,12 @@
 - Live docs: #/docs/kpi-strip
 
 ```ts
-import { KpiStrip } from "@vks/ui"
+import { KpiStrip } from "@vks-kit/ui"
 ```
 
 ## When to use
 
-- **KpiStrip**: Use for a row of 2-6 headline numbers at the top of a dashboard. For one big metric with a trend line use StatCard instead; for a chart use @vks/ui/charts instead.
+- **KpiStrip**: Use for a row of 2-6 headline numbers at the top of a dashboard. For one big metric with a trend line use StatCard instead; for a chart use @vks-kit/ui/charts instead.
 
 ## Example
 

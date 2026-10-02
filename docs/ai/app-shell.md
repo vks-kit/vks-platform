@@ -7,7 +7,7 @@
 - Live docs: #/docs/app-shell
 
 ```ts
-import { AppShell, Fab, type NavItem } from "@vks/ui"
+import { AppShell, Fab, type NavItem } from "@vks-kit/ui"
 ```
 
 ## When to use

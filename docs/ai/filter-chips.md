@@ -7,7 +7,7 @@
 - Live docs: #/docs/filter-chips
 
 ```ts
-import { FilterChips } from "@vks/ui"
+import { FilterChips } from "@vks-kit/ui"
 ```
 
 ## When to use

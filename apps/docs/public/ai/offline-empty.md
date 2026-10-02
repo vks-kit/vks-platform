@@ -7,7 +7,7 @@
 - Live docs: #/docs/offline-empty
 
 ```ts
-import { OfflineBanner, Empty } from "@vks/ui"
+import { OfflineBanner, Empty } from "@vks-kit/ui"
 ```
 
 ## When to use

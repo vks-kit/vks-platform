@@ -1,11 +1,11 @@
 import * as React from "react"
-import { Bell, Camera, Copy, Moon, Pencil, Share2, Trash2, Shield, MapPin, Wifi, LogOut, Lock, FileText, Phone, Clock, ScanLine, CalendarDays } from "@vks/ui/icons"
+import { Bell, Camera, Copy, Moon, Pencil, Share2, Trash2, Shield, MapPin, Wifi, LogOut, Lock, FileText, Phone, Clock, ScanLine, CalendarDays } from "@vks-kit/ui/icons"
 import {
   IOSAlert, ActionSheet, Banner, ListGroup, ListRow, Switch, Button, SkeletonText, SkeletonList, SkeletonCard, SkeletonTable, SkeletonAvatar,
   NumberTicker, PasswordInput, FloatingInput, Chip, Kbd, CopyButton, Separator, Popover, PopoverTrigger, PopoverContent,
   Menu, MenuTrigger, MenuContent, MenuItem, MenuSeparator, MenuLabel, PerfToggle, usePerf, StepProgress, toast,
   DetailPopover, Avatar, Progress, type DetailField,
-} from "@vks/ui"
+} from "@vks-kit/ui"
 import type { Doc } from "./types"
 
 function AlertDemo() {
@@ -145,7 +145,7 @@ function DetailClickDemo() {
   </div>
 }
 
-const imp = (x: string) => `import { ${x} } from "@vks/ui"`
+const imp = (x: string) => `import { ${x} } from "@vks-kit/ui"`
 export const moreDocs: Doc[] = [
   {
     slug: "detail-popover", name: "Detail popover", group: "Overlays", badge: "New",

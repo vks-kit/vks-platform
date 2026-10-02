@@ -7,7 +7,7 @@
 - Live docs: #/docs/accordion
 
 ```ts
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@vks/ui"
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@vks-kit/ui"
 ```
 
 ## When to use

@@ -7,7 +7,7 @@
 - Live docs: #/docs/detail-popover
 
 ```ts
-import { DetailPopover, type DetailField } from "@vks/ui"
+import { DetailPopover, type DetailField } from "@vks-kit/ui"
 ```
 
 ## When to use

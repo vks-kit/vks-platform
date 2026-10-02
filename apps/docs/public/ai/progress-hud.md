@@ -7,7 +7,7 @@
 - Live docs: #/docs/progress-hud
 
 ```ts
-import { useProgressHUD, ProgressHUD } from "@vks/ui"
+import { useProgressHUD, ProgressHUD } from "@vks-kit/ui"
 ```
 
 ## When to use

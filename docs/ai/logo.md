@@ -7,7 +7,7 @@
 - Live docs: #/docs/logo
 
 ```ts
-import { Logo, LogoTile, BRAND } from "@vks/ui"
+import { Logo, LogoTile, BRAND } from "@vks-kit/ui"
 ```
 
 ## When to use
@@ -34,7 +34,7 @@ Readable down to 32 px. Below that use mono.
 ### On the navy bar
 
 ```tsx
-import { Logo, BRAND } from "@vks/ui"
+import { Logo, BRAND } from "@vks-kit/ui"
 
 <header className="bg-bar text-bar-foreground">
   <Logo className="size-10" />

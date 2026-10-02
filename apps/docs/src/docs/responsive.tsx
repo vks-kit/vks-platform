@@ -1,11 +1,11 @@
 import * as React from "react"
-import { Monitor, Smartphone, Plus, Printer, Download, Share2, MoreHorizontal, Pencil, Phone, Trash2, Check, X, Filter } from "@vks/ui/icons"
+import { Monitor, Smartphone, Plus, Printer, Download, Share2, MoreHorizontal, Pencil, Phone, Trash2, Check, X, Filter } from "@vks-kit/ui/icons"
 import {
   DataTable, type Column, Badge, Avatar, Button, Card, CardContent, Input, Textarea, Label, PageHeader, Fab, SearchBox, FilterChips, Combobox,
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, Menu, MenuTrigger, MenuContent, MenuItem, MenuSeparator,
   ButtonGroup, BottomToolbar, useIsMobile, useLongPress, toast, cn,
-} from "@vks/ui"
-import { fmtKip } from "@vks/core"
+} from "@vks-kit/ui"
+import { fmtKip } from "@vks-kit/core"
 import { PhoneFrame, DesktopFrame } from "./layout"
 import { CodeBlock, H2, H3, P, Code, FeatureCard, FeatureGrid, useT } from "./kit"
 
@@ -206,7 +206,7 @@ function TouchTargets() {
       <p className="mt-2 text-xs leading-5 text-muted-foreground">{t("ໃຊ້ກັບເມົ້າໄດ້. ແຕ່ໃນໂທລະສັບຈະແຕະຜິດປຸ່ມ.", "Fine for a mouse. On a phone you hit the wrong one.")}</p></div>
     <div><div className="mb-2 flex items-center gap-2 text-sm font-semibold"><Check className="size-4 text-success" />{t("44 px, ຫ່າງກັນ 8 px", "44 px, 8 px gap")}</div>
       <div className="flex gap-2">{[Phone, Pencil, Trash2].map((I, i) => <span key={i} className="relative flex size-11 items-center justify-center rounded-xl border [&_svg]:size-5"><I /><i aria-hidden className="absolute inset-0 rounded-xl ring-2 ring-dashed ring-gold/40" /></span>)}</div>
-      <p className="mt-2 text-xs leading-5 text-muted-foreground">{t("ທຸກ Button, MenuItem ແລະ ແຖວ nav ໃນ @vks/ui ເຮັດແບບນີ້ຢູ່ແລ້ວເມື່ອຕ່ຳກວ່າ md.", "Every Button, MenuItem and nav row in @vks/ui already does this below md.")}</p></div>
+      <p className="mt-2 text-xs leading-5 text-muted-foreground">{t("ທຸກ Button, MenuItem ແລະ ແຖວ nav ໃນ @vks-kit/ui ເຮັດແບບນີ້ຢູ່ແລ້ວເມື່ອຕ່ຳກວ່າ md.", "Every Button, MenuItem and nav row in @vks-kit/ui already does this below md.")}</p></div>
   </div>
 }
 
@@ -233,7 +233,7 @@ export function Responsive() {
 <div className="grid gap-4 md:grid-cols-2">…</div>
 
 // JS only when the STRUCTURE changes (different component)
-import { useIsMobile } from "@vks/ui"
+import { useIsMobile } from "@vks-kit/ui"
 const mobile = useIsMobile()        // true at <= 768 px
 return mobile ? <Fab … /> : <Button>…</Button>`} />
 

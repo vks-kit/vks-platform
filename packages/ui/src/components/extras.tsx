@@ -1,7 +1,7 @@
 import * as React from "react"
 import { DropdownMenu as DM, Popover as PO, Separator as SP } from "radix-ui"
 import { Check, Copy, Eye, EyeOff, X } from "lucide-react"
-import { haptics } from "@vks/core"
+import { haptics } from "@vks-kit/core"
 import { cn } from "../lib/cn"
 import { usePerf, type PerfMode } from "../lib/perf"
 import { useIndicator, Indicator } from "../lib/use-indicator"

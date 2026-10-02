@@ -7,7 +7,7 @@
 - Live docs: #/docs/toast
 
 ```ts
-import { toast, Toaster } from "@vks/ui"
+import { toast, Toaster } from "@vks-kit/ui"
 ```
 
 ## When to use

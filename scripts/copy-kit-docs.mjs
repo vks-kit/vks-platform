@@ -1,4 +1,4 @@
-// prepack for @vks/ui: copies llms.txt + docs/ai into packages/ui/docs so AI docs travel with the kit.
+// prepack for @vks-kit/ui: copies llms.txt + docs/ai into packages/ui/docs so AI docs travel with the kit.
 import { cpSync, existsSync, mkdirSync, rmSync } from "node:fs"
 import { dirname, resolve } from "node:path"
 import { fileURLToPath } from "node:url"

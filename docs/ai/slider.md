@@ -7,7 +7,7 @@
 - Live docs: #/docs/slider
 
 ```ts
-import { Slider } from "@vks/ui"
+import { Slider } from "@vks-kit/ui"
 ```
 
 ## When to use

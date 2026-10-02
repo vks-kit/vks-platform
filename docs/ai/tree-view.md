@@ -7,7 +7,7 @@
 - Live docs: #/docs/tree-view
 
 ```ts
-import { TreeView, flattenTree } from "@vks/ui"
+import { TreeView, flattenTree } from "@vks-kit/ui"
 ```
 
 ## When to use

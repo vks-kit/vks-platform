@@ -7,7 +7,7 @@
 - Live docs: #/docs/date-range-picker
 
 ```ts
-import { DateRangePicker, RangeCalendar, formatRange, type Range } from "@vks/ui"
+import { DateRangePicker, RangeCalendar, formatRange, type Range } from "@vks-kit/ui"
 ```
 
 ## When to use

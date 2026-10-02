@@ -7,7 +7,7 @@
 - Live docs: #/docs/table
 
 ```ts
-import { Table, THead, TBody, TR, TH, TD } from "@vks/ui"
+import { Table, THead, TBody, TR, TH, TD } from "@vks-kit/ui"
 ```
 
 ## When to use

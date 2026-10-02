@@ -1,12 +1,12 @@
 import * as React from "react"
-import { Home, FileText, Users, Settings, Plus, Folder, Shield, User, Copy, Trash2, CheckCircle2, Clock, AlertTriangle, BarChart3, Search } from "@vks/ui/icons"
+import { Home, FileText, Users, Settings, Plus, Folder, Shield, User, Copy, Trash2, CheckCircle2, Clock, AlertTriangle, BarChart3, Search } from "@vks-kit/ui/icons"
 import {
   CommandPalette, Breadcrumb, HoverCard, ContextMenu, TreeView, StatCard, TrendLine, ButtonGroup, Dropzone, fmtBytes, FileIcon, FileItem, TagInput, SplitPane, NotificationList, ScrollArea,
   Button, Badge, Avatar, Card, Label, toast, type Notice, type TreeNode,
   HoverFx, Parallax, ParallaxLayer, SlideHighlight, CursorRing, Logo,
-} from "@vks/ui"
-import { ArrowRight, Bell } from "@vks/ui/icons"
-import { fmtKipShort } from "@vks/core"
+} from "@vks-kit/ui"
+import { ArrowRight, Bell } from "@vks-kit/ui/icons"
+import { fmtKipShort } from "@vks-kit/core"
 import type { Doc } from "./types"
 
 function CommandDemo() {
@@ -72,7 +72,7 @@ const CursorDemo = () => <CursorRing className="flex h-48 w-full items-center ju
   {["Patrol", "QC", "HRM"].map((l) => <Button key={l} variant="outline" className="rounded-full border-white/20 bg-white/5 text-bar-foreground">{l}</Button>)}
 </CursorRing>
 const NudgeDemo = () => <div className="flex gap-3"><Button className="vks-nudge">ຕໍ່ໄປ <ArrowRight /></Button><Button variant="outline" size="icon" className="vks-nudge" aria-label="ແຈ້ງເຕືອນ"><Bell /></Button></div>
-const imp = (x: string) => "import { " + x + " } from \"@vks/ui\""
+const imp = (x: string) => "import { " + x + " } from \"@vks-kit/ui\""
 const F = "packages/ui/src/components/desktop-kit.tsx"
 export const desktopDocs: Doc[] = [
   { slug: "command-palette", name: "Command palette (⌘K)", group: "Layout & navigation", badge: "New", desc: "Ctrl/⌘ K opens a fuzzy search over pages and actions. Arrow keys + Enter. Works in Lao.", file: F, importLine: imp("CommandPalette, useCommandK"), demo: CommandDemo,
@@ -88,7 +88,7 @@ export const desktopDocs: Doc[] = [
   { slug: "tree-view", name: "Tree view", group: "Data display", badge: "New", desc: "Nested sites/folders. Arrow keys walk and open/close, rows slide in.", file: F, importLine: imp("TreeView, flattenTree"), demo: TreeDemo,
     code: "<TreeView nodes={tree} selected={id} onSelect={(n) => setId(n.id)} defaultExpanded={[\"vte\"]} />" },
   { slug: "stat-card", name: "Stat card", group: "Data display", badge: "New", bleed: true, desc: "Dashboard KPI tile: number, coloured delta and a drawn-in trend line.", file: F, importLine: imp("StatCard, TrendLine"), demo: StatDemo,
-    examples: [{ id: "trend-line", title: "Trend line alone", note: "The drawn-in line from StatCard, for table cells or custom tiles. For axes and tooltips use @vks/ui/charts.", demo: () => <div className="w-40"><TrendLine data={[12, 11, 9, 10, 8, 9, 7]} /></div>, code: "<TrendLine data={[12, 11, 9, 10, 8, 9, 7]} />" }],
+    examples: [{ id: "trend-line", title: "Trend line alone", note: "The drawn-in line from StatCard, for table cells or custom tiles. For axes and tooltips use @vks-kit/ui/charts.", demo: () => <div className="w-40"><TrendLine data={[12, 11, 9, 10, 8, 9, 7]} /></div>, code: "<TrendLine data={[12, 11, 9, 10, 8, 9, 7]} />" }],
     code: "<StatCard label=\"ມາຊ້າ\" value=\"7\" delta={-22} goodWhen=\"down\" tone=\"warning\" trend={[12, 11, 9, 7]} />",
     notes: ["On phones (≤768 px) it turns into a compact row: icon, label + number, delta chip and a small trend on the right. A 4-tile summary then fits one screen instead of four tall cards. layout=\"card\" or \"row\" overrides the automatic choice."],
     props: [{ name: "flush", type: "boolean", def: "false", desc: "Phone row only: no border or radius, so rows form one full-width grouped list. Wrap them in a bg-card border-y container." }, { name: "layout", type: "'auto'|'card'|'row'", def: '"auto"', desc: "auto = row on phones, card elsewhere." }, { name: "goodWhen", type: "'up'|'down'", def: '"up"', desc: "Which direction is green." }, { name: "tone", type: "'primary'|'success'|'warning'|'destructive'", def: '"primary"', desc: "" }] },

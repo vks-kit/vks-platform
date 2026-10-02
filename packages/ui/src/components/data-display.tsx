@@ -152,7 +152,7 @@ export function Timeline({ items, className }: { items: TimelineItem[]; classNam
  * All new fields are optional, so the old { label, value, hint, tone } shape still works.
  */
 export type KpiItem = { label: string; value: React.ReactNode; hint?: string; tone?: "success" | "warning" | "danger"; icon?: React.ReactNode; trend?: "up" | "down" | "flat"; spark?: number[] }
-/** Use for a row of 2-6 headline numbers at the top of a dashboard. For one big metric with a trend line use StatCard instead; for a chart use @vks/ui/charts instead. */
+/** Use for a row of 2-6 headline numbers at the top of a dashboard. For one big metric with a trend line use StatCard instead; for a chart use @vks-kit/ui/charts instead. */
 export function KpiStrip({ items, className }: { items: KpiItem[]; className?: string }) {
   const text = { success: "text-success", warning: "text-warning", danger: "text-destructive" }
   const chip = { success: "bg-success/12 text-success", warning: "bg-warning/14 text-warning", danger: "bg-destructive/12 text-destructive" }
@@ -198,7 +198,7 @@ export function KpiStrip({ items, className }: { items: KpiItem[]; className?: s
 
 /** One hero metric for a phone dashboard: a big number, trend pill, sparkline and up to 3 compact secondary figures in a single card. */
 export type KpiHeroItem = { label: string; value: React.ReactNode }
-/** Use at the top of a PHONE dashboard when one number matters most (e.g. today's on-time rate); a KpiStrip of 4 tiles eats the whole first screen on a phone. For 2-6 equal numbers on desktop use KpiStrip instead; for a chart use @vks/ui/charts instead. */
+/** Use at the top of a PHONE dashboard when one number matters most (e.g. today's on-time rate); a KpiStrip of 4 tiles eats the whole first screen on a phone. For 2-6 equal numbers on desktop use KpiStrip instead; for a chart use @vks-kit/ui/charts instead. */
 export function KpiHero({ label, value, unit, hint, tone, trend, spark, icon, secondary, className }: {
   label: string; value: React.ReactNode; unit?: string; hint?: string; tone?: "success" | "warning" | "danger"; trend?: "up" | "down" | "flat"
   spark?: number[]; icon?: React.ReactNode; secondary?: KpiHeroItem[]; className?: string

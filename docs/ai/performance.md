@@ -7,7 +7,7 @@
 - Live docs: #/docs/performance
 
 ```ts
-import { PerfProvider, initPerf, PerfToggle, usePerf } from "@vks/ui"
+import { PerfProvider, initPerf, PerfToggle, usePerf } from "@vks-kit/ui"
 ```
 
 ## When to use

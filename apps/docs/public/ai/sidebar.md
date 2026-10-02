@@ -7,7 +7,7 @@
 - Live docs: #/docs/sidebar
 
 ```ts
-import { Sidebar, SidebarSheet } from "@vks/ui"
+import { Sidebar, SidebarSheet } from "@vks-kit/ui"
 ```
 
 ## When to use

@@ -7,7 +7,7 @@
 - Live docs: #/docs/search-box
 
 ```ts
-import { SearchBox } from "@vks/ui"
+import { SearchBox } from "@vks-kit/ui"
 ```
 
 ## When to use

@@ -2,7 +2,7 @@ import * as React from "react"
 import { Checkbox as CB, Switch as SW, Select as SE, Tabs as TB, RadioGroup as RG, Slider as SL } from "radix-ui"
 import { Check, ChevronDown, Minus, Plus } from "lucide-react"
 import { cn } from "../lib/cn"
-import { haptics } from "@vks/core"
+import { haptics } from "@vks-kit/core"
 import { useIndicator, Indicator } from "../lib/use-indicator"
 
 /**

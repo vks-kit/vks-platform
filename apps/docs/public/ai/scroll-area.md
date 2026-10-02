@@ -7,7 +7,7 @@
 - Live docs: #/docs/scroll-area
 
 ```ts
-import { ScrollArea } from "@vks/ui"
+import { ScrollArea } from "@vks-kit/ui"
 ```
 
 ## When to use

@@ -15,7 +15,7 @@ afterEach(() => { while (dirs.length) rmSync(dirs.pop()!, { recursive: true, for
 
 describe("vks-guard", () => {
   it("passes clean code", () => {
-    expect(scan(mk('import { Button } from "@vks/ui"\nexport const A = () => <Button />\n'))).toEqual([])
+    expect(scan(mk('import { Button } from "@vks-kit/ui"\nexport const A = () => <Button />\n'))).toEqual([])
   })
   it("flags raw colours", () => {
     expect(scan(mk('export const c = "#ff0000"\n')).some((h) => h.rule === "raw-colour")).toBe(true)

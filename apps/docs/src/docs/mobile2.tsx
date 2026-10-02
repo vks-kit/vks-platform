@@ -1,6 +1,6 @@
 import * as React from "react"
-import { Share2, Pencil, Trash2, Heart, FileDown } from "@vks/ui/icons"
-import { SearchBar, Carousel, useProgressHUD, SnapSheet, IndexedList, BottomToolbar, useLongPress, useShareSheet, ShareSheet, Button, Card, CardContent, Badge, toast } from "@vks/ui"
+import { Share2, Pencil, Trash2, Heart, FileDown } from "@vks-kit/ui/icons"
+import { SearchBar, Carousel, useProgressHUD, SnapSheet, IndexedList, BottomToolbar, useLongPress, useShareSheet, ShareSheet, Button, Card, CardContent, Badge, toast } from "@vks-kit/ui"
 import type { Doc } from "./types"
 import { useT } from "./kit"
 
@@ -48,7 +48,7 @@ function ShareDemo() {
     <ShareSheet {...sheetProps} targets={[{ id: "pdf", label: "PDF", icon: <FileDown />, onPress: () => toast("PDF") }]} /></>
 }
 
-const imp = (x: string) => "import { " + x + " } from \"@vks/ui\""
+const imp = (x: string) => "import { " + x + " } from \"@vks-kit/ui\""
 const F = "packages/ui/src/components/mobile-kit.tsx"
 export const mobile2Docs: Doc[] = [
   { slug: "search-bar", bleed: true, name: "Search bar", group: "Mobile & touch", badge: "Mobile", desc: "iOS search pill: clear button while typing, Cancel slides in on focus.", file: F, importLine: imp("SearchBar"), demo: SearchDemo,

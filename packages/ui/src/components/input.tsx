@@ -15,7 +15,7 @@ export function Input({ className, invalid, ...p }: React.ComponentProps<"input"
     />
   )
 }
-/** Use for multi-line free text (notes, incident description); run cleanText() from @vks/types before saving. For a one-line value use Input instead. */
+/** Use for multi-line free text (notes, incident description); run cleanText() from @vks-kit/types before saving. For a one-line value use Input instead. */
 export function Textarea({ className, ...p }: React.ComponentProps<"textarea">) {
   return <textarea className={cn("vks-field flex min-h-24 w-full rounded-lg border border-input bg-card px-3 py-2 text-base placeholder:text-muted-foreground focus-visible:outline-none focus-visible:border-ring", className)} {...p} />
 }

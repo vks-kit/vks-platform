@@ -7,7 +7,7 @@
 - Live docs: #/docs/scan
 
 ```ts
-import { QrScanner, PhotoCapture } from "@vks/ui/scan"
+import { QrScanner, PhotoCapture } from "@vks-kit/ui/scan"
 ```
 
 ## When to use

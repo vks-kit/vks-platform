@@ -7,7 +7,7 @@
 - Live docs: #/docs/bottom-nav
 
 ```ts
-import { BottomNav, Fab } from "@vks/ui"
+import { BottomNav, Fab } from "@vks-kit/ui"
 ```
 
 ## When to use

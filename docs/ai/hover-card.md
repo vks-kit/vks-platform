@@ -7,7 +7,7 @@
 - Live docs: #/docs/hover-card
 
 ```ts
-import { HoverCard } from "@vks/ui"
+import { HoverCard } from "@vks-kit/ui"
 ```
 
 ## When to use

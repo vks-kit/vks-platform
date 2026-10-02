@@ -7,7 +7,7 @@
 - Live docs: #/docs/file-icon
 
 ```ts
-import { FileIcon, FileItem, fileKind, fileBadge } from "@vks/ui"
+import { FileIcon, FileItem, fileKind, fileBadge } from "@vks-kit/ui"
 ```
 
 ## When to use

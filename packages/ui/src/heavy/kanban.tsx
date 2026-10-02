@@ -7,7 +7,7 @@ import {
 import { SortableContext, useSortable, verticalListSortingStrategy, arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import { Check, ChevronRight, GripVertical, Plus } from "lucide-react"
-import { haptics } from "@vks/core"
+import { haptics } from "@vks-kit/core"
 import { cn } from "../lib/cn"
 import { useIsMobile } from "../lib/use-media"
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from "../components/overlay"
@@ -223,7 +223,7 @@ function KanbanPhone({ columns, cards, onChange, onAdd, onOpen, addLabel = "ເ�
 /**
  * Task board. Desktop: drag cards between columns (mouse drags after 4 px; keyboard: Space + arrows; cards move live while dragging).
  * Phone: no dragging — one column per screen with a tab strip (name + count) and swipe between columns; tap a card to open a bottom sheet with a "move to" list.
- * Use for status boards (todo / doing / done); for a plain list use ListGroup instead. Import from "@vks/ui/kanban".
+ * Use for status boards (todo / doing / done); for a plain list use ListGroup instead. Import from "@vks-kit/ui/kanban".
  */
 export function Kanban(props: KanbanProps) {
   return useIsMobile() ? <KanbanPhone {...props} /> : <KanbanDesktop {...props} />

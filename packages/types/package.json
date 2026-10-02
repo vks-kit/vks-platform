@@ -1,7 +1,6 @@
 {
-  "name": "@vks/types",
-  "version": "0.1.0",
-  "private": true,
+  "name": "@vks-kit/types",
+  "version": "0.2.0",
   "type": "module",
   "exports": {
     ".": "./src/index.ts"
@@ -11,5 +10,14 @@
   },
   "files": [
     "src"
-  ]
+  ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vks-kit/vks-platform.git",
+    "directory": "packages/types"
+  }
 }

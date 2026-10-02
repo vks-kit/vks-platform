@@ -1,6 +1,6 @@
 import * as React from "react"
-import { RefreshCw, Search, Inbox } from "@vks/ui/icons"
-import { CloseButton, Alert, Button, ConfirmDialog, Skeleton, Spinner, SuccessCheck, OfflineBanner, Empty, LiveDot, toast, Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose, InSheetView, useInSheet, Combobox, FilterChips, Label, Sheet, SheetTrigger, SheetContent, SheetTitle, SheetDescription, Tooltip, TooltipTrigger, TooltipContent, Tip, Drawer, Lightbox, PhotoGrid } from "@vks/ui"
+import { RefreshCw, Search, Inbox } from "@vks-kit/ui/icons"
+import { CloseButton, Alert, Button, ConfirmDialog, Skeleton, Spinner, SuccessCheck, OfflineBanner, Empty, LiveDot, toast, Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose, InSheetView, useInSheet, Combobox, FilterChips, Label, Sheet, SheetTrigger, SheetContent, SheetTitle, SheetDescription, Tooltip, TooltipTrigger, TooltipContent, Tip, Drawer, Lightbox, PhotoGrid } from "@vks-kit/ui"
 import type { Doc } from "./types"
 
 function AlertDemo() {
@@ -66,7 +66,7 @@ export const feedbackDocs: Doc[] = [
   {
     slug: "alert", name: "Alert", group: "Feedback", badge: "New",
     desc: "Inline warning strip with a coloured left edge. Info, success, warning, danger.",
-    file: "packages/ui/src/components/alerts.tsx", importLine: 'import { Alert } from "@vks/ui"',
+    file: "packages/ui/src/components/alerts.tsx", importLine: 'import { Alert } from "@vks-kit/ui"',
     demo: () => <AlertDemo />,
     code: `<Alert title="ຂໍ້ມູນ">ລະບົບຈະປິດປັບປຸງ 22:00.</Alert>
 <Alert tone="success" title="ສົ່ງແລ້ວ">…</Alert>
@@ -94,7 +94,7 @@ export const feedbackDocs: Doc[] = [
   {
     slug: "close-button", name: "Close button", group: "Feedback", badge: "New",
     desc: "The one round X. 44 px hit area, quiet muted hover, a small press, Lao label ປິດ. Alert, Banner, Dialog, Sheet and Drawer all use it.",
-    file: "packages/ui/src/components/close-button.tsx", importLine: 'import { CloseButton, CLOSE_BUTTON } from "@vks/ui"',
+    file: "packages/ui/src/components/close-button.tsx", importLine: 'import { CloseButton, CLOSE_BUTTON } from "@vks-kit/ui"',
     demo: () => <div className="flex items-center gap-4"><CloseButton /><div className="relative h-20 w-56 rounded-2xl border bg-card p-3 text-sm">ກາດ<CloseButton className="absolute right-1 top-1" /></div></div>,
     code: `<CloseButton onClick={dismiss} />
 <CloseButton aria-label="ປິດແຈ້ງເຕືອນ" className="absolute right-1 top-1" />
@@ -109,7 +109,7 @@ export const feedbackDocs: Doc[] = [
   {
     slug: "confirm-dialog", name: "Confirm popup", group: "Feedback", badge: "New",
     desc: "Warning popup before anything you cannot undo. Hold-to-confirm for the really dangerous ones, so a pocket tap can't delete.",
-    file: "packages/ui/src/components/alerts.tsx", importLine: 'import { ConfirmDialog } from "@vks/ui"',
+    file: "packages/ui/src/components/alerts.tsx", importLine: 'import { ConfirmDialog } from "@vks-kit/ui"',
     demo: () => <ConfirmDemo />,
     code: `<ConfirmDialog open={open} onOpenChange={setOpen}
   tone="danger" holdToConfirm
@@ -126,7 +126,7 @@ export const feedbackDocs: Doc[] = [
   {
     slug: "toast", name: "Toast", group: "Feedback", badge: "Stable",
     desc: "Sonner restyled to match IOSAlert: glass card with a gold hairline, round tone badge, spring entrance and a bar that drains while it stays. Top-center, away from the thumb. Success, error and finished promises buzz the phone.",
-    file: "packages/ui/src/components/toaster.tsx", importLine: 'import { toast, Toaster } from "@vks/ui"',
+    file: "packages/ui/src/components/toaster.tsx", importLine: 'import { toast, Toaster } from "@vks-kit/ui"',
     demo: () => <><Button variant="action" onClick={() => toast.success("ບັນທຶກແລ້ວ", { description: "ລາຍງານ QC #142 ສົ່ງໄປແລ້ວ" })}>Success</Button><Button variant="outline" onClick={() => toast.warning("ເນັດຊ້າ", { description: "ກຳລັງລອງໃໝ່…" })}>Warning</Button><Button variant="destructive" onClick={() => toast.error("ສົ່ງບໍ່ສຳເລັດ", { description: "ບໍ່ມີເນັດ, ຈະລອງໃໝ່ອັດຕະໂນມັດ", action: { label: "ລອງໃໝ່", onClick: () => toast.success("ສົ່ງແລ້ວ") } })}>Error + action</Button><Button variant="outline" onClick={() => toast.promise(new Promise((r) => setTimeout(r, 1600)), { loading: "ກຳລັງອັບໂຫຼດຮູບ…", success: "ອັບໂຫຼດແລ້ວ", error: "ອັບໂຫຼດບໍ່ສຳເລັດ" })}>Promise</Button><Button variant="ghost" onClick={() => toast("ມີວຽກໃໝ່ 2 ລາຍການ", { description: "ຈາກ ຫົວໜ້າກະ" })}>Plain</Button></>,
     code: `// once, at the app root
 <Toaster />
@@ -140,7 +140,7 @@ toast("ມີວຽກໃໝ່ 2 ລາຍການ", { description: "ຈາກ
   {
     slug: "loading", name: "Loading & success", group: "Feedback", badge: "Stable",
     desc: "Skeleton shimmer while loading, a spinner for short waits, and the animated check after a scan.",
-    file: "packages/ui/src/components/feedback.tsx", importLine: 'import { Skeleton, Spinner, SuccessCheck, LiveDot } from "@vks/ui"',
+    file: "packages/ui/src/components/feedback.tsx", importLine: 'import { Skeleton, Spinner, SuccessCheck, LiveDot } from "@vks-kit/ui"',
     demo: () => <div className="flex w-full flex-wrap items-center justify-center gap-8"><div className="w-48 space-y-2"><Skeleton className="h-10 w-10 rounded-full" /><Skeleton /><Skeleton className="w-2/3" /></div><Spinner className="size-6" /><Replay>{(k) => <SuccessCheck key={k} />}</Replay><span className="inline-flex items-center gap-2 text-sm"><LiveDot />Live</span></div>,
     code: `<Skeleton className="h-10 w-10 rounded-full" />
 <Skeleton className="w-2/3" />
@@ -151,7 +151,7 @@ toast("ມີວຽກໃໝ່ 2 ລາຍການ", { description: "ຈາກ
   {
     slug: "offline-empty", name: "Offline & empty", group: "Feedback", badge: "Mobile",
     desc: "Offline banner shows the number of scans waiting (classic bar, or the navy Dynamic-Island pill). Empty state with a floating icon orb for lists with nothing in them; Combobox, CommandPalette, NotificationList, IndexedList and DataTable use it too.",
-    file: "packages/ui/src/components/feedback.tsx", importLine: 'import { OfflineBanner, Empty } from "@vks/ui"',
+    file: "packages/ui/src/components/feedback.tsx", importLine: 'import { OfflineBanner, Empty } from "@vks-kit/ui"',
     demo: () => <div className="grid w-full max-w-md gap-4"><div className="overflow-hidden rounded-lg"><OfflineBanner queued={3} /></div><div className="overflow-hidden rounded-lg"><OfflineBanner queued={3} syncing /></div><Empty title="ຍັງບໍ່ມີຂໍ້ມູນ" hint="ສະແກນຈຸດທຳອິດເພື່ອເລີ່ມ" /></div>,
     code: `<OfflineBanner queued={queue.size} syncing={flushing} />
 <Empty title="ຍັງບໍ່ມີຂໍ້ມູນ" hint="ສະແກນຈຸດທຳອິດເພື່ອເລີ່ມ" />`,
@@ -167,7 +167,7 @@ toast("ມີວຽກໃໝ່ 2 ລາຍການ", { description: "ຈາກ
   {
     slug: "dialog", name: "Dialog", group: "Overlays", badge: "Stable",
     desc: "Bottom sheet on a phone (thumb reach), centred box on desktop. Gold top edge.",
-    file: "packages/ui/src/components/overlay.tsx", importLine: 'import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose, InSheetView, useInSheet } from "@vks/ui"',
+    file: "packages/ui/src/components/overlay.tsx", importLine: 'import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose, InSheetView, useInSheet } from "@vks-kit/ui"',
     demo: () => <Dialog><DialogTrigger asChild><Button variant="outline">Open dialog</Button></DialogTrigger><DialogContent><DialogHeader><DialogTitle>ຢືນຢັນການບັນທຶກ?</DialogTitle><DialogDescription>ຂໍ້ມູນຈະຖືກສົ່ງໄປຫາສູນຄວບຄຸມ.</DialogDescription></DialogHeader><DialogFooter><DialogClose asChild><Button variant="ghost">ຍົກເລີກ</Button></DialogClose><DialogClose asChild><Button variant="action" onClick={() => toast.success("ບັນທຶກແລ້ວ")}>ບັນທຶກ</Button></DialogClose></DialogFooter></DialogContent></Dialog>,
     code: `<Dialog>
   <DialogTrigger asChild><Button variant="outline">Open dialog</Button></DialogTrigger>
@@ -195,7 +195,7 @@ toast("ມີວຽກໃໝ່ 2 ລາຍການ", { description: "ຈາກ
   {
     slug: "sheet", name: "Sheet", group: "Overlays", badge: "Mobile",
     desc: "Slides in from the bottom, the right, or covers the whole screen.",
-    file: "packages/ui/src/components/overlay.tsx", importLine: 'import { Sheet, SheetTrigger, SheetContent, SheetTitle, SheetDescription } from "@vks/ui"',
+    file: "packages/ui/src/components/overlay.tsx", importLine: 'import { Sheet, SheetTrigger, SheetContent, SheetTitle, SheetDescription } from "@vks-kit/ui"',
     demo: () => <>{(["bottom", "right", "fullscreen"] as const).map((s) => <Sheet key={s}><SheetTrigger asChild><Button variant="outline">{s}</Button></SheetTrigger><SheetContent side={s}><div className={s === "fullscreen" ? "p-5" : ""}><SheetTitle>ເລືອກຈຸດກວດ</SheetTitle><SheetDescription>side = {s}</SheetDescription></div></SheetContent></Sheet>)}</>,
     code: `<Sheet>
   <SheetTrigger asChild><Button>Open</Button></SheetTrigger>
@@ -209,7 +209,7 @@ toast("ມີວຽກໃໝ່ 2 ລາຍການ", { description: "ຈາກ
   {
     slug: "drawer", name: "Drawer", group: "Overlays", badge: "Mobile",
     desc: "Record detail panel. Full screen with a back arrow on a phone, side panel on desktop.",
-    file: "packages/ui/src/components/drawer.tsx", importLine: 'import { Drawer } from "@vks/ui"',
+    file: "packages/ui/src/components/drawer.tsx", importLine: 'import { Drawer } from "@vks-kit/ui"',
     demo: () => <DrawerDemo />,
     code: `<Drawer open={!!row} onClose={() => setRow(null)} title={row?.name}
   footer={<Button className="w-full">ແກ້ໄຂ</Button>}>
@@ -220,7 +220,7 @@ toast("ມີວຽກໃໝ່ 2 ລາຍການ", { description: "ຈາກ
   {
     slug: "tooltip", name: "Tooltip", group: "Overlays", badge: "Stable",
     desc: "Desktop hint only. Never put anything a phone user needs inside a tooltip. Three looks: dark (navy chip, default), light (card for longer help), glass (over maps, photos, charts). Optional arrow, key-shortcut hint and a bold title line. Tip is the one-line shortcut.",
-    file: "packages/ui/src/components/overlay.tsx", importLine: 'import { TooltipProvider, Tip, Tooltip, TooltipTrigger, TooltipContent } from "@vks/ui"',
+    file: "packages/ui/src/components/overlay.tsx", importLine: 'import { TooltipProvider, Tip, Tooltip, TooltipTrigger, TooltipContent } from "@vks-kit/ui"',
     demo: () => <div className="flex flex-wrap items-center justify-center gap-3">
       <Tip content="ບັນທຶກ" shortcut="Ctrl S"><Button variant="outline">Dark + key</Button></Tip>
       <Tip variant="light" side="bottom" title="ກະເຊົ້າ" content="06:00 – 14:00 · 12 ຄົນ"><Button variant="outline">Light + title</Button></Tip>
@@ -247,7 +247,7 @@ toast("ມີວຽກໃໝ່ 2 ລາຍການ", { description: "ຈາກ
   {
     slug: "lightbox", name: "Lightbox", group: "Overlays", badge: "Mobile",
     desc: "Full screen photo viewer with swipe, arrows and a caption. For patrol photos.",
-    file: "packages/ui/src/components/lightbox.tsx", importLine: 'import { Lightbox, PhotoGrid } from "@vks/ui"',
+    file: "packages/ui/src/components/lightbox.tsx", importLine: 'import { Lightbox, PhotoGrid } from "@vks-kit/ui"',
     demo: () => <LightboxDemo />,
     code: `<Lightbox images={photos} index={i} onIndex={setI} onClose={() => setI(null)} />`,
     examples: [{ id: "photo-grid", title: "Photo grid", note: "Square thumbnails that open the same Lightbox on tap. cols = 2 | 3 | 4.",

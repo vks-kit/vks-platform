@@ -7,7 +7,7 @@
 - Live docs: #/docs/share-sheet
 
 ```ts
-import { useShareSheet, ShareSheet } from "@vks/ui"
+import { useShareSheet, ShareSheet } from "@vks-kit/ui"
 ```
 
 ## When to use

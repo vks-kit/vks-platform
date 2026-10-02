@@ -7,7 +7,7 @@
 - Live docs: #/docs/profile-view
 
 ```ts
-import { ProfileView, type ProfileSection, type ProfileRow, type ProfileQuickAction } from "@vks/ui"
+import { ProfileView, type ProfileSection, type ProfileRow, type ProfileQuickAction } from "@vks-kit/ui"
 ```
 
 ## When to use

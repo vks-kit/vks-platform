@@ -1,7 +1,7 @@
 import * as React from "react"
 import { AlertDialog as AD, Dialog as D } from "radix-ui"
 import { ChevronRight } from "lucide-react"
-import { haptics } from "@vks/core"
+import { haptics } from "@vks-kit/core"
 import { cn } from "../lib/cn"
 import { FLOAT_CARD, FLOAT_DOCK, FLOAT_CANCEL } from "../lib/panel"
 import { ToneBadge, type Tone } from "../lib/tone-badge"

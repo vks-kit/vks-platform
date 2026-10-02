@@ -7,7 +7,7 @@
 - Live docs: #/docs/tag-input
 
 ```ts
-import { TagInput, parseTags } from "@vks/ui"
+import { TagInput, parseTags } from "@vks-kit/ui"
 ```
 
 ## When to use

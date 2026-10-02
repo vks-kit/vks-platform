@@ -7,7 +7,7 @@
 - Live docs: #/docs/select
 
 ```ts
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@vks/ui"
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@vks-kit/ui"
 ```
 
 ## When to use

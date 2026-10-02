@@ -22,7 +22,7 @@ Coming apps (one folder each under apps/): stationary-guard (pilot), call-center
 - `npm run typecheck` / `npm run build:docs`
 
 ## The rule that keeps everything consistent
-1. Apps use **only** components from `@vks/ui` and colour tokens (`bg-primary`, `text-muted-foreground`...). No raw hex in apps.
+1. Apps use **only** components from `@vks-kit/ui` and colour tokens (`bg-primary`, `text-muted-foreground`...). No raw hex in apps.
 2. Need a new component or colour? Add it to `packages/ui`, show it in the gallery, then use it.
 3. Changing a token in `packages/ui/src/styles/theme.css` changes every app.
 4. Light theme (A) is the default. Dark (E) is opt-in.
@@ -36,13 +36,13 @@ Built and tested locally only. Not deployed. Logo is a vector approximation of v
 
 | Need | Import |
 |---|---|
-| Page layout: sidebar (desktop) / bottom nav (phone), FAB, header, login | `AppShell, Sidebar, BottomNav, Fab, PageHeader, LoginCard` from `@vks/ui` |
+| Page layout: sidebar (desktop) / bottom nav (phone), FAB, header, login | `AppShell, Sidebar, BottomNav, Fab, PageHeader, LoginCard` from `@vks-kit/ui` |
 | Date (popover / phone wheel), dropdown (search, multi), chips, search | `DatePicker, Calendar, Combobox, FilterChips, SearchBox` |
 | Sign-in code, signature, photo viewer | `OtpInput, SignaturePad, Lightbox` |
 | Lists | `DataTable` (cards on phone if > 4 columns; loading/empty/error built in), `Pagination`, `Drawer` |
 | Steps, FAQ, history, stats | `Wizard, Accordion, Timeline, KpiStrip, Progress, StarRating, Avatar` |
-| **Heavy, own entry point (load only where used)** | `@vks/ui/charts` (~105 KB gz), `@vks/ui/map` (~43 KB), `@vks/ui/scan` (~48 KB), `@vks/ui/kanban` (~17 KB) |
-| Non-visual helpers | `@vks/core`: `t()` Lao/English, `fmtKip`, `swr` page cache, `registerSW`, `promptInstall`, `subscribePush`, `distanceM`, `OfflineQueue` |
+| **Heavy, own entry point (load only where used)** | `@vks-kit/ui/charts` (~105 KB gz), `@vks-kit/ui/map` (~43 KB), `@vks-kit/ui/scan` (~48 KB), `@vks-kit/ui/kanban` (~17 KB) |
+| Non-visual helpers | `@vks-kit/core`: `t()` Lao/English, `fmtKip`, `swr` page cache, `registerSW`, `promptInstall`, `subscribePush`, `distanceM`, `OfflineQueue` |
 | Print | automatic (`print.css`); add class `no-print` to hide extra things |
 
 One breakpoint everywhere: 768 px. Gallery: `npm run dev`, then `#/` (basics) and `#/more` (everything else).

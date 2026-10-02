@@ -7,7 +7,7 @@
 - Live docs: #/docs/otp-input
 
 ```ts
-import { OtpInput } from "@vks/ui"
+import { OtpInput } from "@vks-kit/ui"
 ```
 
 ## When to use

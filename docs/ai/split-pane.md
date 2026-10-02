@@ -7,7 +7,7 @@
 - Live docs: #/docs/split-pane
 
 ```ts
-import { SplitPane } from "@vks/ui"
+import { SplitPane } from "@vks-kit/ui"
 ```
 
 ## When to use

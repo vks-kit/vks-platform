@@ -7,7 +7,7 @@
 - Live docs: #/docs/command-palette
 
 ```ts
-import { CommandPalette, useCommandK } from "@vks/ui"
+import { CommandPalette, useCommandK } from "@vks-kit/ui"
 ```
 
 ## When to use

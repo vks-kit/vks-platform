@@ -1,24 +1,24 @@
 import * as React from "react"
-import { Home, ClipboardList, Users, BarChart3, Settings, Bell, Plus, Moon, Sun, MapPin, FileText, ScanLine, Wallet } from "@vks/ui/icons"
+import { Home, ClipboardList, Users, BarChart3, Settings, Bell, Plus, Moon, Sun, MapPin, FileText, ScanLine, Wallet } from "@vks-kit/ui/icons"
 import {
   AppShell, PageHeader, Fab, LoginCard, Button, Card, CardContent, CardHeader, CardTitle, Input, Label, Badge, useTheme,
   IOSAlert, ActionSheet, Banner, ListGroup, ListRow, SkeletonList, SkeletonCard, NumberTicker, FloatingInput, PasswordInput, Chip, CopyButton, Menu, MenuTrigger, MenuContent, MenuItem, PerfToggle,
   DatePicker, Calendar, Combobox, FilterChips, SearchBox, OtpInput, SignaturePad, Lightbox, DataTable, Drawer, Wizard,
   Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose, InSheetView,
   Avatar, Progress, Accordion, DateRangePicker, Alert, ConfirmDialog, SwipeRow, PullToRefresh, toast, Toaster, type Range, AccordionItem, AccordionTrigger, AccordionContent, StarRating, Timeline, KpiStrip, KpiHero, Pagination, LoginScreen, ProfileView, type Column,
-} from "@vks/ui"
+} from "@vks-kit/ui"
 import {
   SearchBar, Carousel, useProgressHUD, SnapSheet, IndexedList, BottomToolbar, useLongPress, useShareSheet, ShareSheet,
   Sidebar, SidebarSheet, Slider, DetailPopover, type NavItem,
   CommandPalette, useCommandK, Breadcrumb, HoverCard, ContextMenu, TreeView, StatCard, ButtonGroup, Dropzone, fmtBytes, FileIcon, TagInput, SplitPane, NotificationList, ScrollArea, type Notice,
   HoverFx, Parallax, ParallaxLayer, SlideHighlight, CursorRing, Logo,
-} from "@vks/ui"
-import { Share2, Pencil, Phone, Trash2, Heart, Shield, AlertTriangle, CheckCircle2, Clock, Folder, User, Copy as CopyIcon, Search as SearchIcon, ArrowRight } from "@vks/ui/icons"
-import { BarSeries, LineSeries, Donut, Sparkline, ScatterSeries, RadarSeries, RadialBars, ComboSeries, Heatmap, DateGrid, LatencyTimeline, AttendanceBoard } from "@vks/ui/charts"
-import { MapView } from "@vks/ui/map"
-import { Kanban, type KanbanCard } from "@vks/ui/kanban"
-import { QrScanner, PhotoCapture, CaptureStamp, stampPhoto, stampTime } from "@vks/ui/scan"
-import { fmtKip, fmtKipShort, t, setLang, getLang } from "@vks/core"
+} from "@vks-kit/ui"
+import { Share2, Pencil, Phone, Trash2, Heart, Shield, AlertTriangle, CheckCircle2, Clock, Folder, User, Copy as CopyIcon, Search as SearchIcon, ArrowRight } from "@vks-kit/ui/icons"
+import { BarSeries, LineSeries, Donut, Sparkline, ScatterSeries, RadarSeries, RadialBars, ComboSeries, Heatmap, DateGrid, LatencyTimeline, AttendanceBoard } from "@vks-kit/ui/charts"
+import { MapView } from "@vks-kit/ui/map"
+import { Kanban, type KanbanCard } from "@vks-kit/ui/kanban"
+import { QrScanner, PhotoCapture, CaptureStamp, stampPhoto, stampTime } from "@vks-kit/ui/scan"
+import { fmtKip, fmtKipShort, t, setLang, getLang } from "@vks-kit/core"
 
 const Sec = ({ id, title, children }: { id: string; title: string; children: React.ReactNode }) => (
   <section id={id} className="scroll-mt-20 space-y-3"><h2 className="text-lg font-bold">{title}</h2>{children}</section>

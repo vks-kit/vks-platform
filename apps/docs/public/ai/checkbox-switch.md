@@ -7,7 +7,7 @@
 - Live docs: #/docs/checkbox-switch
 
 ```ts
-import { Checkbox, Switch, Label } from "@vks/ui"
+import { Checkbox, Switch, Label } from "@vks-kit/ui"
 ```
 
 ## When to use

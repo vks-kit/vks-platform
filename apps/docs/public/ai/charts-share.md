@@ -7,7 +7,7 @@
 - Live docs: #/docs/charts-share
 
 ```ts
-import { Donut, RadialBars, ScatterSeries, RadarSeries } from "@vks/ui/charts"
+import { Donut, RadialBars, ScatterSeries, RadarSeries } from "@vks-kit/ui/charts"
 ```
 
 ## When to use

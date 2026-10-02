@@ -3,7 +3,7 @@ import jsQR from "jsqr"
 import { Camera, ImagePlus, SwitchCamera } from "lucide-react"
 import { cn } from "../lib/cn"
 import { Button } from "../components/button"
-import { shrinkPhoto } from "@vks/core"
+import { shrinkPhoto } from "@vks-kit/core"
 
 type BD = { detect: (s: CanvasImageSource) => Promise<{ rawValue: string }[]> }
 /** Native BarcodeDetector when the phone has it (fast, no CPU), jsQR fallback otherwise. */

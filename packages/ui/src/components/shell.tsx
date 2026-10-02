@@ -1,7 +1,7 @@
 import * as React from "react"
 import { ChevronLeft, MoreHorizontal, Plus } from "lucide-react"
 import { cn } from "../lib/cn"
-import { haptics } from "@vks/core"
+import { haptics } from "@vks-kit/core"
 import { useIndicator, Indicator } from "../lib/use-indicator"
 import { Logo, BRAND } from "./logo"
 import { Sheet, SheetContent, SheetTitle, TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "./overlay"

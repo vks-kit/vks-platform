@@ -7,7 +7,7 @@
 - Live docs: #/docs/tooltip
 
 ```ts
-import { TooltipProvider, Tip, Tooltip, TooltipTrigger, TooltipContent } from "@vks/ui"
+import { TooltipProvider, Tip, Tooltip, TooltipTrigger, TooltipContent } from "@vks-kit/ui"
 ```
 
 ## When to use

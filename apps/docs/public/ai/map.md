@@ -7,12 +7,12 @@
 - Live docs: #/docs/map
 
 ```ts
-import { MapView, type Pin } from "@vks/ui/map"
+import { MapView, type Pin } from "@vks-kit/ui/map"
 ```
 
 ## When to use
 
-- **MapView**: OpenStreetMap tiles via Leaflet, VKS-styled: glass +/- and "fit pins" controls (44 px), pulsing token pins (danger pins keep pulsing), Noto Sans Lao card tooltips, an optional pin card that springs up from the bottom when a pin is tapped (phones have no hover), and a tiny OSM credit (required by the tile licence). On phones, with 2+ pins, a bottom sheet lists every pin (tap a row to fly there and open its card), because small pins are hard to hit with a thumb; pass list={false} to turn it off. Import from "@vks/ui/map" only where a map is shown. Point-in-radius check is in @vks/core/geo.
+- **MapView**: OpenStreetMap tiles via Leaflet, VKS-styled: glass +/- and "fit pins" controls (44 px), pulsing token pins (danger pins keep pulsing), Noto Sans Lao card tooltips, an optional pin card that springs up from the bottom when a pin is tapped (phones have no hover), and a tiny OSM credit (required by the tile licence). On phones, with 2+ pins, a bottom sheet lists every pin (tap a row to fly there and open its card), because small pins are hard to hit with a thumb; pass list={false} to turn it off. Import from "@vks-kit/ui/map" only where a map is shown. Point-in-radius check is in @vks-kit/core/geo.
 
 ## Example
 

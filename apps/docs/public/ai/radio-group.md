@@ -7,7 +7,7 @@
 - Live docs: #/docs/radio-group
 
 ```ts
-import { RadioGroup, RadioGroupItem } from "@vks/ui"
+import { RadioGroup, RadioGroupItem } from "@vks-kit/ui"
 ```
 
 ## When to use

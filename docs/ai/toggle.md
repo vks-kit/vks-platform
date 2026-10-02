@@ -7,7 +7,7 @@
 - Live docs: #/docs/toggle
 
 ```ts
-import { Toggle, ToggleGroup, ToggleGroupItem } from "@vks/ui"
+import { Toggle, ToggleGroup, ToggleGroupItem } from "@vks-kit/ui"
 ```
 
 ## When to use

@@ -7,7 +7,7 @@
 - Live docs: #/docs/step-progress
 
 ```ts
-import { StepProgress } from "@vks/ui"
+import { StepProgress } from "@vks-kit/ui"
 ```
 
 ## When to use

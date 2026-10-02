@@ -1,7 +1,7 @@
 import * as React from "react"
 import { ContextMenu as CM, Dialog as D, HoverCard as HC, ScrollArea as SA } from "radix-ui"
 import { ArrowDownRight, ArrowUpRight, Bell, ChevronRight, CornerDownLeft, FileUp, MoreHorizontal, Search, X } from "lucide-react"
-import { haptics } from "@vks/core"
+import { haptics } from "@vks-kit/core"
 import { cn } from "../lib/cn"
 import { useFlip } from "../lib/use-flip"
 import { useIsMobile } from "../lib/use-media"

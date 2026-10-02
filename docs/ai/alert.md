@@ -7,7 +7,7 @@
 - Live docs: #/docs/alert
 
 ```ts
-import { Alert } from "@vks/ui"
+import { Alert } from "@vks-kit/ui"
 ```
 
 ## When to use

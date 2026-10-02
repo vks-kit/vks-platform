@@ -1,15 +1,23 @@
 {
-  "name": "@vks/core",
-  "version": "0.1.0",
-  "private": true,
+  "name": "@vks-kit/core",
+  "version": "0.2.0",
   "type": "module",
   "exports": {
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@vks/types": "^0.1.0"
+    "@vks-kit/types": "^0.2.0"
   },
   "files": [
     "src"
-  ]
+  ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vks-kit/vks-platform.git",
+    "directory": "packages/core"
+  }
 }

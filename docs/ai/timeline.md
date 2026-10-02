@@ -7,7 +7,7 @@
 - Live docs: #/docs/timeline
 
 ```ts
-import { Timeline } from "@vks/ui"
+import { Timeline } from "@vks-kit/ui"
 ```
 
 ## When to use

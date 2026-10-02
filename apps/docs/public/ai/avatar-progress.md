@@ -7,7 +7,7 @@
 - Live docs: #/docs/avatar-progress
 
 ```ts
-import { Avatar, AvatarGroup, UserChip, Progress, ProgressRing } from "@vks/ui"
+import { Avatar, AvatarGroup, UserChip, Progress, ProgressRing } from "@vks-kit/ui"
 ```
 
 ## When to use

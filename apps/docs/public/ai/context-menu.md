@@ -7,7 +7,7 @@
 - Live docs: #/docs/context-menu
 
 ```ts
-import { ContextMenu } from "@vks/ui"
+import { ContextMenu } from "@vks-kit/ui"
 ```
 
 ## When to use

@@ -1,6 +1,6 @@
 import * as React from "react"
-import { Search, Moon, Sun, Menu as MenuIcon, ChevronLeft, ChevronRight, CornerDownLeft, Settings2, ChevronDown, ListTree, ArrowUp, Monitor, Smartphone } from "@vks/ui/icons"
-import { Logo, Button, Badge, Sheet, SheetContent, SheetTitle, Dialog, DialogContent, DialogTitle, useTheme, cn, PerfToggle, Popover, PopoverTrigger, PopoverContent, BRAND } from "@vks/ui"
+import { Search, Moon, Sun, Menu as MenuIcon, ChevronLeft, ChevronRight, CornerDownLeft, Settings2, ChevronDown, ListTree, ArrowUp, Monitor, Smartphone } from "@vks-kit/ui/icons"
+import { Logo, Button, Badge, Sheet, SheetContent, SheetTitle, Dialog, DialogContent, DialogTitle, useTheme, cn, PerfToggle, Popover, PopoverTrigger, PopoverContent, BRAND } from "@vks-kit/ui"
 import { nav, flat, find, entries, type Entry } from "./docs/registry"
 import { frames as layoutFrames } from "./docs/layout"
 import { respFrames } from "./docs/responsive"

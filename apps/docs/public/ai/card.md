@@ -7,7 +7,7 @@
 - Live docs: #/docs/card
 
 ```ts
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@vks/ui"
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@vks-kit/ui"
 ```
 
 ## When to use

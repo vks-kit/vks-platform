@@ -7,7 +7,7 @@
 - Live docs: #/docs/banner
 
 ```ts
-import { Banner } from "@vks/ui"
+import { Banner } from "@vks-kit/ui"
 ```
 
 ## When to use

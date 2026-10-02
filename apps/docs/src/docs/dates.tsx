@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Calendar, DateWheel, DatePicker, DateRangePicker, RangeCalendar, Card, CardContent, type Range, formatRange } from "@vks/ui"
+import { Calendar, DateWheel, DatePicker, DateRangePicker, RangeCalendar, Card, CardContent, type Range, formatRange } from "@vks-kit/ui"
 import type { Doc } from "./types"
 
 function DP() { const [d, setD] = React.useState("2026-09-30"); return <div className="w-full max-w-xs"><DatePicker value={d} onChange={setD} /></div> }
@@ -12,7 +12,7 @@ export const dateDocs: Doc[] = [
   {
     slug: "date-picker", name: "Date picker", group: "Dates", badge: "Stable",
     desc: "Lao month names, Monday first. Bottom sheet with a wheel on a phone, calendar popover on desktop.",
-    file: "packages/ui/src/components/date-picker.tsx", importLine: 'import { DatePicker, Calendar, DateWheel } from "@vks/ui"',
+    file: "packages/ui/src/components/date-picker.tsx", importLine: 'import { DatePicker, Calendar, DateWheel } from "@vks-kit/ui"',
     demo: () => <DP />,
     code: `const [d, setD] = useState("2026-09-30")   // ISO yyyy-mm-dd, always
 <DatePicker value={d} onChange={setD} min="2026-01-01" />`,
@@ -29,7 +29,7 @@ export const dateDocs: Doc[] = [
   {
     slug: "date-range-picker", name: "Date range picker", group: "Dates", badge: "New",
     desc: "Report ranges with presets (today, last 7 days, this month…). One month on a phone sheet, two side by side on desktop.",
-    file: "packages/ui/src/components/date-range-picker.tsx", importLine: 'import { DateRangePicker, RangeCalendar, formatRange, type Range } from "@vks/ui"',
+    file: "packages/ui/src/components/date-range-picker.tsx", importLine: 'import { DateRangePicker, RangeCalendar, formatRange, type Range } from "@vks-kit/ui"',
     demo: () => <DRP />,
     code: `const [r, setR] = useState<Range>({ from: "2026-09-10", to: "2026-09-16" })
 <DateRangePicker value={r} onChange={setR} />`,

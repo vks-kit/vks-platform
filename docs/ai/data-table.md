@@ -7,7 +7,7 @@
 - Live docs: #/docs/data-table
 
 ```ts
-import { DataTable, type Column } from "@vks/ui"
+import { DataTable, type Column } from "@vks-kit/ui"
 ```
 
 ## When to use

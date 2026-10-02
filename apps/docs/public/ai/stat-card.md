@@ -7,7 +7,7 @@
 - Live docs: #/docs/stat-card
 
 ```ts
-import { StatCard, TrendLine } from "@vks/ui"
+import { StatCard, TrendLine } from "@vks-kit/ui"
 ```
 
 ## When to use
@@ -23,7 +23,7 @@ import { StatCard, TrendLine } from "@vks/ui"
 
 ### Trend line alone
 
-The drawn-in line from StatCard, for table cells or custom tiles. For axes and tooltips use @vks/ui/charts.
+The drawn-in line from StatCard, for table cells or custom tiles. For axes and tooltips use @vks-kit/ui/charts.
 
 ```tsx
 <TrendLine data={[12, 11, 9, 10, 8, 9, 7]} />

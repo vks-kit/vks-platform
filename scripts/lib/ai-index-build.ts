@@ -38,9 +38,9 @@ function docPage(d: Doc, decls: ReturnType<typeof componentDecls>): string {
 /** linkBase: "docs/ai/" for the repo-root copy, "ai/" for the copy the docs site serves. */
 function llms(linkBase: string): string {
   const out = [
-    "# VKS UI (@vks/ui)", "",
+    "# VKS UI (@vks-kit/ui)", "",
     "> Shared React 19 + Tailwind v4 design system for VKS Security apps (Guard Navy + Gold, Lao-first, mobile-first). Search this list before building any UI: reuse a part if it fits, extend it with a prop/variant if it almost fits, and only then add a new part to packages/ui + apps/gallery + apps/docs.", "",
-    "Rules: import only from \"@vks/ui\" (icons from \"@vks/ui/icons\", heavy parts from \"@vks/ui/charts\" | \"/map\" | \"/kanban\" | \"/scan\"); colours only via theme tokens; see AGENTS.md.", "",
+    "Rules: import only from \"@vks-kit/ui\" (icons from \"@vks-kit/ui/icons\", heavy parts from \"@vks-kit/ui/charts\" | \"/map\" | \"/kanban\" | \"/scan\"); colours only via theme tokens; see AGENTS.md.", "",
   ]
   for (const g of GROUP_ORDER) {
     const items = docs.filter((d) => d.group === g)

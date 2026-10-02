@@ -7,7 +7,7 @@
 - Live docs: #/docs/skeletons
 
 ```ts
-import { SkeletonText, SkeletonList, SkeletonCard, SkeletonTable, SkeletonAvatar } from "@vks/ui"
+import { SkeletonText, SkeletonList, SkeletonCard, SkeletonTable, SkeletonAvatar } from "@vks-kit/ui"
 ```
 
 ## When to use

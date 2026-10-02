@@ -7,7 +7,7 @@
 - Live docs: #/docs/tabs
 
 ```ts
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@vks/ui"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@vks-kit/ui"
 ```
 
 ## When to use

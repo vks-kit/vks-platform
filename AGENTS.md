@@ -2,12 +2,12 @@
 
 ## House rules (always)
 - Never write raw colours (hex, rgb) or one-off shadows in apps/. Use tokens from packages/ui/src/styles/theme.css.
-- Never import Radix or shadcn directly in an app. Import from "@vks/ui".
+- Never import Radix or shadcn directly in an app. Import from "@vks-kit/ui".
 - New UI part = add to packages/ui + add to apps/gallery, in the same change.
 - Lao UI text: keep line-height >= 1.5, use normalizeLao() before comparing names.
-- Free text from users: run cleanText() from @vks/types before saving.
+- Free text from users: run cleanText() from @vks-kit/types before saving.
 - Keep animations to transform/opacity. Respect prefers-reduced-motion (already global).
-- Icons: import from "@vks/ui/icons" (never "lucide-react" in an app).
+- Icons: import from "@vks-kit/ui/icons" (never "lucide-react" in an app).
 
 The first three and the icon rule are enforced by `packages/ui/test/guards.test.ts` — `npm test` fails if you break them.
 
@@ -39,7 +39,7 @@ The first three and the icon rule are enforced by `packages/ui/test/guards.test.
 | Status pill | `Badge` | docs/ai/badge.md |
 | Nothing here / loading | `Empty`, `Skeleton` | docs/ai/offline-empty.md, docs/ai/loading.md |
 
-Heavy parts are lazy subpaths: `@vks/ui/charts`, `@vks/ui/map`, `@vks/ui/kanban`, `@vks/ui/scan`.
+Heavy parts are lazy subpaths: `@vks-kit/ui/charts`, `@vks-kit/ui/map`, `@vks-kit/ui/kanban`, `@vks-kit/ui/scan`.
 
 ## Adding a new UI feature (future sessions — follow every step)
 1. **Search first** (section above). Write down which part you checked and why it doesn't fit.
@@ -51,7 +51,7 @@ Heavy parts are lazy subpaths: `@vks/ui/charts`, `@vks/ui/map`, `@vks/ui/kanban`
 4. **Doc comment on every exported component**, in the house form, directly above the export:
    `/** Use for X; for Y use Z instead. */`
 5. **Styling**: tokens only (`bg-primary`, `text-muted-foreground`, `var(--success)`…). A new colour means a new token in `theme.css` (light + dark), not a hex.
-6. **Icons** from `@vks/ui/icons` in apps (inside packages/ui, `lucide-react` is fine).
+6. **Icons** from `@vks-kit/ui/icons` in apps (inside packages/ui, `lucide-react` is fine).
 7. **Motion & touch**: transform/opacity only; reduced motion snaps; ≤ 400 ms on phones; lite mode (`usePerf`) drops blur and loops; touch targets ≥ 44 px; Lao line-height ≥ 1.5; 16 px inputs (no iOS zoom).
 8. **Gallery**: add a demo to `apps/gallery/src/App.tsx` or `More.tsx`.
 9. **Docs**: add a `Doc` entry in `apps/docs/src/docs/<group>.tsx` (slug, name, group, desc, file, importLine, demo, code, props, notes). Every exported component name must appear in some entry's `importLine`; sub-parts can go in an existing entry's importLine plus an `examples` item.
@@ -71,4 +71,4 @@ Heavy parts are lazy subpaths: `@vks/ui/charts`, `@vks/ui/map`, `@vks/ui/kanban`
 | `npm run dev:docs` / `npm run build:docs` | docs site (preview :5200) |
 
 ## Scope
-GAS and Alpine.js apps cannot import `@vks/ui` (React). They may only share the colour tokens from theme.css.
+GAS and Alpine.js apps cannot import `@vks-kit/ui` (React). They may only share the colour tokens from theme.css.

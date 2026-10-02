@@ -7,7 +7,7 @@
 - Live docs: #/docs/rating-pagination
 
 ```ts
-import { StarRating, Pagination } from "@vks/ui"
+import { StarRating, Pagination } from "@vks-kit/ui"
 ```
 
 ## When to use

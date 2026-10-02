@@ -1,8 +1,8 @@
-# VKS UI (@vks/ui)
+# VKS UI (@vks-kit/ui)
 
 > Shared React 19 + Tailwind v4 design system for VKS Security apps (Guard Navy + Gold, Lao-first, mobile-first). Search this list before building any UI: reuse a part if it fits, extend it with a prop/variant if it almost fits, and only then add a new part to packages/ui + apps/gallery + apps/docs.
 
-Rules: import only from "@vks/ui" (icons from "@vks/ui/icons", heavy parts from "@vks/ui/charts" | "/map" | "/kanban" | "/scan"); colours only via theme tokens; see AGENTS.md.
+Rules: import only from "@vks-kit/ui" (icons from "@vks-kit/ui/icons", heavy parts from "@vks-kit/ui/charts" | "/map" | "/kanban" | "/scan"); colours only via theme tokens; see AGENTS.md.
 
 ## Foundations
 
@@ -125,7 +125,7 @@ Rules: import only from "@vks/ui" (icons from "@vks/ui/icons", heavy parts from 
 
 ## Optional
 
-- [Introduction](ai/introduction.md): What @vks/ui is and why it looks the way it does.
+- [Introduction](ai/introduction.md): What @vks-kit/ui is and why it looks the way it does.
 - [Installation](ai/installation.md): Add the design system to a new app in the monorepo.
 - [Theming](ai/theming.md): Theme A (Guard Navy + Gold) and Theme E (Night Watch).
 - [Typography & Lao](ai/typography.md): Font, scale and the Lao text rules.

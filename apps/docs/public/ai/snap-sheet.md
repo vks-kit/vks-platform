@@ -7,7 +7,7 @@
 - Live docs: #/docs/snap-sheet
 
 ```ts
-import { SnapSheet } from "@vks/ui"
+import { SnapSheet } from "@vks-kit/ui"
 ```
 
 ## When to use

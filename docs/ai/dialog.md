@@ -7,7 +7,7 @@
 - Live docs: #/docs/dialog
 
 ```ts
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose, InSheetView, useInSheet } from "@vks/ui"
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose, InSheetView, useInSheet } from "@vks-kit/ui"
 ```
 
 ## When to use

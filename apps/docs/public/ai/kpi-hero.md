@@ -7,12 +7,12 @@
 - Live docs: #/docs/kpi-hero
 
 ```ts
-import { KpiHero } from "@vks/ui"
+import { KpiHero } from "@vks-kit/ui"
 ```
 
 ## When to use
 
-- **KpiHero**: Use at the top of a PHONE dashboard when one number matters most (e.g. today's on-time rate); a KpiStrip of 4 tiles eats the whole first screen on a phone. For 2-6 equal numbers on desktop use KpiStrip instead; for a chart use @vks/ui/charts instead.
+- **KpiHero**: Use at the top of a PHONE dashboard when one number matters most (e.g. today's on-time rate); a KpiStrip of 4 tiles eats the whole first screen on a phone. For 2-6 equal numbers on desktop use KpiStrip instead; for a chart use @vks-kit/ui/charts instead.
 
 ## Example
 

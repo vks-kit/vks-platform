@@ -20,13 +20,13 @@ describe("apps use the design system, not its building blocks", () => {
     const bad: string[] = []
     const re = /from\s+["'](radix-ui|@radix-ui\/[^"']+|class-variance-authority|lucide-react|sonner)["']/
     for (const f of appFiles) read(f).split(/\r?\n/).forEach((l, i) => { if (re.test(l)) bad.push(`${rel(f)}:${i + 1}  ${l.trim()}`) })
-    expect(bad, "Import from \"@vks/ui\" (icons: \"@vks/ui/icons\") instead").toEqual([])
+    expect(bad, "Import from \"@vks-kit/ui\" (icons: \"@vks-kit/ui/icons\") instead").toEqual([])
   })
 
   it("no deep imports into packages/ui internals", () => {
     const bad: string[] = []
     for (const f of appFiles) read(f).split(/\r?\n/).forEach((l, i) => { if (/from\s+["'](@vks\/ui\/src|[./]+\/packages\/ui)/.test(l)) bad.push(`${rel(f)}:${i + 1}`) })
-    expect(bad, "Use the public entry points: @vks/ui, @vks/ui/icons, /charts, /map, /kanban, /scan").toEqual([])
+    expect(bad, "Use the public entry points: @vks-kit/ui, @vks-kit/ui/icons, /charts, /map, /kanban, /scan").toEqual([])
   })
 
   it("no raw colours in apps (hex / rgb / hsl / oklch)", () => {

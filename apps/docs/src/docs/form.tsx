@@ -1,6 +1,6 @@
 import * as React from "react"
-import { Input, Textarea, Label, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Checkbox, Switch, Tabs, TabsList, TabsTrigger, TabsContent, Combobox, FilterChips, SearchBox, OtpInput, Slider, RadioGroup, RadioGroupItem, Stepper } from "@vks/ui"
-import { fmtKip } from "@vks/core"
+import { Input, Textarea, Label, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Checkbox, Switch, Tabs, TabsList, TabsTrigger, TabsContent, Combobox, FilterChips, SearchBox, OtpInput, Slider, RadioGroup, RadioGroupItem, Stepper } from "@vks-kit/ui"
+import { fmtKip } from "@vks-kit/core"
 import type { Doc } from "./types"
 
 const sites = [{ value: "a", label: "ປະຕູໜ້າ", hint: "A-01" }, { value: "b", label: "ບ່ອນຈອດລົດ", hint: "A-02" }, { value: "c", label: "ຄັງສິນຄ້າ", hint: "B-01" }, { value: "d", label: "ຫ້ອງຄວບຄຸມ", hint: "B-02" }]
@@ -39,7 +39,7 @@ export const formDocs: Doc[] = [
   {
     slug: "slider", name: "Slider", group: "Form", badge: "New",
     desc: "iOS-size 28 px thumb. While dragging the track thickens, a halo grows round the thumb, a value bubble springs up and Android phones tick on every step. Tick marks light up as the fill passes.",
-    file: "packages/ui/src/components/form.tsx", importLine: 'import { Slider } from "@vks/ui"',
+    file: "packages/ui/src/components/form.tsx", importLine: 'import { Slider } from "@vks-kit/ui"',
     demo: () => <SliderDemo />,
     code: `const [v, setV] = useState([40])
 <Slider value={v} onValueChange={setV} format={(x) => x + "%"} aria-label="ລະດັບສຽງ" />`,
@@ -63,7 +63,7 @@ export const formDocs: Doc[] = [
   {
     slug: "input", name: "Input & Textarea", group: "Form", badge: "Stable",
     desc: "44 px tall, 16 px text (iOS never zooms), red border + shake when invalid.",
-    file: "packages/ui/src/components/input.tsx", importLine: 'import { Input, Textarea, Label } from "@vks/ui"',
+    file: "packages/ui/src/components/input.tsx", importLine: 'import { Input, Textarea, Label } from "@vks-kit/ui"',
     demo: () => <div className="grid w-full max-w-sm gap-3"><div className="grid gap-1.5"><Label htmlFor="d-id">ລະຫັດພະນັກງານ</Label><Input id="d-id" placeholder="G001" /></div><div className="grid gap-1.5"><Label htmlFor="d-bad">ເບີໂທ</Label><Input id="d-bad" invalid defaultValue="020 55" /><span className="text-xs text-destructive">ເບີບໍ່ຄົບ</span></div><Textarea placeholder="ໝາຍເຫດ…" /></div>,
     code: `<Label htmlFor="id">ລະຫັດພະນັກງານ</Label>
 <Input id="id" placeholder="G001" />
@@ -74,12 +74,12 @@ export const formDocs: Doc[] = [
       { name: "invalid", type: "boolean", def: "false", desc: "Sets aria-invalid: red border and one shake." },
       { name: "...props", type: 'React.ComponentProps<"input">', desc: "Everything a normal input takes." },
     ],
-    notes: ["Run cleanText() from @vks/types on free text before you save it."],
+    notes: ["Run cleanText() from @vks-kit/types on free text before you save it."],
   },
   {
     slug: "select", name: "Select", group: "Form", badge: "Stable",
     desc: "Radix Select with a 44 px trigger. For long lists or search, use Combobox.",
-    file: "packages/ui/src/components/form.tsx", importLine: 'import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@vks/ui"',
+    file: "packages/ui/src/components/form.tsx", importLine: 'import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@vks-kit/ui"',
     demo: () => <div className="w-full max-w-xs"><Select><SelectTrigger><SelectValue placeholder="ເລືອກຈຸດ…" /></SelectTrigger><SelectContent>{sites.map((s) => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}</SelectContent></Select></div>,
     code: `<Select onValueChange={setSite}>
   <SelectTrigger><SelectValue placeholder="ເລືອກຈຸດ…" /></SelectTrigger>
@@ -96,7 +96,7 @@ export const formDocs: Doc[] = [
   {
     slug: "checkbox-switch", name: "Checkbox & Switch", group: "Form", badge: "New",
     desc: "Press in and hold: the box sinks with a soft halo, the switch knob stretches into a pill. Let go: green grows out from the centre, the tick draws, the knob springs across and one ring pulses. Unticking is quicker and quiet. Both have a 44 px hit area and a tiny haptic on Android.",
-    file: "packages/ui/src/components/form.tsx", importLine: 'import { Checkbox, Switch, Label } from "@vks/ui"',
+    file: "packages/ui/src/components/form.tsx", importLine: 'import { Checkbox, Switch, Label } from "@vks-kit/ui"',
     demo: () => <div className="grid gap-3"><label className="flex items-center gap-3"><Checkbox defaultChecked />ມີຮູບປະກອບ</label><label className="flex items-center gap-3"><Switch defaultChecked />ແຈ້ງເຕືອນ</label></div>,
     code: `<label className="flex items-center gap-3"><Checkbox defaultChecked />ມີຮູບປະກອບ</label>
 <label className="flex items-center gap-3"><Switch defaultChecked />ແຈ້ງເຕືອນ</label>`,
@@ -109,7 +109,7 @@ export const formDocs: Doc[] = [
   {
     slug: "tabs", name: "Tabs", group: "Form", badge: "Stable",
     desc: "Segmented tabs. Keep to 2-4 on a phone.",
-    file: "packages/ui/src/components/form.tsx", importLine: 'import { Tabs, TabsList, TabsTrigger, TabsContent } from "@vks/ui"',
+    file: "packages/ui/src/components/form.tsx", importLine: 'import { Tabs, TabsList, TabsTrigger, TabsContent } from "@vks-kit/ui"',
     demo: () => <Tabs defaultValue="a" className="w-full max-w-sm"><TabsList><TabsTrigger value="a">ວັນນີ້</TabsTrigger><TabsTrigger value="b">ອາທິດນີ້</TabsTrigger><TabsTrigger value="c">ເດືອນນີ້</TabsTrigger></TabsList><TabsContent value="a" className="p-3">ສະແກນ 42 ຈຸດ</TabsContent><TabsContent value="b" className="p-3">ສະແກນ 290 ຈຸດ</TabsContent><TabsContent value="c" className="p-3">ສະແກນ 1,204 ຈຸດ</TabsContent></Tabs>,
     code: `<Tabs defaultValue="a">
   <TabsList>
@@ -123,7 +123,7 @@ export const formDocs: Doc[] = [
   {
     slug: "combobox", name: "Combobox", group: "Form", badge: "New",
     desc: "Searchable picker. Bottom sheet on a phone, popover on desktop; inside a Dialog on a phone it pushes a view in the same sheet. Single or multi.",
-    file: "packages/ui/src/components/combobox.tsx", importLine: 'import { Combobox, type Option } from "@vks/ui"',
+    file: "packages/ui/src/components/combobox.tsx", importLine: 'import { Combobox, type Option } from "@vks-kit/ui"',
     demo: () => <ComboDemo />,
     code: `const [v, setV] = useState<string[]>([])
 <Combobox options={sites} value={v} onChange={setV} />`,
@@ -140,7 +140,7 @@ export const formDocs: Doc[] = [
   {
     slug: "filter-chips", name: "Filter chips", group: "Form", badge: "New",
     desc: "Scrollable one-row chips for filtering lists. Better than a dropdown on a phone.",
-    file: "packages/ui/src/components/combobox.tsx", importLine: 'import { FilterChips } from "@vks/ui"',
+    file: "packages/ui/src/components/combobox.tsx", importLine: 'import { FilterChips } from "@vks-kit/ui"',
     demo: () => <ChipsDemo />,
     code: `<FilterChips options={[{ value: "all", label: "ທັງໝົດ" }, { value: "late", label: "ຊ້າ" }]} value={v} onChange={setV} />`,
     props: [
@@ -151,14 +151,14 @@ export const formDocs: Doc[] = [
   {
     slug: "search-box", name: "Search box", group: "Form", badge: "New",
     desc: "Input with a search icon and a clear button.",
-    file: "packages/ui/src/components/combobox.tsx", importLine: 'import { SearchBox } from "@vks/ui"',
+    file: "packages/ui/src/components/combobox.tsx", importLine: 'import { SearchBox } from "@vks-kit/ui"',
     demo: () => <SearchDemo />, code: `<SearchBox value={q} onChange={setQ} />`,
     props: [{ name: "value", type: "string", desc: "" }, { name: "onChange", type: "(v: string) => void", desc: "" }, { name: "placeholder", type: "string", def: '"ຄົ້ນຫາ..."', desc: "" }],
   },
   {
     slug: "radio-group", name: "Radio group", group: "Form", badge: "New",
     desc: "Pick exactly one of a few options, all visible at once. 44 px rows, the dot springs in.",
-    file: "packages/ui/src/components/form.tsx", importLine: 'import { RadioGroup, RadioGroupItem } from "@vks/ui"',
+    file: "packages/ui/src/components/form.tsx", importLine: 'import { RadioGroup, RadioGroupItem } from "@vks-kit/ui"',
     demo: () => <RadioDemo />,
     code: `<RadioGroup value={v} onValueChange={setV}>
   <RadioGroupItem value="day">ກະກາງເວັນ</RadioGroupItem>
@@ -170,7 +170,7 @@ export const formDocs: Doc[] = [
   {
     slug: "stepper", name: "Stepper", group: "Form", badge: "New",
     desc: "− / + number control for small counts (qty, guards per shift). The digit rolls up or down.",
-    file: "packages/ui/src/components/form.tsx", importLine: 'import { Stepper } from "@vks/ui"',
+    file: "packages/ui/src/components/form.tsx", importLine: 'import { Stepper } from "@vks-kit/ui"',
     demo: () => <StepperDemo />,
     code: `<Stepper value={n} onChange={setN} min={1} max={12} label="guards" />`,
     props: [{ name: "value / onChange", type: "number / (v: number) => void", desc: "" }, { name: "min / max / step", type: "number", def: "0 / 999 / 1", desc: "Buttons disable at the bounds." }, { name: "label", type: "string", desc: "aria-label for the group." }],
@@ -179,7 +179,7 @@ export const formDocs: Doc[] = [
   {
     slug: "otp-input", name: "OTP input", group: "Form", badge: "New",
     desc: "One box per digit, numeric keyboard, pastes a whole code, shakes on error.",
-    file: "packages/ui/src/components/otp-input.tsx", importLine: 'import { OtpInput } from "@vks/ui"',
+    file: "packages/ui/src/components/otp-input.tsx", importLine: 'import { OtpInput } from "@vks-kit/ui"',
     demo: () => <OtpDemo />,
     code: `<OtpInput value={code} onChange={setCode} onComplete={verify} error={wrong} />`,
     props: [

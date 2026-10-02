@@ -7,7 +7,7 @@
 - Live docs: #/docs/ios-alert
 
 ```ts
-import { IOSAlert } from "@vks/ui"
+import { IOSAlert } from "@vks-kit/ui"
 ```
 
 ## When to use

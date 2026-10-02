@@ -7,7 +7,7 @@
 - Live docs: #/docs/floating-input
 
 ```ts
-import { FloatingInput, PasswordInput } from "@vks/ui"
+import { FloatingInput, PasswordInput } from "@vks-kit/ui"
 ```
 
 ## When to use

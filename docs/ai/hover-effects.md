@@ -7,7 +7,7 @@
 - Live docs: #/docs/hover-effects
 
 ```ts
-import { HoverFx, Parallax, ParallaxLayer, SlideHighlight, CursorRing, usePointerVars } from "@vks/ui"
+import { HoverFx, Parallax, ParallaxLayer, SlideHighlight, CursorRing, usePointerVars } from "@vks-kit/ui"
 ```
 
 ## When to use

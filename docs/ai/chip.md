@@ -7,7 +7,7 @@
 - Live docs: #/docs/chip
 
 ```ts
-import { Chip } from "@vks/ui"
+import { Chip } from "@vks-kit/ui"
 ```
 
 ## When to use

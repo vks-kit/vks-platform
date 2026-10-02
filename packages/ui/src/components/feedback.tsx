@@ -11,7 +11,7 @@ export function Skeleton({ className, ...p }: React.ComponentProps<"div">) {
 export function Spinner({ className }: { className?: string }) {
   return <Loader2 aria-label="loading" className={cn("vks-spin size-4", className)} />
 }
-/** Circle pops, tick draws. Pair with haptics.success() from @vks/core. */
+/** Circle pops, tick draws. Pair with haptics.success() from @vks-kit/core. */
 export function SuccessCheck({ className }: { className?: string }) {
   return (
     <svg role="img" aria-label="success" viewBox="0 0 56 56" className={cn("vks-check-pop size-14", className)}>

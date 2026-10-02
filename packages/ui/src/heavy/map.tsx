@@ -33,7 +33,7 @@ const toneText = { success: "text-success", warning: "text-warning", danger: "te
  * (danger pins keep pulsing), Noto Sans Lao card tooltips, an optional pin card that springs up from the bottom
  * when a pin is tapped (phones have no hover), and a tiny OSM credit (required by the tile licence).
  * On phones, with 2+ pins, a bottom sheet lists every pin (tap a row to fly there and open its card), because small pins are hard to hit
- * with a thumb; pass list={false} to turn it off. Import from "@vks/ui/map" only where a map is shown. Point-in-radius check is in @vks/core/geo.
+ * with a thumb; pass list={false} to turn it off. Import from "@vks-kit/ui/map" only where a map is shown. Point-in-radius check is in @vks-kit/core/geo.
  */
 export function MapView({ pins, height = 320, onPin, center = [17.9757, 102.6331], zoom = 12, tips = "hover", card, renderCard, list, flush }: {
   pins: Pin[]; height?: number | string; onPin?: (id: string) => void; center?: [number, number]; zoom?: number

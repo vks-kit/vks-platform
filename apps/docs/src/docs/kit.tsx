@@ -1,6 +1,6 @@
 import * as React from "react"
-import { Check, Copy, ChevronDown, Code2, RotateCcw, Terminal, FileCode2, Monitor, Smartphone, Columns2 } from "@vks/ui/icons"
-import { cn, toast } from "@vks/ui"
+import { Check, Copy, ChevronDown, Code2, RotateCcw, Terminal, FileCode2, Monitor, Smartphone, Columns2 } from "@vks-kit/ui/icons"
+import { cn, toast } from "@vks-kit/ui"
 
 import { PhoneFrame } from "./layout"
 import { toLo } from "./i18n"
@@ -159,7 +159,7 @@ export function InstallBlock({ file, importLine }: { file: string; importLine: s
     <div className="space-y-3">
       <Tabs2 tabs={["Command", "Manual"]} value={tab} onChange={setTab} />
       {tab === "Command"
-        ? <CodeBlock lang="bash" title="terminal" code={"npm install @vks/ui -w apps/<your-app>"} />
+        ? <CodeBlock lang="bash" title="terminal" code={"npm install @vks-kit/ui -w apps/<your-app>"} />
         : <div className="space-y-3 text-sm">
             <p className="leading-7 text-muted-foreground">Already in the monorepo. Source lives at <code className="break-all rounded bg-muted px-1.5 py-0.5 font-mono text-[13px]">{file}</code>. Edit it there, never copy it into an app.</p>
             <CodeBlock code={importLine} />

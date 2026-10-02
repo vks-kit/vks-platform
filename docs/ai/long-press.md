@@ -7,7 +7,7 @@
 - Live docs: #/docs/long-press
 
 ```ts
-import { useLongPress } from "@vks/ui"
+import { useLongPress } from "@vks-kit/ui"
 ```
 
 ## Example

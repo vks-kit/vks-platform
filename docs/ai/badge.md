@@ -7,7 +7,7 @@
 - Live docs: #/docs/badge
 
 ```ts
-import { Badge } from "@vks/ui"
+import { Badge } from "@vks-kit/ui"
 ```
 
 ## When to use

@@ -7,7 +7,7 @@
 - Live docs: #/docs/wizard
 
 ```ts
-import { Wizard } from "@vks/ui"
+import { Wizard } from "@vks-kit/ui"
 ```
 
 ## When to use

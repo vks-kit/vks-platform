@@ -7,7 +7,7 @@
 - Live docs: #/docs/charts-schedule
 
 ```ts
-import { Heatmap, DateGrid, LatencyTimeline, AttendanceBoard } from "@vks/ui/charts"
+import { Heatmap, DateGrid, LatencyTimeline, AttendanceBoard } from "@vks-kit/ui/charts"
 ```
 
 ## When to use

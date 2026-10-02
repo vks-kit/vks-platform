@@ -7,7 +7,7 @@
 - Live docs: #/docs/signature-pad
 
 ```ts
-import { SignaturePad, type SignaturePadHandle } from "@vks/ui"
+import { SignaturePad, type SignaturePadHandle } from "@vks-kit/ui"
 ```
 
 ## When to use

@@ -29,8 +29,8 @@ export function scan(dir, { allow = [] } = {}) {
     if (allow.includes(where)) continue
     readFileSync(f, "utf8").split(/\r?\n/).forEach((l, i) => {
       const at = `${where}:${i + 1}`
-      if (IMPORT.test(l)) hits.push({ rule: "direct-import", where: at, text: l.trim(), fix: 'Import from "@vks/ui" (icons: "@vks/ui/icons")' })
-      if (DEEP.test(l)) hits.push({ rule: "deep-import", where: at, text: l.trim(), fix: "Use @vks/ui, /icons, /charts, /map, /kanban or /scan" })
+      if (IMPORT.test(l)) hits.push({ rule: "direct-import", where: at, text: l.trim(), fix: 'Import from "@vks-kit/ui" (icons: "@vks-kit/ui/icons")' })
+      if (DEEP.test(l)) hits.push({ rule: "deep-import", where: at, text: l.trim(), fix: "Use @vks-kit/ui, /icons, /charts, /map, /kanban or /scan" })
       const m = l.match(COLOUR)
       if (m && !/^#\d+$/.test(m[0]) && !/^\s*(\/\/|\*)/.test(l)) hits.push({ rule: "raw-colour", where: at, text: m[0], fix: "Use a token: bg-primary, text-gold, var(--success)" })
     })

@@ -7,7 +7,7 @@
 - Live docs: #/docs/sheet
 
 ```ts
-import { Sheet, SheetTrigger, SheetContent, SheetTitle, SheetDescription } from "@vks/ui"
+import { Sheet, SheetTrigger, SheetContent, SheetTitle, SheetDescription } from "@vks-kit/ui"
 ```
 
 ## When to use

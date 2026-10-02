@@ -7,7 +7,7 @@
 - Live docs: #/docs/kbd-copy
 
 ```ts
-import { Kbd, CopyButton, Separator } from "@vks/ui"
+import { Kbd, CopyButton, Separator } from "@vks-kit/ui"
 ```
 
 ## When to use

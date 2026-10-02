@@ -7,7 +7,7 @@
 - Live docs: #/docs/indexed-list
 
 ```ts
-import { IndexedList, groupByIndex, indexKey } from "@vks/ui"
+import { IndexedList, groupByIndex, indexKey } from "@vks-kit/ui"
 ```
 
 ## When to use

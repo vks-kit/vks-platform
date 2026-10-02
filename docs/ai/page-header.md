@@ -7,7 +7,7 @@
 - Live docs: #/docs/page-header
 
 ```ts
-import { PageHeader, LargeTitleBar } from "@vks/ui"
+import { PageHeader, LargeTitleBar } from "@vks-kit/ui"
 ```
 
 ## When to use

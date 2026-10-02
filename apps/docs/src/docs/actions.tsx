@@ -1,13 +1,13 @@
 import * as React from "react"
-import { ScanLine, Trash2, Plus, ArrowRight, Bold, Italic, Underline, Flashlight, List, LayoutGrid, Map as MapIcon, Sun, Moon, Clock } from "@vks/ui/icons"
-import { Button, Badge, Logo, LogoTile, BRAND, Toggle, ToggleGroup, ToggleGroupItem, toast } from "@vks/ui"
+import { ScanLine, Trash2, Plus, ArrowRight, Bold, Italic, Underline, Flashlight, List, LayoutGrid, Map as MapIcon, Sun, Moon, Clock } from "@vks-kit/ui/icons"
+import { Button, Badge, Logo, LogoTile, BRAND, Toggle, ToggleGroup, ToggleGroupItem, toast } from "@vks-kit/ui"
 import type { Doc } from "./types"
 
 export const actionDocs: Doc[] = [
   {
     slug: "button", name: "Button", group: "Actions", badge: "Stable",
     desc: "The one button. Layered fill, inner highlight, tinted lift shadow and a sheen on hover. Presses land on an iOS spring. h-11 (44 px) on every size.",
-    file: "packages/ui/src/components/button.tsx", importLine: 'import { Button } from "@vks/ui"',
+    file: "packages/ui/src/components/button.tsx", importLine: 'import { Button } from "@vks-kit/ui"',
     demo: () => <><Button>ບັນທຶກ</Button><Button variant="action"><ScanLine />ສະແກນ</Button><Button variant="gold">Gold</Button><Button variant="outline">Outline</Button><Button variant="ghost">Ghost</Button><Button variant="destructive"><Trash2 />ລຶບ</Button></>,
     code: `<Button>ບັນທຶກ</Button>
 <Button variant="action"><ScanLine />ສະແກນ</Button>
@@ -15,7 +15,7 @@ export const actionDocs: Doc[] = [
 <Button variant="outline">Outline</Button>
 <Button variant="ghost">Ghost</Button>
 <Button variant="destructive"><Trash2 />ລຶບ</Button>`,
-    usage: `import { Button } from "@vks/ui"
+    usage: `import { Button } from "@vks-kit/ui"
 
 export function Save() {
   return <Button onClick={save}>ບັນທຶກ</Button>
@@ -46,7 +46,7 @@ export function Save() {
   {
     slug: "badge", name: "Badge", group: "Actions", badge: "Stable",
     desc: "Small status pill. Tinted background + full-strength text so it passes contrast in both themes.",
-    file: "packages/ui/src/components/badge.tsx", importLine: 'import { Badge } from "@vks/ui"',
+    file: "packages/ui/src/components/badge.tsx", importLine: 'import { Badge } from "@vks-kit/ui"',
     demo: () => <><Badge>ປົກກະຕິ</Badge><Badge variant="info">ໃໝ່</Badge><Badge variant="success" dot>ສຳເລັດ</Badge><Badge variant="danger" live>ສົດ</Badge><Badge variant="success">ສຳເລັດ</Badge><Badge variant="warning">ຊ້າ</Badge><Badge variant="danger">ພາດ</Badge><Badge variant="gold">VIP</Badge></>,
     code: `<Badge>ປົກກະຕິ</Badge>
 <Badge variant="success">ສຳເລັດ</Badge>
@@ -65,7 +65,7 @@ export function Save() {
   {
     slug: "toggle", name: "Toggle", group: "Actions", badge: "New",
     desc: "A button that stays pressed. ToggleGroup picks one (or many) of a few options; the segmented variant is the iOS control with a pill that springs under your choice.",
-    file: "packages/ui/src/components/toggle.tsx", importLine: 'import { Toggle, ToggleGroup, ToggleGroupItem } from "@vks/ui"',
+    file: "packages/ui/src/components/toggle.tsx", importLine: 'import { Toggle, ToggleGroup, ToggleGroupItem } from "@vks-kit/ui"',
     demo: () => {
       const [v, setV] = React.useState("list")
       return <div className="flex flex-col items-center gap-5">
@@ -110,7 +110,7 @@ export function Save() {
   {
     slug: "logo", name: "Logo", group: "Foundations", badge: "New",
     desc: "The official VKS badge, redrawn as a vector from the brand file used in the QC dashboard. Same colours in both themes, because the badge carries its own field.",
-    file: "packages/ui/src/components/logo.tsx", importLine: 'import { Logo, LogoTile, BRAND } from "@vks/ui"',
+    file: "packages/ui/src/components/logo.tsx", importLine: 'import { Logo, LogoTile, BRAND } from "@vks-kit/ui"',
     demo: () => <div className="flex flex-wrap items-center justify-center gap-6">
       <Logo className="vks-shine size-40" />
       <div className="flex flex-col items-center gap-3"><LogoTile className="size-24" /><span className="text-xs text-muted-foreground">LogoTile · app icon</span></div>
@@ -122,7 +122,7 @@ export function Save() {
     examples: [
       { id: "sizes", title: "Sizes", note: "Readable down to 32 px. Below that use mono.", demo: () => <div className="flex flex-wrap items-end justify-center gap-4">{["size-8", "size-10", "size-14", "size-20", "size-28"].map((s) => <Logo key={s} className={s} />)}</div>, code: `<Logo className="size-8" /> … <Logo className="size-28" />` },
       { id: "on-navy", title: "On the navy bar", demo: () => <div className="flex items-center gap-3 rounded-2xl bg-bar px-5 py-3 text-bar-foreground"><Logo className="size-10" /><div><div className="font-bold leading-snug">{BRAND.name}</div><div className="text-xs leading-normal opacity-75">{BRAND.legalLo}</div></div></div>,
-        code: `import { Logo, BRAND } from "@vks/ui"
+        code: `import { Logo, BRAND } from "@vks-kit/ui"
 
 <header className="bg-bar text-bar-foreground">
   <Logo className="size-10" />

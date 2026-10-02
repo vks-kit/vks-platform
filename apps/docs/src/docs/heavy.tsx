@@ -7,7 +7,7 @@ export const heavyDocs: Doc[] = [
   {
     slug: "charts", name: "Charts · Trends", group: "Heavy (lazy)", badge: "Lazy",
     desc: "Recharts wrapped in theme colours (chart-1…5 flip with the theme): gradient fills, VKS card tooltip, tap-to-hide legend pills, entry animation (off for reduced motion / lite). Bar, Line, Area, Combo and Sparkline: values over time. ~105 KB gzip, so load it only on report pages. Phone: they simply fill the card width, axes stay 12 px; keep to 7 or fewer x labels. Siblings: Charts · Share & compare, Charts · Schedules & grids.",
-    file: "packages/ui/src/heavy/charts.tsx", importLine: 'import { BarSeries, LineSeries, AreaSeries, ComboSeries, Sparkline, ChartTip, ChartLegend } from "@vks/ui/charts"',
+    file: "packages/ui/src/heavy/charts.tsx", importLine: 'import { BarSeries, LineSeries, AreaSeries, ComboSeries, Sparkline, ChartTip, ChartLegend } from "@vks-kit/ui/charts"',
     demo: L("Charts"),
     code: `const Charts = lazy(() => import("./ReportCharts"))   // keep it off the guard's first load
 
@@ -32,7 +32,7 @@ export const heavyDocs: Doc[] = [
   {
     slug: "charts-share", name: "Charts · Share & compare", group: "Heavy (lazy)", badge: "Lazy",
     desc: "Parts of a whole and comparisons: Donut, RadialBars, Scatter / bubble and Radar. Phone: Donut and RadialBars scale as they are; RadarSeries switches by its own width to a bar-per-axis comparison list, because radar labels collide on a 320 px card (industry practice: radar is desktop, bars are the phone equivalent). Pass compact to force either form.",
-    file: "packages/ui/src/heavy/charts.tsx", importLine: 'import { Donut, RadialBars, ScatterSeries, RadarSeries } from "@vks/ui/charts"',
+    file: "packages/ui/src/heavy/charts.tsx", importLine: 'import { Donut, RadialBars, ScatterSeries, RadarSeries } from "@vks-kit/ui/charts"',
     demo: L("ChartsShare"),
     code: `<Donut data={[{ name: "ສຳເລັດ", value: 82 }, { name: "ຊ້າ", value: 12 }]} centerLabel="ລວມ" />
 <RadialBars data={[{ name: "ລາດຕະເວນ", value: 86 }, { name: "ຝຶກອົບຮົມ", value: 64 }]} />
@@ -52,7 +52,7 @@ export const heavyDocs: Doc[] = [
   {
     slug: "charts-schedule", name: "Charts · Schedules & grids", group: "Heavy (lazy)", badge: "Lazy",
     desc: "Calendar-shaped charts from the VKS apps: Heatmap, DateGrid (QC site profile), LatencyTimeline (patrol latency site profile) and AttendanceBoard (HRM ຕິດຕາມການມາວຽກ). Each has a real phone form chosen by its own width, not the screen: DateGrid becomes one tappable row per round (mini status strip) that opens a bottom sheet with the days, Heatmap scales, LatencyTimeline becomes a month calendar with gap chips and tapping a visited day opens a bottom sheet, AttendanceBoard becomes one tappable row per guard that opens a bottom sheet with the month. Phone tap targets are 44 px.",
-    file: "packages/ui/src/heavy/charts.tsx", importLine: 'import { Heatmap, DateGrid, LatencyTimeline, AttendanceBoard } from "@vks/ui/charts"',
+    file: "packages/ui/src/heavy/charts.tsx", importLine: 'import { Heatmap, DateGrid, LatencyTimeline, AttendanceBoard } from "@vks-kit/ui/charts"',
     demo: L("ChartsSchedule"),
     code: `<Heatmap rows={days} cols={hours} values={grid} unit="ເຫດ" />
 <DateGrid rows={["R1", "R2", "R3"]} dates={["2/4", "2/5", "2/6"]} status={[["ok", "late", "miss"], ["ok", "ok", "na"], ["ok", "ok", "ok"]]} today={1} onPick={(r, d, s) => open(r, d)} />
@@ -71,7 +71,7 @@ export const heavyDocs: Doc[] = [
   {
     slug: "map", bleed: true, name: "Map", group: "Heavy (lazy)", badge: "Lazy",
     desc: "Leaflet + OpenStreetMap with VKS controls: glass 44 px zoom + 'fit all pins' buttons, pulsing token pins (danger pulses faster), Noto Sans Lao card tooltips (tone dot, title, sub line, time), an optional pin card that springs up when a pin is tapped (phones have no hover, so this is how they read details), always-on labels, and a tiny © OSM credit (required by the OSM licence). Defaults to Vientiane. ~43 KB gzip.",
-    file: "packages/ui/src/heavy/map.tsx", importLine: 'import { MapView, type Pin } from "@vks/ui/map"',
+    file: "packages/ui/src/heavy/map.tsx", importLine: 'import { MapView, type Pin } from "@vks-kit/ui/map"',
     demo: L("Map"),
     code: `<MapView
   pins={[{ id: "1", lat: 17.9757, lng: 102.6331, label: "ປະຕູໜ້າ", sub: "ສົມພອນ · ເຂົ້າກະແລ້ວ", meta: "08:12", tone: "success" }]}
@@ -92,7 +92,7 @@ export const heavyDocs: Doc[] = [
   {
     slug: "kanban", name: "Kanban", group: "Heavy (lazy)", badge: "Lazy",
     desc: "Task board. Desktop: drag cards between columns (keyboard: Space + arrows). Phone: no dragging — one column per screen with count tabs, swipe between columns, tap a card to move it from a bottom sheet. ~17 KB gzip.",
-    file: "packages/ui/src/heavy/kanban.tsx", importLine: 'import { Kanban, moveCard, type KanbanCard } from "@vks/ui/kanban"',
+    file: "packages/ui/src/heavy/kanban.tsx", importLine: 'import { Kanban, moveCard, type KanbanCard } from "@vks-kit/ui/kanban"',
     demo: L("Board"),
     code: `<Kanban columns={[{ id: "todo", title: "ຕ້ອງເຮັດ" }, { id: "done", title: "ສຳເລັດ" }]}
   cards={cards} onChange={(next, { id, to }) => { setCards(next); save(id, to) }} />`,
@@ -104,7 +104,7 @@ export const heavyDocs: Doc[] = [
   {
     slug: "scan", name: "QR scan & photo", group: "Heavy (lazy)", badge: "Lazy",
     desc: "Camera QR scanner (jsQR) and a photo button that shrinks to 1280 px / 70 % JPEG before upload. ~48 KB gzip.",
-    file: "packages/ui/src/heavy/scan.tsx", importLine: 'import { QrScanner, PhotoCapture } from "@vks/ui/scan"',
+    file: "packages/ui/src/heavy/scan.tsx", importLine: 'import { QrScanner, PhotoCapture } from "@vks-kit/ui/scan"',
     demo: L("Scan"),
     code: `<QrScanner onScan={(text) => submit(text)} onError={showHelp} />
 <PhotoCapture onPhoto={({ blob, bytes }) => upload(blob)} />`,
@@ -116,7 +116,7 @@ export const heavyDocs: Doc[] = [
   {
     slug: "capture-stamp", name: "Capture stamp (photo & video)", group: "Heavy (lazy)", badge: "Lazy",
     desc: "The time / site / GPS card the Patrol app burns into photos and video frames: top-left capture time, bottom-right site + GPS, top-right brand pill. One drawing function, so the live preview and the saved file look identical. Lao text wraps without splitting tone marks.",
-    file: "packages/ui/src/heavy/scan.tsx", importLine: 'import { drawCaptureStamp, stampPhoto, stampTime, CaptureStamp, type CaptureStampData } from "@vks/ui/scan"',
+    file: "packages/ui/src/heavy/scan.tsx", importLine: 'import { drawCaptureStamp, stampPhoto, stampTime, CaptureStamp, type CaptureStampData } from "@vks-kit/ui/scan"',
     demo: L("Stamp"),
     code: `const data = { time: stampTime(), site: "ຄັງສິນຄ້າ ໂຮງງານເບຍລາວ", gps: "17.97570, 102.63310 (±8 m)" }
 
@@ -139,7 +139,7 @@ drawCaptureStamp(ctx, canvas.width, canvas.height, data)`,
   {
     slug: "signature-pad", name: "Signature pad", group: "Heavy (lazy)", badge: "Lazy",
     desc: "Finger signature for hand-overs. Read it back as a PNG.",
-    file: "packages/ui/src/components/signature-pad.tsx", importLine: 'import { SignaturePad, type SignaturePadHandle } from "@vks/ui"',
+    file: "packages/ui/src/components/signature-pad.tsx", importLine: 'import { SignaturePad, type SignaturePadHandle } from "@vks-kit/ui"',
     demo: L("Sign"),
     code: `const ref = useRef<SignaturePadHandle>(null)
 <SignaturePad ref={ref} onChange={(empty) => setSigned(!empty)} />

@@ -7,7 +7,7 @@
 - Live docs: #/docs/combobox
 
 ```ts
-import { Combobox, type Option } from "@vks/ui"
+import { Combobox, type Option } from "@vks-kit/ui"
 ```
 
 ## When to use

@@ -7,7 +7,7 @@
 - Live docs: #/docs/charts
 
 ```ts
-import { BarSeries, LineSeries, AreaSeries, ComboSeries, Sparkline, ChartTip, ChartLegend } from "@vks/ui/charts"
+import { BarSeries, LineSeries, AreaSeries, ComboSeries, Sparkline, ChartTip, ChartLegend } from "@vks-kit/ui/charts"
 ```
 
 ## When to use

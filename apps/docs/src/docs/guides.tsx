@@ -1,6 +1,6 @@
 import * as React from "react"
-import { Pointer, MonitorSmartphone, PanelBottom, PanelBottomOpen, Type, Vibrate, MousePointerClick, ImageDown, Cpu, Signal, ArrowRight, Smartphone, Palette, Zap, Languages, WifiOff, ShieldCheck, RefreshCw, Monitor, Home, ClipboardList, Users, BarChart3, Bell, Plus, Ruler, Move, Timer, Package, Coins, Blocks, Eraser, Tag, Columns2, LayoutGrid, Layers, Maximize2, Hand, MousePointer2, Sparkles, Gauge, Accessibility, Navigation } from "@vks/ui/icons"
-import { Button, Card, CardContent, Badge, SuccessCheck, Logo, Tabs, TabsList, TabsTrigger, Slider, toast, useTheme } from "@vks/ui"
+import { Pointer, MonitorSmartphone, PanelBottom, PanelBottomOpen, Type, Vibrate, MousePointerClick, ImageDown, Cpu, Signal, ArrowRight, Smartphone, Palette, Zap, Languages, WifiOff, ShieldCheck, RefreshCw, Monitor, Home, ClipboardList, Users, BarChart3, Bell, Plus, Ruler, Move, Timer, Package, Coins, Blocks, Eraser, Tag, Columns2, LayoutGrid, Layers, Maximize2, Hand, MousePointer2, Sparkles, Gauge, Accessibility, Navigation } from "@vks-kit/ui/icons"
+import { Button, Card, CardContent, Badge, SuccessCheck, Logo, Tabs, TabsList, TabsTrigger, Slider, toast, useTheme } from "@vks-kit/ui"
 import { CodeBlock, H2, H3, P, Code, FeatureCard, FeatureGrid, useT, useTr } from "./kit"
 
 const Lead = ({ children }: { children: React.ReactNode }) => <p className="text-lg leading-8 text-muted-foreground">{children}</p>
@@ -12,7 +12,7 @@ export function Introduction() {
     { icon: <Smartphone />, t: t("ມືຖືມາກ່ອນ", "Phone first"), d: t("ສ້າງເພື່ອໂທລະສັບ Android ລາຄາຖືກ. ປຸ່ມ 44 px, bottom sheet, bottom nav.", "Built for cheap Android phones. 44 px targets, bottom sheets, bottom nav.") },
     { icon: <Palette />, t: t("ສອງ theme", "Two themes"), d: t("A (Guard Navy + Gold) ສຳລັບກາງເວັນ. E (Night Watch) ສຳລັບກະກາງຄືນ.", "A (Guard Navy + Gold) for day. E (Night Watch) for night shifts.") },
     { icon: <Languages />, t: t("ພາສາລາວກ່ອນ", "Lao first"), d: t("Noto Sans Lao, line-height 1.7, ຊື່ເດືອນເປັນພາສາລາວ, ເງິນເປັນ ກີບ.", "Noto Sans Lao, line-height 1.7, Lao month names, ກີບ money.") },
-    { icon: <WifiOff />, t: t("ໃຊ້ໄດ້ເມື່ອບໍ່ມີເນັດ", "Works offline"), d: t("Offline queue, banner ແລະ page cache ໃນ @vks/core.", "Offline queue, banner and page cache in @vks/core.") },
+    { icon: <WifiOff />, t: t("ໃຊ້ໄດ້ເມື່ອບໍ່ມີເນັດ", "Works offline"), d: t("Offline queue, banner ແລະ page cache ໃນ @vks-kit/core.", "Offline queue, banner and page cache in @vks-kit/core.") },
     { icon: <Zap />, t: t("ຂະໜາດນ້ອຍ", "Small"), d: t("core ~29 KB gzip. Charts, map, kanban ແລະ scan ຈະໂຫຼດເມື່ອໃຊ້ເທົ່ານັ້ນ.", "~29 KB gzip core. Charts, map, kanban and scan load only when used.") },
     { icon: <ShieldCheck />, t: t("ເຂົ້າເຖິງໄດ້ງ່າຍ", "Accessible"), d: t("ໃຊ້ Radix ພາຍໃນ: keyboard, focus ແລະ screen reader ຈັດການໃຫ້ແລ້ວ.", "Radix under the hood: keyboard, focus and screen readers handled.") },
   ]
@@ -30,13 +30,13 @@ export function Introduction() {
         <Logo className="vks-float-y size-28 vks-logo-lift md:size-44" />
       </div>
     </section>
-    <Lead>{t("@vks/ui ແມ່ນຊຸດ component ດຽວສຳລັບທຸກເວັບໄຊ ແລະ ແອັບຂອງ VKS. Radix + Tailwind v4, ໃຊ້ສີຂອງບໍລິສັດ, ປັບໃຫ້ເໝາະກັບເຈົ້າໜ້າທີ່ຮັກສາຄວາມປອດໄພທີ່ເຄື່ອນທີ່ຕະຫຼອດ.", "@vks/ui is the one component set for every VKS website and app. Radix + Tailwind v4, in the company colours, tuned for guards on the move.")}</Lead>
+    <Lead>{t("@vks-kit/ui ແມ່ນຊຸດ component ດຽວສຳລັບທຸກເວັບໄຊ ແລະ ແອັບຂອງ VKS. Radix + Tailwind v4, ໃຊ້ສີຂອງບໍລິສັດ, ປັບໃຫ້ເໝາະກັບເຈົ້າໜ້າທີ່ຮັກສາຄວາມປອດໄພທີ່ເຄື່ອນທີ່ຕະຫຼອດ.", "@vks-kit/ui is the one component set for every VKS website and app. Radix + Tailwind v4, in the company colours, tuned for guards on the move.")}</Lead>
     <H2 id="principles">{t("ຫຼັກການ", "Principles")}</H2>
     <FeatureGrid>{items.map((x) => <FeatureCard key={x.t} icon={x.icon} title={x.t} compact>{x.d}</FeatureCard>)}</FeatureGrid>
     <H2 id="packages">{t("ແພັກເກດ", "Packages")}</H2>
-    <div className="overflow-x-auto rounded-xl border"><table className="w-full min-w-[480px] text-sm"><tbody>{[["@vks/ui", t("Component, theme, animation", "Components, theme, animations")], ["@vks/ui/charts · /map · /kanban · /scan", t("ສ່ວນໜັກ, ແຍກ entry point ຕ່າງຫາກ", "Heavy parts, separate entry points")], ["@vks/core", t("Offline queue, haptics, i18n t(en, lo), fmtKip, ຍ່ອຮູບ, PWA, geo", "Offline queue, haptics, i18n t(en, lo), fmtKip, photo shrink, PWA, geo")], ["@vks/types", t("Zod schema ທີ່ໃຊ້ຮ່ວມກັນລະຫວ່າງ browser ແລະ Worker; cleanText, normalizeLao", "Zod schemas shared by browser and Worker; cleanText, normalizeLao")]].map(([a, b]) => <tr key={a} className="border-t first:border-0"><td className="px-4 py-2.5 font-mono text-[13px] font-semibold">{a}</td><td className="px-4 py-2.5 text-muted-foreground">{b}</td></tr>)}</tbody></table></div>
+    <div className="overflow-x-auto rounded-xl border"><table className="w-full min-w-[480px] text-sm"><tbody>{[["@vks-kit/ui", t("Component, theme, animation", "Components, theme, animations")], ["@vks-kit/ui/charts · /map · /kanban · /scan", t("ສ່ວນໜັກ, ແຍກ entry point ຕ່າງຫາກ", "Heavy parts, separate entry points")], ["@vks-kit/core", t("Offline queue, haptics, i18n t(en, lo), fmtKip, ຍ່ອຮູບ, PWA, geo", "Offline queue, haptics, i18n t(en, lo), fmtKip, photo shrink, PWA, geo")], ["@vks-kit/types", t("Zod schema ທີ່ໃຊ້ຮ່ວມກັນລະຫວ່າງ browser ແລະ Worker; cleanText, normalizeLao", "Zod schemas shared by browser and Worker; cleanText, normalizeLao")]].map(([a, b]) => <tr key={a} className="border-t first:border-0"><td className="px-4 py-2.5 font-mono text-[13px] font-semibold">{a}</td><td className="px-4 py-2.5 text-muted-foreground">{b}</td></tr>)}</tbody></table></div>
     <H2 id="quick-start">{t("ເລີ່ມໄວ", "Quick start")}</H2>
-    <CodeBlock code={`import { Button, toast } from "@vks/ui"
+    <CodeBlock code={`import { Button, toast } from "@vks-kit/ui"
 
 export function ScanDone() {
   return <Button variant="action" onClick={() => toast.success("ສະແກນແລ້ວ")}>ສະແກນ</Button>
@@ -53,7 +53,7 @@ export function Installation() {
     <CodeBlock lang="bash" code={`# inside vks-platform/
 mkdir apps/my-app && cd apps/my-app
 npm create vite@latest . -- --template react-ts
-npm install @vks/ui @vks/core @vks/types -w apps/my-app`} />
+npm install @vks-kit/ui @vks-kit/core @vks-kit/types -w apps/my-app`} />
     <H2 id="vite">2 · Vite + Tailwind</H2>
     <CodeBlock code={`// vite.config.ts
 import { defineConfig } from "vite"
@@ -62,9 +62,9 @@ import tailwindcss from "@tailwindcss/vite"
 export default defineConfig({ plugins: [react(), tailwindcss()] })`} />
     <H2 id="css">{t("3 · CSS ໜຶ່ງແຖວ", "3 · One CSS line")}</H2>
     <CodeBlock lang="css" code={`/* src/index.css */
-@import "@vks/ui/theme.css";   /* tokens, font, animations, print */`} />
+@import "@vks-kit/ui/theme.css";   /* tokens, font, animations, print */`} />
     <H2 id="root">{t("4 · ຄອບ root", "4 · Wrap the root")}</H2>
-    <CodeBlock code={`import { ThemeProvider, TooltipProvider, Toaster } from "@vks/ui"
+    <CodeBlock code={`import { ThemeProvider, TooltipProvider, Toaster } from "@vks-kit/ui"
 
 createRoot(root).render(
   <ThemeProvider>
@@ -81,7 +81,7 @@ createRoot(root).render(
     <H2 id="rules">{t("ກົດ (AGENTS.md)", "Rules (AGENTS.md)")}</H2>
     <FeatureGrid>
       <FeatureCard icon={<Palette />} title={t("ໃຊ້ token ເທົ່ານັ້ນ", "Tokens only")} index={0} compact>{t("ຫ້າມໃຊ້ສີດິບໃນແອັບ. ໃຊ້", "No raw colours in apps. Use")} <Code>bg-primary</Code>, <Code>text-muted-foreground</Code>, <Code>var(--success)</Code>.</FeatureCard>
-      <FeatureCard icon={<Package />} title={t("ທາງເຂົ້າດຽວ", "One entry point")} index={1} compact>{t("import Radix, icon ແລະ toast ຜ່ານ", "Import Radix, icons and toasts only through")} <Code>@vks/ui</Code> {t("ແລະ", "and")} <Code>@vks/ui/icons</Code> {t("ເທົ່ານັ້ນ.", "only.")}</FeatureCard>
+      <FeatureCard icon={<Package />} title={t("ທາງເຂົ້າດຽວ", "One entry point")} index={1} compact>{t("import Radix, icon ແລະ toast ຜ່ານ", "Import Radix, icons and toasts only through")} <Code>@vks-kit/ui</Code> {t("ແລະ", "and")} <Code>@vks-kit/ui/icons</Code> {t("ເທົ່ານັ້ນ.", "only.")}</FeatureCard>
       <FeatureCard icon={<Blocks />} title={t("ສ່ວນໃໝ່, ການປ່ຽນດຽວກັນ", "New part, same change")} index={2} compact>{t("ເພີ່ມໃສ່ packages/ui, gallery ແລະ docs ນີ້ພ້ອມກັນ, ແລ້ວແລ່ນ", "Add it to packages/ui, the gallery and these docs together, then")} <Code>npm run ai:index</Code>.</FeatureCard>
       <FeatureCard icon={<Eraser />} title={t("ທຳຄວາມສະອາດຂໍ້ຄວາມ", "Clean the text")} index={3} compact>{t("ແລ່ນ", "Run")} <Code>cleanText()</Code> {t("ກັບຂໍ້ຄວາມອິດສະຫຼະ;", "on free text;")} <Code>normalizeLao()</Code> {t("ກ່ອນປຽບທຽບຊື່.", "before comparing names.")}</FeatureCard>
     </FeatureGrid>
@@ -161,7 +161,7 @@ export function Typography() {
       <FeatureCard icon={<Type />} value="16 px" title={t("ຕົວອັກສອນໃນ input", "Input text")} index={1}>{t("Input ຕ້ອງມີຢ່າງໜ້ອຍ 16 px, ບໍ່ດັ່ງນັ້ນ iOS ຈະຊູມໜ້າເມື່ອ focus.", "Inputs are 16 px minimum, or iOS zooms the page on focus.")}</FeatureCard>
       <FeatureCard icon={<Languages />} value="ຄຳ ≠ ຄໍາ" title={t("Normalise ກ່ອນປຽບທຽບ", "Normalise before comparing")} index={2}>{t("ເກັບ ແລະ ປຽບທຽບພາສາລາວດ້ວຍ", "Store and compare Lao with")} <Code>normalizeLao()</Code>{t(". ທັງສອງເບິ່ງຄືກັນ ແຕ່ເປັນ code point ຕ່າງກັນ.", ". The two look the same but are different code points.")}</FeatureCard>
       <FeatureCard icon={<Coins />} value="ກີບ" title={t("ເງິນ", "Money")} index={3}><Code>fmtKip(1250000)</Code>{t(" → 1,250,000 ກີບ. ຫ້າມໃຊ້ ₭.", " → 1,250,000 ກີບ. Never ₭.")}</FeatureCard>
-      <FeatureCard icon={<Tag />} value="t(en, lo)" title={t("ຂໍ້ຄວາມສອງພາສາ", "Bilingual strings")} index={4}><Code>t("Save", "ບັນທຶກ")</Code>{t(" ຈາກ @vks/core ຈະເລືອກພາສາຂອງຜູ້ໃຊ້.", " from @vks/core picks the user's language.")}</FeatureCard>
+      <FeatureCard icon={<Tag />} value="t(en, lo)" title={t("ຂໍ້ຄວາມສອງພາສາ", "Bilingual strings")} index={4}><Code>t("Save", "ບັນທຶກ")</Code>{t(" ຈາກ @vks-kit/core ຈະເລືອກພາສາຂອງຜູ້ໃຊ້.", " from @vks-kit/core picks the user's language.")}</FeatureCard>
     </FeatureGrid>
   </div>
 }

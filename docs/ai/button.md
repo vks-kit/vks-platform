@@ -7,7 +7,7 @@
 - Live docs: #/docs/button
 
 ```ts
-import { Button } from "@vks/ui"
+import { Button } from "@vks-kit/ui"
 ```
 
 ## When to use
@@ -16,7 +16,7 @@ import { Button } from "@vks/ui"
 
 ## Usage
 
-import { Button } from "@vks/ui"
+import { Button } from "@vks-kit/ui"
 
 export function Save() {
   return <Button onClick={save}>ບັນທຶກ</Button>

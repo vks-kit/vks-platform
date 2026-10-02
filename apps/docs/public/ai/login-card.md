@@ -7,7 +7,7 @@
 - Live docs: #/docs/login-card
 
 ```ts
-import { LoginCard } from "@vks/ui"
+import { LoginCard } from "@vks-kit/ui"
 ```
 
 ## When to use

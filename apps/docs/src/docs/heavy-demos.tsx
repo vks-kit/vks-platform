@@ -1,10 +1,10 @@
 import * as React from "react"
-import { BarSeries, LineSeries, AreaSeries, Donut, Sparkline, ScatterSeries, RadarSeries, RadialBars, ComboSeries, Heatmap, DateGrid, LatencyTimeline, AttendanceBoard, type AttendanceRow } from "@vks/ui/charts"
-import { MapView, type Pin } from "@vks/ui/map"
-import { Kanban, type KanbanCard } from "@vks/ui/kanban"
-import { QrScanner, PhotoCapture, CaptureStamp, stampPhoto, stampTime } from "@vks/ui/scan"
-import { Button, SignaturePad, useIsMobile, type SignaturePadHandle } from "@vks/ui"
-import { RefreshCw } from "@vks/ui/icons"
+import { BarSeries, LineSeries, AreaSeries, Donut, Sparkline, ScatterSeries, RadarSeries, RadialBars, ComboSeries, Heatmap, DateGrid, LatencyTimeline, AttendanceBoard, type AttendanceRow } from "@vks-kit/ui/charts"
+import { MapView, type Pin } from "@vks-kit/ui/map"
+import { Kanban, type KanbanCard } from "@vks-kit/ui/kanban"
+import { QrScanner, PhotoCapture, CaptureStamp, stampPhoto, stampTime } from "@vks-kit/ui/scan"
+import { Button, SignaturePad, useIsMobile, type SignaturePadHandle } from "@vks-kit/ui"
+import { RefreshCw } from "@vks-kit/ui/icons"
 import { useT } from "./kit"
 
 const week = ["ຈ", "ອ", "ພ", "ພຫ", "ສ", "ສ.", "ອາ"].map((d, i) => ({ d, ok: [82, 91, 88, 95, 90, 70, 65][i], late: [8, 4, 6, 2, 5, 12, 9][i] }))

@@ -7,7 +7,7 @@
 - Live docs: #/docs/action-sheet
 
 ```ts
-import { ActionSheet } from "@vks/ui"
+import { ActionSheet } from "@vks-kit/ui"
 ```
 
 ## When to use

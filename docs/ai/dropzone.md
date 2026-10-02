@@ -7,7 +7,7 @@
 - Live docs: #/docs/dropzone
 
 ```ts
-import { Dropzone, fmtBytes } from "@vks/ui"
+import { Dropzone, fmtBytes } from "@vks-kit/ui"
 ```
 
 ## When to use

@@ -7,7 +7,7 @@
 - Live docs: #/docs/stepper
 
 ```ts
-import { Stepper } from "@vks/ui"
+import { Stepper } from "@vks-kit/ui"
 ```
 
 ## When to use

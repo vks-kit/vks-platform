@@ -7,7 +7,7 @@
 - Live docs: #/docs/capture-stamp
 
 ```ts
-import { drawCaptureStamp, stampPhoto, stampTime, CaptureStamp, type CaptureStampData } from "@vks/ui/scan"
+import { drawCaptureStamp, stampPhoto, stampTime, CaptureStamp, type CaptureStampData } from "@vks-kit/ui/scan"
 ```
 
 ## When to use

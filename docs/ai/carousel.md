@@ -7,7 +7,7 @@
 - Live docs: #/docs/carousel
 
 ```ts
-import { Carousel } from "@vks/ui"
+import { Carousel } from "@vks-kit/ui"
 ```
 
 ## When to use

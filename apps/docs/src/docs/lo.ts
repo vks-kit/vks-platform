@@ -1,6 +1,6 @@
 /** Lao translations of the docs content strings (descriptions, notes, prop docs, example titles). Key = the English original. */
 export const LO: Record<string, string> = {
- "What @vks/ui is and why it looks the way it does.": "@vks/ui ແມ່ນຫຍັງ ແລະ ເປັນຫຍັງຈຶ່ງມີຮູບລັກສະນະແບບນີ້.",
+ "What @vks-kit/ui is and why it looks the way it does.": "@vks-kit/ui ແມ່ນຫຍັງ ແລະ ເປັນຫຍັງຈຶ່ງມີຮູບລັກສະນະແບບນີ້.",
  "Add the design system to a new app in the monorepo.": "ເພີ່ມລະບົບການອອກແບບເຂົ້າໃນແອັບໃໝ່ໃນ monorepo.",
  "Theme A (Guard Navy + Gold) and Theme E (Night Watch).": "ຮູບແບບສີ A (Guard Navy + Gold) ແລະ ຮູບແບບສີ E (Night Watch).",
  "Font, scale and the Lao text rules.": "ຟອນ, ຂະໜາດ ແລະ ກົດຂອງຂໍ້ຄວາມພາສາລາວ.",
@@ -62,7 +62,7 @@ export const LO: Record<string, string> = {
  "Range, bubbles always shown": "ຊ່ວງ, ສະແດງຟອງຄ່າຕະຫຼອດ",
  "Two thumbs = a range (shift hours). Tick at every step.": "ສອງຫົວລາກ = ຊ່ວງ (ຊົ່ວໂມງກະ). ມີຂີດທຸກຂັ້ນ.",
  "44 px tall, 16 px text (iOS never zooms), red border + shake when invalid.": "ສູງ 44 px, ຂໍ້ຄວາມ 16 px (iOS ບໍ່ຊູມ), ຂອບແດງ + ສັ່ນເມື່ອບໍ່ຖືກຕ້ອງ.",
- "Run cleanText() from @vks/types on free text before you save it.": "ໃຊ້ cleanText() ຈາກ @vks/types ກັບຂໍ້ຄວາມອິດສະຫຼະກ່ອນບັນທຶກ.",
+ "Run cleanText() from @vks-kit/types on free text before you save it.": "ໃຊ້ cleanText() ຈາກ @vks-kit/types ກັບຂໍ້ຄວາມອິດສະຫຼະກ່ອນບັນທຶກ.",
  "Sets aria-invalid: red border and one shake.": "ຕັ້ງ aria-invalid: ຂອບແດງ ແລະ ສັ່ນໜຶ່ງຄັ້ງ.",
  "Everything a normal input takes.": "ທຸກຢ່າງທີ່ input ທຳມະດາຮອງຮັບ.",
  "Radix Select with a 44 px trigger. For long lists or search, use Combobox.": "Radix Select ທີ່ມີ trigger 44 px. ສຳລັບລາຍການຍາວ ຫຼື ຄົ້ນຫາ, ໃຫ້ໃຊ້ Combobox.",

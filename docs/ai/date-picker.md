@@ -7,7 +7,7 @@
 - Live docs: #/docs/date-picker
 
 ```ts
-import { DatePicker, Calendar, DateWheel } from "@vks/ui"
+import { DatePicker, Calendar, DateWheel } from "@vks-kit/ui"
 ```
 
 ## When to use

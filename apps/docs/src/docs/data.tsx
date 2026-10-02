@@ -1,7 +1,7 @@
 import * as React from "react"
-import { Avatar, AvatarGroup, UserChip, ProgressRing, Progress, Accordion, AccordionItem, AccordionTrigger, AccordionContent, StarRating, Timeline, KpiStrip, KpiHero, Pagination, Table, THead, TBody, TR, TH, TD, Badge, sortRows, type SortState, DataTable, type Column, Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, Button } from "@vks/ui"
-import { ScanLine, Clock, AlertTriangle, Wallet } from "@vks/ui/icons"
-import { fmtKip, fmtKipShort } from "@vks/core"
+import { Avatar, AvatarGroup, UserChip, ProgressRing, Progress, Accordion, AccordionItem, AccordionTrigger, AccordionContent, StarRating, Timeline, KpiStrip, KpiHero, Pagination, Table, THead, TBody, TR, TH, TD, Badge, sortRows, type SortState, DataTable, type Column, Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, Button } from "@vks-kit/ui"
+import { ScanLine, Clock, AlertTriangle, Wallet } from "@vks-kit/ui/icons"
+import { fmtKip, fmtKipShort } from "@vks-kit/core"
 import type { Doc } from "./types"
 
 type Row = { id: string; site: string; guard: string; time: string; status: string; shift: string; kip: number }
@@ -36,7 +36,7 @@ export const dataDocs: Doc[] = [
   {
     slug: "card", name: "Card", group: "Data display", badge: "Stable",
     desc: "The basic box. White on light, navy-ink on dark.",
-    file: "packages/ui/src/components/card.tsx", importLine: 'import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@vks/ui"',
+    file: "packages/ui/src/components/card.tsx", importLine: 'import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@vks-kit/ui"',
     demo: () => <Card className="vks-lift w-full max-w-sm"><CardHeader><CardTitle>ປະຕູໜ້າ</CardTitle><CardDescription>A-01 · ກາງເວັນ</CardDescription></CardHeader><CardContent className="text-sm">ສະແກນລ່າສຸດ 08:12 ໂດຍ ສົມຊາຍ.</CardContent><CardFooter><Button size="sm" variant="outline">ລາຍລະອຽດ</Button></CardFooter></Card>,
     code: `<Card>
   <CardHeader>
@@ -50,7 +50,7 @@ export const dataDocs: Doc[] = [
   {
     slug: "data-table", name: "Data table", group: "Data display", badge: "Mobile",
     desc: "A table on desktop that turns into cards on a phone when there are more than 4 columns. Loading, error and empty states built in.",
-    file: "packages/ui/src/components/data-table.tsx", importLine: 'import { DataTable, type Column } from "@vks/ui"',
+    file: "packages/ui/src/components/data-table.tsx", importLine: 'import { DataTable, type Column } from "@vks-kit/ui"',
     demo: () => <DT />,
     code: `const cols: Column<Row>[] = [
   { key: "s", header: "ຈຸດ", cell: (r) => r.site, primary: true },
@@ -78,7 +78,7 @@ export const dataDocs: Doc[] = [
   {
     slug: "table", name: "Table", group: "Data display", badge: "Stable",
     desc: "Plain table parts with a navy header. Every column can sort: pass sortKey + sort + onSort to TH.",
-    file: "packages/ui/src/components/table.tsx", importLine: 'import { Table, THead, TBody, TR, TH, TD } from "@vks/ui"',
+    file: "packages/ui/src/components/table.tsx", importLine: 'import { Table, THead, TBody, TR, TH, TD } from "@vks-kit/ui"',
     demo: SortTableDemo,
     device: "desktop", notes: ["Desktop only: a wide table does not fit a phone. On a phone use DataTable (it turns rows into cards) or ListGroup."],
     code: `const [sort, setSort] = useState<SortState>(null)
@@ -91,7 +91,7 @@ const data = sortRows(rows, sort, (r, k) => r[k])
   {
     slug: "kpi-hero", bleed: true, name: "KPI hero card", group: "Data display", badge: "New", device: "mobile",
     desc: "The phone version of KpiStrip: ONE big number with a trend pill and sparkline, plus up to 3 small figures underneath. Takes about a quarter of the screen instead of the whole first page.",
-    file: "packages/ui/src/components/data-display.tsx", importLine: 'import { KpiHero } from "@vks/ui"',
+    file: "packages/ui/src/components/data-display.tsx", importLine: 'import { KpiHero } from "@vks-kit/ui"',
     demo: () => <div className="w-full sm:max-w-sm"><KpiHero className="max-sm:rounded-none max-sm:border-x-0" label="ຕົງເວລາມື້ນີ້" value="94" unit="%" hint="+2% ຈາກມື້ວານ" tone="success" icon={<ScanLine />} spark={[88, 90, 89, 92, 91, 93, 94]}
       secondary={[{ label: "ສະແກນ", value: "2,431" }, { label: "ຊ້າ", value: "18" }, { label: "ພາດ", value: "3" }]} /></div>,
     code: `<KpiHero label="ຕົງເວລາມື້ນີ້" value="94" unit="%" hint="+2% ຈາກມື້ວານ" tone="success" icon={<ScanLine />}
@@ -109,7 +109,7 @@ const data = sortRows(rows, sort, (r, k) => r[k])
     slug: "kpi-strip", name: "KPI strip", group: "Data display", badge: "New",
     desc: "Top-of-dashboard numbers for DESKTOP: 4 tiles in a row. On a phone use KpiHero (one hero card), because 4 tiles eat the first screen. Money uses ກີບ, never ₭.",
     device: "desktop",
-    file: "packages/ui/src/components/data-display.tsx", importLine: 'import { KpiStrip } from "@vks/ui"',
+    file: "packages/ui/src/components/data-display.tsx", importLine: 'import { KpiStrip } from "@vks-kit/ui"',
     demo: () => <div className="w-full"><KpiStrip items={[
       { label: "ສະແກນມື້ນີ້", value: "2,431", hint: "+12%", tone: "success", icon: <ScanLine />, spark: [12, 18, 15, 22, 20, 28, 34] },
       { label: "ຊ້າ", value: "18", hint: "-4 ຈາກມື້ວານ", tone: "warning", icon: <Clock />, spark: [9, 14, 11, 16, 13, 12, 10] },
@@ -126,7 +126,7 @@ const data = sortRows(rows, sort, (r, k) => r[k])
   {
     slug: "timeline", name: "Timeline", group: "Data display", badge: "New",
     desc: "What happened on a shift, newest first.",
-    file: "packages/ui/src/components/data-display.tsx", importLine: 'import { Timeline } from "@vks/ui"',
+    file: "packages/ui/src/components/data-display.tsx", importLine: 'import { Timeline } from "@vks-kit/ui"',
     demo: () => <div className="w-full max-w-sm"><Timeline items={[{ id: "1", time: "08:12", title: "ສະແກນປະຕູໜ້າ", tone: "success" }, { id: "2", time: "08:41", title: "ຊ້າ 6 ນາທີ", detail: "ບ່ອນຈອດລົດ", tone: "warning" }, { id: "3", time: "09:05", title: "ພາດຈຸດ", tone: "danger" }]} /></div>,
     code: `<Timeline items={[
   { id: "1", time: "08:12", title: "ສະແກນປະຕູໜ້າ", tone: "success" },
@@ -137,7 +137,7 @@ const data = sortRows(rows, sort, (r, k) => r[k])
   {
     slug: "avatar-progress", name: "Avatar & progress", group: "Data display", badge: "Stable",
     desc: "Initials avatar (works with Lao names) and a labelled progress bar.",
-    file: "packages/ui/src/components/data-display.tsx", importLine: 'import { Avatar, AvatarGroup, UserChip, Progress, ProgressRing } from "@vks/ui"',
+    file: "packages/ui/src/components/data-display.tsx", importLine: 'import { Avatar, AvatarGroup, UserChip, Progress, ProgressRing } from "@vks-kit/ui"',
     demo: () => <div className="grid w-full max-w-sm gap-4"><div className="flex items-center gap-2"><Avatar name="ສົມຊາຍ ແກ້ວ" /><Avatar name="Bounmy K" size={32} /><Avatar name="ນາງບົວ" size={48} /></div><Progress value={12} max={20} label="ຈຸດກວດ 12 / 20" /></div>,
     code: `<Avatar name="ສົມຊາຍ ແກ້ວ" />
 <Avatar name="Bounmy K" size={32} src={photoUrl} />
@@ -157,7 +157,7 @@ const data = sortRows(rows, sort, (r, k) => r[k])
   {
     slug: "accordion", name: "Accordion", group: "Data display", badge: "Stable",
     desc: "FAQ and long forms broken into parts.",
-    file: "packages/ui/src/components/data-display.tsx", importLine: 'import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@vks/ui"',
+    file: "packages/ui/src/components/data-display.tsx", importLine: 'import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@vks-kit/ui"',
     demo: () => <Accordion type="single" collapsible defaultValue="a" className="w-full max-w-md"><AccordionItem value="a"><AccordionTrigger>ລືມລະຫັດຜ່ານເຮັດແນວໃດ?</AccordionTrigger><AccordionContent>ຕິດຕໍ່ຫົວໜ້າກະ ຫຼື HR.</AccordionContent></AccordionItem><AccordionItem value="b"><AccordionTrigger>ເນັດບໍ່ມີ ສະແກນໄດ້ບໍ?</AccordionTrigger><AccordionContent>ໄດ້. ຂໍ້ມູນຈະສົ່ງເອງເມື່ອມີເນັດ.</AccordionContent></AccordionItem></Accordion>,
     code: `<Accordion type="single" collapsible>
   <AccordionItem value="a">
@@ -169,7 +169,7 @@ const data = sortRows(rows, sort, (r, k) => r[k])
   {
     slug: "rating-pagination", name: "Star rating & pagination", group: "Data display", badge: "Stable",
     desc: "Inspection scores and paged lists. Both 44 px targets.",
-    file: "packages/ui/src/components/data-display.tsx", importLine: 'import { StarRating, Pagination } from "@vks/ui"',
+    file: "packages/ui/src/components/data-display.tsx", importLine: 'import { StarRating, Pagination } from "@vks-kit/ui"',
     demo: () => <div className="flex flex-col items-center gap-4"><Stars /><Pages /></div>,
     code: `<StarRating value={score} onChange={setScore} />
 <Pagination page={page} pages={9} onPage={setPage} />`,

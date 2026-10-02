@@ -16,7 +16,7 @@ try {
   files.forEach((f, i) => {
     const j = JSON.parse(originals[i])
     j.version = version
-    for (const k of ["dependencies"]) for (const d of Object.keys(j[k] ?? {})) if (d.startsWith("@vks/")) j[k][d] = "^" + version
+    for (const k of ["dependencies"]) for (const d of Object.keys(j[k] ?? {})) if (d.startsWith("@vks-kit/")) j[k][d] = "^" + version
     writeFileSync(f, JSON.stringify(j, null, 2) + "\n")
   })
   for (const n of names) execSync("npm pack --pack-destination \"" + out + "\"", { cwd: resolve(root, "packages", n), stdio: "inherit" })

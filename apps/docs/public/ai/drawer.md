@@ -7,7 +7,7 @@
 - Live docs: #/docs/drawer
 
 ```ts
-import { Drawer } from "@vks/ui"
+import { Drawer } from "@vks-kit/ui"
 ```
 
 ## When to use

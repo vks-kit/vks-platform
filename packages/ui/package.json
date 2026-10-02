@@ -1,7 +1,6 @@
 {
-  "name": "@vks/ui",
-  "version": "0.1.0",
-  "private": true,
+  "name": "@vks-kit/ui",
+  "version": "0.2.0",
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
@@ -28,7 +27,7 @@
     "@dnd-kit/utilities": "^3.2.2",
     "leaflet": "^1.9.4",
     "jsqr": "^1.4.0",
-    "@vks/core": "^0.1.0",
+    "@vks-kit/core": "^0.2.0",
     "react-is": "^19.0.0"
   },
   "peerDependencies": {
@@ -51,5 +50,14 @@
   },
   "scripts": {
     "prepack": "node ../../scripts/copy-kit-docs.mjs"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vks-kit/vks-platform.git",
+    "directory": "packages/ui"
   }
 }

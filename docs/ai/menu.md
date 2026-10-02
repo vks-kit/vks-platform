@@ -7,7 +7,7 @@
 - Live docs: #/docs/menu
 
 ```ts
-import { Menu, MenuTrigger, MenuContent, MenuItem, MenuLabel, MenuSeparator, Popover, PopoverTrigger, PopoverContent } from "@vks/ui"
+import { Menu, MenuTrigger, MenuContent, MenuItem, MenuLabel, MenuSeparator, Popover, PopoverTrigger, PopoverContent } from "@vks-kit/ui"
 ```
 
 ## When to use

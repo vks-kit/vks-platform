@@ -7,7 +7,7 @@
 - Live docs: #/docs/bottom-toolbar
 
 ```ts
-import { BottomToolbar } from "@vks/ui"
+import { BottomToolbar } from "@vks-kit/ui"
 ```
 
 ## When to use

@@ -7,7 +7,7 @@
 - Live docs: #/docs/touch
 
 ```ts
-import { PullToRefresh, SwipeRow } from "@vks/ui"
+import { PullToRefresh, SwipeRow } from "@vks-kit/ui"
 ```
 
 ## When to use

@@ -7,12 +7,12 @@
 - Live docs: #/docs/kanban
 
 ```ts
-import { Kanban, moveCard, type KanbanCard } from "@vks/ui/kanban"
+import { Kanban, moveCard, type KanbanCard } from "@vks-kit/ui/kanban"
 ```
 
 ## When to use
 
-- **Kanban**: Task board. Desktop: drag cards between columns (mouse drags after 4 px; keyboard: Space + arrows; cards move live while dragging). Phone: no dragging — one column per screen with a tab strip (name + count) and swipe between columns; tap a card to open a bottom sheet with a "move to" list. Use for status boards (todo / doing / done); for a plain list use ListGroup instead. Import from "@vks/ui/kanban".
+- **Kanban**: Task board. Desktop: drag cards between columns (mouse drags after 4 px; keyboard: Space + arrows; cards move live while dragging). Phone: no dragging — one column per screen with a tab strip (name + count) and swipe between columns; tap a card to open a bottom sheet with a "move to" list. Use for status boards (todo / doing / done); for a plain list use ListGroup instead. Import from "@vks-kit/ui/kanban".
 
 ## Example
 

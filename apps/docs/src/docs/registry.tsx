@@ -15,7 +15,7 @@ import { GROUP_ORDER, type Doc, type Group } from "./types"
 
 export type Guide = { slug: string; name: string; group: Group; badge?: Doc["badge"]; desc: string; page: React.FC }
 export const guides: Guide[] = [
-  { slug: "introduction", name: "Introduction", group: "Getting Started", desc: "What @vks/ui is and why it looks the way it does.", page: Introduction },
+  { slug: "introduction", name: "Introduction", group: "Getting Started", desc: "What @vks-kit/ui is and why it looks the way it does.", page: Introduction },
   { slug: "installation", name: "Installation", group: "Getting Started", desc: "Add the design system to a new app in the monorepo.", page: Installation },
   { slug: "theming", name: "Theming", group: "Foundations", desc: "Theme A (Guard Navy + Gold) and Theme E (Night Watch).", page: Theming },
   { slug: "typography", name: "Typography & Lao", group: "Foundations", desc: "Font, scale and the Lao text rules.", page: Typography },

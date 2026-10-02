@@ -7,7 +7,7 @@
 - Live docs: #/docs/search-bar
 
 ```ts
-import { SearchBar } from "@vks/ui"
+import { SearchBar } from "@vks-kit/ui"
 ```
 
 ## When to use

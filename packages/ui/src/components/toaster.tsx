@@ -1,7 +1,7 @@
 import * as React from "react"
 import { Toaster as Sonner, toast as sonner } from "sonner"
 import { Check, X, TriangleAlert, Info, LoaderCircle } from "lucide-react"
-import { haptics } from "@vks/core"
+import { haptics } from "@vks-kit/core"
 import { useTheme } from "../lib/theme"
 
 type PromiseArg = Parameters<typeof sonner.promise>[0]

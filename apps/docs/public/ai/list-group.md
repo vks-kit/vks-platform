@@ -7,7 +7,7 @@
 - Live docs: #/docs/list-group
 
 ```ts
-import { ListGroup, ListRow } from "@vks/ui"
+import { ListGroup, ListRow } from "@vks-kit/ui"
 ```
 
 ## When to use

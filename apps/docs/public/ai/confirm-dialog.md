@@ -7,7 +7,7 @@
 - Live docs: #/docs/confirm-dialog
 
 ```ts
-import { ConfirmDialog } from "@vks/ui"
+import { ConfirmDialog } from "@vks-kit/ui"
 ```
 
 ## When to use

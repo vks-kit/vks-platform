@@ -6,7 +6,7 @@ import {
   Radar, RadarChart, RadialBar, RadialBarChart, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis, ZAxis,
 } from "recharts"
 
-/** Colours come from theme tokens so charts follow light/dark. Import from "@vks/ui/charts" only in screens that show charts. */
+/** Colours come from theme tokens so charts follow light/dark. Import from "@vks-kit/ui/charts" only in screens that show charts. */
 export const chartColors = ["var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--chart-4)", "var(--chart-5)"]
 const axis = { stroke: "var(--muted-foreground)", fontSize: 12, tickLine: false, axisLine: false } as const
 const grid = <CartesianGrid stroke="var(--border)" strokeDasharray="3 4" vertical={false} />

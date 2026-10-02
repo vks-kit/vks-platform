@@ -7,7 +7,7 @@
 - Live docs: #/docs/breadcrumb
 
 ```ts
-import { Breadcrumb } from "@vks/ui"
+import { Breadcrumb } from "@vks-kit/ui"
 ```
 
 ## When to use

@@ -1,8 +1,8 @@
 import * as React from "react"
-import { Home, ClipboardList, Users, BarChart3, Settings, Bell, Plus } from "@vks/ui/icons"
-import { AppShell, Sidebar, SidebarSheet, BottomNav, Fab, PageHeader, LoginCard, Wizard, Input, Button, Card, CardContent, PullToRefresh, SwipeRow, Avatar, Badge, Switch, toast, useTheme, FloatingInput, PasswordInput, LargeTitleBar, LoginScreen, ProfileView, useIsMobile, type NavItem } from "@vks/ui"
-import { MessageCircle, Pencil } from "@vks/ui/icons"
-import { Menu, ShieldCheck, Clock, MapPin, Phone, Mail, Bell as BellIcon, Lock, Globe, Moon } from "@vks/ui/icons"
+import { Home, ClipboardList, Users, BarChart3, Settings, Bell, Plus } from "@vks-kit/ui/icons"
+import { AppShell, Sidebar, SidebarSheet, BottomNav, Fab, PageHeader, LoginCard, Wizard, Input, Button, Card, CardContent, PullToRefresh, SwipeRow, Avatar, Badge, Switch, toast, useTheme, FloatingInput, PasswordInput, LargeTitleBar, LoginScreen, ProfileView, useIsMobile, type NavItem } from "@vks-kit/ui"
+import { MessageCircle, Pencil } from "@vks-kit/ui/icons"
+import { Menu, ShieldCheck, Clock, MapPin, Phone, Mail, Bell as BellIcon, Lock, Globe, Moon } from "@vks-kit/ui/icons"
 import type { Doc } from "./types"
 import { useT } from "./kit"
 
@@ -148,7 +148,7 @@ export const layoutDocs: Doc[] = [
   {
     slug: "app-shell", name: "App shell", group: "Layout & navigation", badge: "Mobile",
     desc: "Whole-app frame. Navy sidebar on desktop, bottom nav + FAB on a phone. One breakpoint: 768 px. Pages slide in the direction you moved and a gold bar sweeps the header.",
-    file: "packages/ui/src/components/shell.tsx", importLine: 'import { AppShell, Fab, type NavItem } from "@vks/ui"',
+    file: "packages/ui/src/components/shell.tsx", importLine: 'import { AppShell, Fab, type NavItem } from "@vks-kit/ui"',
     demo: () => <PhoneFrame frame="app-shell" />,
     examples: [
       { id: "desktop", title: "Same shell on a desktop", note: "1180 px viewport scaled to fit. Collapse the rail with the chevron; the choice is remembered (localStorage \"vks.rail\"). Click items: later items slide in from the right, earlier ones from the left.", demo: () => <DesktopFrame frame="app-shell" />, code: `<AppShell items={nav} active={page} onNavigate={setPage} collapsible>…</AppShell>` },
@@ -175,7 +175,7 @@ export const layoutDocs: Doc[] = [
   {
     slug: "sidebar", name: "Sidebar", group: "Layout & navigation", badge: "New",
     desc: "Navy rail. The active pill springs between items with a gold edge and a glow behind the icon; icons pop when clicked; the logo spins in once. Collapses to a 72 px icon rail with tooltips.",
-    file: "packages/ui/src/components/shell.tsx", importLine: 'import { Sidebar, SidebarSheet } from "@vks/ui"',
+    file: "packages/ui/src/components/shell.tsx", importLine: 'import { Sidebar, SidebarSheet } from "@vks-kit/ui"',
     demo: () => <SidebarDemo />,
     code: `const [mini, setMini] = useState(false)
 <Sidebar items={nav} active={page} onNavigate={setPage} title="VKS QC"
@@ -195,7 +195,7 @@ export const layoutDocs: Doc[] = [
   {
     slug: "bottom-nav", name: "Bottom nav & FAB", group: "Layout & navigation", badge: "Mobile",
     desc: "56 px tall tabs above the phone's home bar. The FAB sits above it on the right.",
-    file: "packages/ui/src/components/shell.tsx", importLine: 'import { BottomNav, Fab } from "@vks/ui"',
+    file: "packages/ui/src/components/shell.tsx", importLine: 'import { BottomNav, Fab } from "@vks-kit/ui"',
     demo: () => <PhoneFrame frame="bottom-nav" h={320} />,
     code: `<BottomNav items={nav} active={page} onNavigate={setPage} />
 <Fab label="ສະແກນ" icon={<ScanLine />} onClick={scan} />   {/* aria-label required */}`,
@@ -204,7 +204,7 @@ export const layoutDocs: Doc[] = [
   {
     slug: "page-header", name: "Page header", group: "Layout & navigation", badge: "Stable",
     desc: "Title, subtitle and actions. Actions hide on a phone: put the main one in the FAB.",
-    file: "packages/ui/src/components/shell.tsx", importLine: 'import { PageHeader, LargeTitleBar } from "@vks/ui"',
+    file: "packages/ui/src/components/shell.tsx", importLine: 'import { PageHeader, LargeTitleBar } from "@vks-kit/ui"',
     demo: () => <PageHeaderDemo />,
     code: `<PageHeader title="ພະນັກງານ" subtitle="128 ຄົນ" actions={<Button variant="action"><Plus />ເພີ່ມ</Button>} />`,
     examples: [{ id: "large-title", title: "iOS large title (phone)", note: "Big title that shrinks into the centred bar as the window scrolls. Use on phone-first pages instead of PageHeader.",
@@ -214,7 +214,7 @@ export const layoutDocs: Doc[] = [
   {
     slug: "login-card", name: "Login card", group: "Layout & navigation", badge: "Stable",
     desc: "Compact centred sign-in card with the logo shine, for simple apps and phones. For a full-page split-screen login with a brand panel use LoginScreen instead.",
-    file: "packages/ui/src/components/shell.tsx", importLine: 'import { LoginCard } from "@vks/ui"',
+    file: "packages/ui/src/components/shell.tsx", importLine: 'import { LoginCard } from "@vks-kit/ui"',
     demo: () => <PhoneFrame frame="login-card" />,
     code: `<LoginCard title="ເຂົ້າສູ່ລະບົບ" subtitle="ໃສ່ລະຫັດພະນັກງານ">
   <Input placeholder="G001" />
@@ -224,7 +224,7 @@ export const layoutDocs: Doc[] = [
   {
     slug: "login-screen", name: "Login screen", group: "Layout & navigation", badge: "New",
     desc: "Premium full-page sign-in (for the compact centred card use LoginCard instead). Desktop: navy aurora brand panel with feature list beside the form. Phone: logo on top, form centred, safe-area padding.",
-    file: "packages/ui/src/components/account.tsx", importLine: 'import { LoginScreen } from "@vks/ui"',
+    file: "packages/ui/src/components/account.tsx", importLine: 'import { LoginScreen } from "@vks-kit/ui"',
     demo: LoginAdaptive,
     code: `<LoginScreen title="ຍິນດີຕ້ອນຮັບກັບມາ" subtitle="ໃສ່ລະຫັດພະນັກງານ"
   tagline="ຄວາມປອດໄພ ທີ່ທ່ານໄວ້ວາງໃຈ"
@@ -244,7 +244,7 @@ export const layoutDocs: Doc[] = [
   {
     slug: "profile-view", name: "Profile view", group: "Layout & navigation", badge: "New", bleed: true,
     desc: "Employee / account profile. Desktop: sticky identity card on the left, grouped settings on the right. Phone: an iOS-contact-style header (big avatar, round call / message / edit buttons) edge to edge, then one stacked column.",
-    file: "packages/ui/src/components/account.tsx", importLine: 'import { ProfileView, type ProfileSection, type ProfileRow, type ProfileQuickAction } from "@vks/ui"',
+    file: "packages/ui/src/components/account.tsx", importLine: 'import { ProfileView, type ProfileSection, type ProfileRow, type ProfileQuickAction } from "@vks-kit/ui"',
     demo: ProfileAdaptive,
     examples: [
       { id: "banner", title: "Banner header (default)", note: "variant=\"banner\" keeps the navy banner with the avatar overlapping it; add flush for an edge-to-edge phone layout.", demo: () => <div className="w-full md:p-8"><ProfileView flush name="ສົມຊາຍ ວົງສະຫວັນ" role="ເຈົ້າໜ້າທີ່ຮັກສາຄວາມປອດໄພ" code="VKS2207001" sections={[{ title: "ຂໍ້ມູນ", rows: [{ icon: <Phone />, label: "ເບີໂທ", value: "020 5555 1234" }] }]} actions={<Button variant="outline">ແກ້ໄຂໂປຣໄຟລ໌</Button>} /></div>, code: `<ProfileView flush name="ສົມຊາຍ" code="VKS2207001" actions={<Button variant="outline">ແກ້ໄຂ</Button>} sections={…} />` },
@@ -271,7 +271,7 @@ export const layoutDocs: Doc[] = [
   {
     slug: "wizard", name: "Wizard", group: "Layout & navigation", badge: "New",
     desc: "Multi-step form with a step bar. Long forms on a phone should always be a wizard.",
-    file: "packages/ui/src/components/wizard.tsx", importLine: 'import { Wizard } from "@vks/ui"',
+    file: "packages/ui/src/components/wizard.tsx", importLine: 'import { Wizard } from "@vks-kit/ui"',
     demo: () => <WizardDemo />,
     code: `<Wizard steps={["ຂໍ້ມູນ", "ຮູບ", "ຢືນຢັນ"]} step={step} onStep={setStep} onFinish={submit}
   canNext={valid} finishLabel="ສົ່ງ" nextLabel="ຕໍ່ໄປ" backLabel="ກັບຄືນ">
@@ -286,7 +286,7 @@ export const layoutDocs: Doc[] = [
   {
     slug: "touch", name: "Pull to refresh & swipe row", group: "Mobile & touch", badge: "Mobile",
     desc: "The two gestures guards already know from other apps. Both have a button fallback for accessibility.",
-    file: "packages/ui/src/components/touch.tsx", importLine: 'import { PullToRefresh, SwipeRow } from "@vks/ui"',
+    file: "packages/ui/src/components/touch.tsx", importLine: 'import { PullToRefresh, SwipeRow } from "@vks-kit/ui"',
     demo: () => <PhoneFrame frame="touch" h={440} />,
     code: `<PullToRefresh onRefresh={refetch}>          {/* 70 px pull */}
   {rows.map((r) => (

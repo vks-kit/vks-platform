@@ -7,7 +7,7 @@
 - Live docs: #/docs/number-ticker
 
 ```ts
-import { NumberTicker } from "@vks/ui"
+import { NumberTicker } from "@vks-kit/ui"
 ```
 
 ## When to use

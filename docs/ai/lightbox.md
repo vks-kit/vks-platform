@@ -7,7 +7,7 @@
 - Live docs: #/docs/lightbox
 
 ```ts
-import { Lightbox, PhotoGrid } from "@vks/ui"
+import { Lightbox, PhotoGrid } from "@vks-kit/ui"
 ```
 
 ## When to use

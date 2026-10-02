@@ -7,7 +7,7 @@
 - Live docs: #/docs/notification-list
 
 ```ts
-import { NotificationList } from "@vks/ui"
+import { NotificationList } from "@vks-kit/ui"
 ```
 
 ## When to use

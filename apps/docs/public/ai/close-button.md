@@ -7,7 +7,7 @@
 - Live docs: #/docs/close-button
 
 ```ts
-import { CloseButton, CLOSE_BUTTON } from "@vks/ui"
+import { CloseButton, CLOSE_BUTTON } from "@vks-kit/ui"
 ```
 
 ## When to use

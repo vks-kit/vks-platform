@@ -7,7 +7,7 @@
 - Live docs: #/docs/button-group
 
 ```ts
-import { ButtonGroup } from "@vks/ui"
+import { ButtonGroup } from "@vks-kit/ui"
 ```
 
 ## When to use

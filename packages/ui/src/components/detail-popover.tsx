@@ -1,7 +1,7 @@
 import * as React from "react"
 import { HoverCard as HC, Popover as PO } from "radix-ui"
 import { cn } from "../lib/cn"
-import { haptics } from "@vks/core"
+import { haptics } from "@vks-kit/core"
 import { useIsMobile } from "../lib/use-media"
 import { Sheet, SheetTrigger, SheetContent, SheetTitle, SheetDescription } from "./overlay"
 
