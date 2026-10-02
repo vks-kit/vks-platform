@@ -338,6 +338,7 @@ const mobile = useIsMobile()   // (max-width: 768px)`} />
 export function Changelog() {
   const tr = useTr()
   const log: [string, string, string[]][] = [
+    ["0.2.3", "Phone chart motion", ["On phones every chart now finishes inside 400 ms in total: stagger delays are capped and the calendar-cell wave (Heatmap, DateGrid, LatencyTimeline, AttendanceBoard) is shortened. Desktop motion is unchanged. No API change."]],
     ["0.2.2", "Docs and publish script", ["Installation page rewritten for the private registry; the shipped AGENTS.md template now has the Vite dev-server note and the registry update steps; chart prop tables list every prop. New npm run kit:publish script replaces kit:pack. No API change."]],
     ["0.2.1", "Registry release", ["Version numbers: the rows below this one (0.3.0 to 0.7.7) are the design-system history from before the move to the registry. Package versions now start from 0.2.x and are shared by ui, core and types.", "The kit is now published as @vks-kit/ui, @vks-kit/core and @vks-kit/types on GitHub Packages (private). @types/leaflet moved to dependencies so apps using the map typecheck. No API change."]],
     ["0.7.7", "Profile view: phone header", ["ProfileView on a phone is now edge to edge with a single 16 px margin. New optional flush, variant=\"actions\" (soft header, big avatar, no banner) and quickActions (round call / message / edit buttons) props. Defaults and desktop are unchanged."]],

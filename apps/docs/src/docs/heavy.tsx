@@ -17,7 +17,7 @@ export const heavyDocs: Doc[] = [
 <AreaSeries data={week} x="d" y={["ok", "late"]} />      // several keys = stacked
 <ComboSeries data={week} x="d" bars={["ok", "late"]} line="rate" lineUnit="%" />
 <Sparkline values={[3, 5, 4, 8, 6, 9, 7]} color="var(--chart-2)" />`,
-    examples: [{ id: "motion", title: "Motion", note: "Replay to watch each chart draw in. The switch turns on the same lite mode the Settings screen uses (and prefers-reduced-motion behaves the same): charts then render finished, with no motion. Entry motion stays under 700 ms; only transform and opacity-style effects, no layout work.", demo: L("ChartsMotion"), code: `// Charts animate once on mount. Remount (key) to replay.
+    examples: [{ id: "motion", title: "Motion", note: "Replay to watch each chart draw in. The switch turns on the same lite mode the Settings screen uses (and prefers-reduced-motion behaves the same): charts then render finished, with no motion. Entry motion is 700 ms on desktop and finishes inside 400 ms in total on a phone (stagger delays are capped, so delay plus draw never goes past 400 ms); only transform and opacity-style effects, no layout work.", demo: L("ChartsMotion"), code: `// Charts animate once on mount. Remount (key) to replay.
 // Off automatically for prefers-reduced-motion and <html data-perf="lite">.
 <BarSeries data={week} x="d" y={["ok", "late"]} />      // nothing to enable` }],
     props: [
@@ -58,7 +58,7 @@ export const heavyDocs: Doc[] = [
 <DateGrid rows={["R1", "R2", "R3"]} dates={["2/4", "2/5", "2/6"]} status={[["ok", "late", "miss"], ["ok", "ok", "na"], ["ok", "ok", "ok"]]} today={1} onPick={(r, d, s) => open(r, d)} />
 <LatencyTimeline days={30} offset={1} entries={[{ day: 6, kinds: ["inspection"] }, { day: 11, kinds: ["inspection", "event"] }, { day: 20, kinds: ["inspection"] }]} onPick={(d) => open(d)} />
 <AttendanceBoard days={31} today={19} offset={1} rows={[{ id: "VKS2207001", name: "ພູວົງ ແສງດາວ", cells: ["P", "P", "P+O8", "W", "A", "?"] }]} onPick={(id, d, code) => edit(id, d)} />`,
-    examples: [{ id: "motion", title: "Motion", note: "Calendar-shaped charts use a CSS wave (45 ms-ish per cell step), so they cost nothing when Recharts is not loaded. Lite / reduced motion removes the wave.", demo: L("ChartsScheduleMotion"), code: `// Charts animate once on mount. Remount (key) to replay.
+    examples: [{ id: "motion", title: "Motion", note: "Calendar-shaped charts use a CSS wave (a few ms per cell step, capped so the whole wave ends within 400 ms on a phone), so they cost nothing when Recharts is not loaded. Lite / reduced motion removes the wave.", demo: L("ChartsScheduleMotion"), code: `// Charts animate once on mount. Remount (key) to replay.
 // Off automatically for prefers-reduced-motion and <html data-perf="lite">.
 <BarSeries data={week} x="d" y={["ok", "late"]} />      // nothing to enable` }],
     props: [

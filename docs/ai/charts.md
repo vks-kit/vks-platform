@@ -35,7 +35,7 @@ const Charts = lazy(() => import("./ReportCharts"))   // keep it off the guard's
 
 ### Motion
 
-Replay to watch each chart draw in. The switch turns on the same lite mode the Settings screen uses (and prefers-reduced-motion behaves the same): charts then render finished, with no motion. Entry motion stays under 700 ms; only transform and opacity-style effects, no layout work.
+Replay to watch each chart draw in. The switch turns on the same lite mode the Settings screen uses (and prefers-reduced-motion behaves the same): charts then render finished, with no motion. Entry motion is 700 ms on desktop and finishes inside 400 ms in total on a phone (stagger delays are capped, so delay plus draw never goes past 400 ms); only transform and opacity-style effects, no layout work.
 
 ```tsx
 // Charts animate once on mount. Remount (key) to replay.

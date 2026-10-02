@@ -28,7 +28,7 @@ import { Heatmap, DateGrid, LatencyTimeline, AttendanceBoard } from "@vks-kit/ui
 
 ### Motion
 
-Calendar-shaped charts use a CSS wave (45 ms-ish per cell step), so they cost nothing when Recharts is not loaded. Lite / reduced motion removes the wave.
+Calendar-shaped charts use a CSS wave (a few ms per cell step, capped so the whole wave ends within 400 ms on a phone), so they cost nothing when Recharts is not loaded. Lite / reduced motion removes the wave.
 
 ```tsx
 // Charts animate once on mount. Remount (key) to replay.

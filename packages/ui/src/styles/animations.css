@@ -177,6 +177,8 @@
 /* heatmap cells: diagonal wave-in */
 @keyframes vks-heat-in { from { opacity: 0; transform: scale(.4) } }
 .vks-heat-cell { animation: vks-heat-in .45s var(--ease-out-quint) both; }
+/* Phones: stagger delay (capped in charts.tsx) + this draw stay inside the 400 ms budget. */
+@media (max-width: 767px) { .vks-heat-cell { animation-duration: .22s; } }
 /* grab handle on phone sheets */
 .vks-grabber { width: 40px; height: 5px; border-radius: 99px; background: var(--border); margin: -8px auto 4px; }
 @media (min-width: 768px) { .vks-modal .vks-grabber { display: none } }
@@ -512,7 +514,7 @@ label:has(> .vks-cb:not(:disabled)):active, label:has(> .vks-switch:not(:disable
 @keyframes vks-nav-up { from { transform: translate3d(0,100%,0) } }
 .vks-nav-up { animation: vks-nav-up .4s var(--ease-ios) both; }
 @keyframes vks-draw-x { from { transform: scaleX(0) } }
-.vks-draw-x { transform-origin: center; animation: vks-draw-x .4s var(--ease-out-quint) .08s both; }
+.vks-draw-x { transform-origin: center; animation: vks-draw-x .32s var(--ease-out-quint) .08s both; }
 
 /* ---- v0.4 · slider (bubble, halo, ticks) ---- */
 .vks-slider-track { transition: transform .3s var(--ease-spring); }

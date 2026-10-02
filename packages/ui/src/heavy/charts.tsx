@@ -26,7 +26,12 @@ function useMotion() {
 }
 /** SVG ids must be unique per chart and safe inside url(#...). */
 const useGid = () => "g" + React.useId().replace(/[^a-zA-Z0-9]/g, "")
-const anim = (on: boolean, delay = 0) => ({ isAnimationActive: on, animationDuration: typeof window !== "undefined" && window.matchMedia("(max-width: 767px)").matches ? 400 : 700, animationBegin: delay, animationEasing: "ease-out" as const })
+const phone = () => typeof window !== "undefined" && window.matchMedia("(max-width: 767px)").matches
+/** Phone motion budget: a whole chart (stagger delay + draw) finishes inside 400 ms. */
+const PHONE_MS = 400, PHONE_DRAW = 200, PHONE_SLACK = 40
+/** Stagger delay: full on desktop, capped on phones so delay + draw + a frame-rounding slack stays inside the budget. */
+const dly = (ms: number) => (phone() ? Math.min(ms, PHONE_MS - PHONE_DRAW - PHONE_SLACK) : ms)
+const anim = (on: boolean, delay = 0) => ({ isAnimationActive: on, animationDuration: phone() ? PHONE_DRAW : 700, animationBegin: dly(delay), animationEasing: "ease-out" as const })
 
 /* ---------- tooltip + legend ---------- */
 type TipItem = { name?: unknown; value?: unknown; color?: string; stroke?: string; fill?: string; payload?: Record<string, unknown>; dataKey?: unknown }
@@ -281,7 +286,7 @@ export function Heatmap({ rows, cols, values, max, tone = "var(--chart-1)", unit
           return <span key={c} role="img" aria-label={r + " " + c + ": " + v + (unit ? " " + unit : "")} title={r + " · " + c + ": " + v + (unit ? " " + unit : "")}
             onMouseEnter={() => setHot([ri, ci])} onMouseLeave={() => setHot(null)}
             className="vks-heat-cell rounded-md transition-transform duration-200"
-            style={{ height: cell, background: "color-mix(in oklab, " + tone + " " + pct + "%, var(--muted))", transform: on ? "scale(1.18)" : undefined, animationDelay: (ri + ci) * 18 + "ms", boxShadow: on ? "0 0 0 2px var(--card), 0 0 0 3.5px " + tone : undefined }} />
+            style={{ height: cell, background: "color-mix(in oklab, " + tone + " " + pct + "%, var(--muted))", transform: on ? "scale(1.18)" : undefined, animationDelay: dly((ri + ci) * 18) + "ms", boxShadow: on ? "0 0 0 2px var(--card), 0 0 0 3.5px " + tone : undefined }} />
         })}
       </React.Fragment>)}
     </div>
@@ -319,7 +324,7 @@ export function DateGrid({ rows, dates, status, today, onPick, labels, cell = 26
             return <button key={d} type="button" aria-label={r + " " + d + ": " + L[s]} title={r + " · " + d + ": " + L[s]}
               onClick={() => { setHot(id); onPick?.(r, d, s) }} onBlur={() => setHot(null)}
               className="vks-heat-cell rounded-[4px] transition-transform duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              style={{ height: cell, background: bg[s], boxShadow: s === "miss" ? "inset 0 0 0 2px var(--destructive)" : on ? "0 0 0 2px var(--card), 0 0 0 3.5px var(--primary)" : undefined, transform: on ? "scale(1.15)" : undefined, animationDelay: (ri + ci) * 14 + "ms" }} />
+              style={{ height: cell, background: bg[s], boxShadow: s === "miss" ? "inset 0 0 0 2px var(--destructive)" : on ? "0 0 0 2px var(--card), 0 0 0 3.5px var(--primary)" : undefined, transform: on ? "scale(1.15)" : undefined, animationDelay: dly((ri + ci) * 14) + "ms" }} />
           })}
         </React.Fragment>)}
       </div>
@@ -419,8 +424,8 @@ export function LatencyTimeline({ days = 30, entries, offset = 0, today, onPick,
       <div className="grid gap-1" style={{ gridTemplateColumns: "repeat(" + days + ", minmax(0, 1fr))" }}>
         {nums.map((d) => { const ks = act.get(d)
           return ks
-            ? <button key={d} type="button" aria-label={label(d, ks)} title={label(d, ks)} onClick={() => onPick?.(d, ks)} className="vks-heat-cell vks-press relative grid aspect-square place-items-center rounded-md text-[10px] font-bold tabular-nums text-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" style={{ background: fill(ks), animationDelay: d * 12 + "ms" }}>{d}{multi(ks)}</button>
-            : <span key={d} className={"vks-heat-cell grid aspect-square place-items-center rounded-md bg-muted/60 text-[11px] font-semibold tabular-nums text-muted-foreground/60 " + (d === today ? "ring-2 ring-primary/50" : "")} style={{ animationDelay: d * 12 + "ms" }}>{d}</span> })}
+            ? <button key={d} type="button" aria-label={label(d, ks)} title={label(d, ks)} onClick={() => onPick?.(d, ks)} className="vks-heat-cell vks-press relative grid aspect-square place-items-center rounded-md text-[10px] font-bold tabular-nums text-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" style={{ background: fill(ks), animationDelay: dly(d * 12) + "ms" }}>{d}{multi(ks)}</button>
+            : <span key={d} className={"vks-heat-cell grid aspect-square place-items-center rounded-md bg-muted/60 text-[11px] font-semibold tabular-nums text-muted-foreground/60 " + (d === today ? "ring-2 ring-primary/50" : "")} style={{ animationDelay: dly(d * 12) + "ms" }}>{d}</span> })}
       </div>
     </div>
     <div className="@xl:hidden">
@@ -429,8 +434,8 @@ export function LatencyTimeline({ days = 30, entries, offset = 0, today, onPick,
         {Array.from({ length: offset }, (_, i) => <span key={"b" + i} aria-hidden />)}
         {nums.map((d) => { const ks = act.get(d)
           return ks
-            ? <button key={d} type="button" aria-label={label(d, ks)} aria-haspopup="dialog" onClick={() => setDayOpen(d)} className="vks-heat-cell vks-press relative grid h-11 place-items-center rounded-xl text-sm font-bold tabular-nums text-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" style={{ background: fill(ks), animationDelay: d * 12 + "ms" }}>{d}{multi(ks)}</button>
-            : <span key={d} className={"vks-heat-cell grid h-11 place-items-center rounded-xl bg-muted/60 text-sm font-semibold tabular-nums text-muted-foreground/60 " + (d === today ? "ring-2 ring-primary/50" : "")} style={{ animationDelay: d * 12 + "ms" }}>{d}</span> })}
+            ? <button key={d} type="button" aria-label={label(d, ks)} aria-haspopup="dialog" onClick={() => setDayOpen(d)} className="vks-heat-cell vks-press relative grid h-11 place-items-center rounded-xl text-sm font-bold tabular-nums text-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" style={{ background: fill(ks), animationDelay: dly(d * 12) + "ms" }}>{d}{multi(ks)}</button>
+            : <span key={d} className={"vks-heat-cell grid h-11 place-items-center rounded-xl bg-muted/60 text-sm font-semibold tabular-nums text-muted-foreground/60 " + (d === today ? "ring-2 ring-primary/50" : "")} style={{ animationDelay: dly(d * 12) + "ms" }}>{d}</span> })}
       </div>
       {gaps.length > 0 && <>
         <div className="mb-1.5 mt-4 text-[11px] font-bold text-muted-foreground">ໄລຍະຫວ່າງລະຫວ່າງການຢ້ຽມຢາມ</div>
@@ -479,11 +484,11 @@ function AttCell({ parts, label, day, now, mobile, onClick }: { parts: AttPart[]
   const size = mobile ? "h-11" : "h-10"
   const ring = now ? " ring-2 ring-primary dark:ring-gold" : ""
   const num = mobile && <span aria-hidden className="pointer-events-none absolute left-1 top-0.5 text-[9px] font-semibold leading-none opacity-70">{day}</span>
-  if (!parts.length) return <span className={"vks-heat-cell relative rounded-lg bg-muted/50 text-muted-foreground " + size + ring} style={{ animationDelay: day * 10 + "ms" }}>{num}</span>
+  if (!parts.length) return <span className={"vks-heat-cell relative rounded-lg bg-muted/50 text-muted-foreground " + size + ring} style={{ animationDelay: dly(day * 10) + "ms" }}>{num}</span>
   const miss = parts.length === 1 && parts[0].k === "?"
   return <button type="button" aria-label={label} title={label} onClick={onClick}
     className={"vks-heat-cell vks-press relative flex overflow-hidden rounded-lg font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring " + size + ring + (miss ? " border-2 border-dashed border-destructive text-destructive" : "")}
-    style={{ animationDelay: day * 10 + "ms" }}>
+    style={{ animationDelay: dly(day * 10) + "ms" }}>
     {num}
     {parts.map((p, i) => { const a = ATT[p.k], t = a.t + (p.n != null ? p.n : "")
       return <span key={i} className={"relative grid flex-1 place-items-center " + (parts.length > 1 ? "text-[10px] " : "text-[13px] ") + (mobile ? "pt-2.5" : "")}
