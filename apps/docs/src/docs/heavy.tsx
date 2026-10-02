@@ -45,7 +45,7 @@ export const heavyDocs: Doc[] = [
     props: [
       { name: "Donut", type: "{ name; value }[]; centerLabel?; centerValue?; unit?", desc: "Total (or hovered %) in the hole, legend with percentages." },
       { name: "RadialBars", type: "{ name; value }[]; max = 100; unit = %", desc: "Centre shows the average." },
-      { name: "ScatterSeries", type: "groups: { name; data }[]; x; y; z?; xLabel?", desc: "z sizes bubbles." },
+      { name: "ScatterSeries", type: "groups: { name; data }[]; x; y; z?; xLabel?; yLabel?; unit?", desc: "z sizes bubbles; yLabel and unit label the axis and tooltip." },
       { name: "RadarSeries", type: "data; axisKey; y[]; max?; compact?", desc: "Desktop: radar. Narrow box (< 440 px) or compact: one row per axis with a thin bar per series. Legend pills hide series in both forms." },
     ],
   },
@@ -62,7 +62,7 @@ export const heavyDocs: Doc[] = [
 // Off automatically for prefers-reduced-motion and <html data-perf="lite">.
 <BarSeries data={week} x="d" y={["ok", "late"]} />      // nothing to enable` }],
     props: [
-      { name: "DateGrid", type: "rows; dates; status: (ok|late|miss|na)[][]; today?; onPick?; cell = 26", desc: "QC site-profile date grid: a row per round, a column per day, status squares. Scrolls sideways on a phone with row labels pinned." },
+      { name: "DateGrid", type: "rows; dates; status: (ok|late|miss|na)[][]; today?; onPick?; labels?; cell = 26", desc: "QC site-profile date grid: a row per round, a column per day, status squares. Scrolls sideways on a phone with row labels pinned." },
       { name: "LatencyTimeline", type: "days = 30; entries: { day; kinds }[]; offset?; today?; onPick?; labels?; unit = d; openLabel?", desc: "Site profile (patrol latency): visit days, gap brackets, avg / longest / shortest gap. Wide = one strip; narrow = month calendar + gap chips; tap a visited day for a sheet (kinds, gap before/after, openLabel button that fires onPick). kinds: inspection, special, event, meeting, incident (several = split underline)." },
       { name: "AttendanceBoard", type: "rows: { id; name; cells: string[] }[]; days = 31; today?; offset?; onPick?; labels?", desc: "HRM attendance tracking. Codes: P present, W rest day, A absent, L leave, O8 overtime hours, H8 holiday worked, ? missing, P+O8 split, '' empty. Wide = table with pinned names; narrow = one collapsible month card per guard." },
       { name: "Heatmap", type: "rows; cols; values: number[][]; tone?; unit?; cell = 28", desc: "Pure CSS, no Recharts." },

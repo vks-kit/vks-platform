@@ -40,7 +40,7 @@ Calendar-shaped charts use a CSS wave (45 ms-ish per cell step), so they cost no
 
 | Prop | Type | Default | Notes |
 | --- | --- | --- | --- |
-| DateGrid | rows; dates; status: (ok\|late\|miss\|na)[][]; today?; onPick?; cell = 26 |  | QC site-profile date grid: a row per round, a column per day, status squares. Scrolls sideways on a phone with row labels pinned. |
+| DateGrid | rows; dates; status: (ok\|late\|miss\|na)[][]; today?; onPick?; labels?; cell = 26 |  | QC site-profile date grid: a row per round, a column per day, status squares. Scrolls sideways on a phone with row labels pinned. |
 | LatencyTimeline | days = 30; entries: { day; kinds }[]; offset?; today?; onPick?; labels?; unit = d; openLabel? |  | Site profile (patrol latency): visit days, gap brackets, avg / longest / shortest gap. Wide = one strip; narrow = month calendar + gap chips; tap a visited day for a sheet (kinds, gap before/after, openLabel button that fires onPick). kinds: inspection, special, event, meeting, incident (several = split underline). |
 | AttendanceBoard | rows: { id; name; cells: string[] }[]; days = 31; today?; offset?; onPick?; labels? |  | HRM attendance tracking. Codes: P present, W rest day, A absent, L leave, O8 overtime hours, H8 holiday worked, ? missing, P+O8 split, '' empty. Wide = table with pinned names; narrow = one collapsible month card per guard. |
 | Heatmap | rows; cols; values: number[][]; tone?; unit?; cell = 28 |  | Pure CSS, no Recharts. |

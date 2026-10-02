@@ -43,5 +43,5 @@ Replay to see sweeps, pops and the radar-to-bars switch. Lite / reduced motion s
 | --- | --- | --- | --- |
 | Donut | { name; value }[]; centerLabel?; centerValue?; unit? |  | Total (or hovered %) in the hole, legend with percentages. |
 | RadialBars | { name; value }[]; max = 100; unit = % |  | Centre shows the average. |
-| ScatterSeries | groups: { name; data }[]; x; y; z?; xLabel? |  | z sizes bubbles. |
+| ScatterSeries | groups: { name; data }[]; x; y; z?; xLabel?; yLabel?; unit? |  | z sizes bubbles; yLabel and unit label the axis and tooltip. |
 | RadarSeries | data; axisKey; y[]; max?; compact? |  | Desktop: radar. Narrow box (< 440 px) or compact: one row per axis with a thin bar per series. Legend pills hide series in both forms. |
