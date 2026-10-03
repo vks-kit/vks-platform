@@ -11,7 +11,7 @@ import {
   SearchBar, Carousel, useProgressHUD, SnapSheet, IndexedList, BottomToolbar, useLongPress, useShareSheet, ShareSheet,
   Sidebar, SidebarSheet, Slider, DetailPopover, type NavItem,
   CommandPalette, useCommandK, Breadcrumb, HoverCard, ContextMenu, TreeView, StatCard, ButtonGroup, Dropzone, fmtBytes, FileIcon, TagInput, SplitPane, NotificationList, ScrollArea, type Notice,
-  HoverFx, Parallax, ParallaxLayer, SlideHighlight, CursorRing, Logo,
+  HoverFx, Parallax, ParallaxLayer, SlideHighlight, CursorRing, Logo, Roadmap, DependencyMap,
 } from "@vks-kit/ui"
 import { Share2, Pencil, Phone, Trash2, Heart, Shield, AlertTriangle, CheckCircle2, Clock, Folder, User, Copy as CopyIcon, Search as SearchIcon, ArrowRight } from "@vks-kit/ui/icons"
 import { BarSeries, LineSeries, Donut, Sparkline, ScatterSeries, RadarSeries, RadialBars, ComboSeries, Heatmap, DateGrid, LatencyTimeline, AttendanceBoard } from "@vks-kit/ui/charts"
@@ -142,6 +142,12 @@ export function More() {
               <Timeline items={[{ id: "1", time: "08:12", title: "ສະແກນປະຕູໜ້າ", tone: "success" }, { id: "2", time: "08:41", title: "ຊ້າ 6 ນາທີ", detail: "ບ່ອນຈອດລົດ", tone: "warning" }, { id: "3", time: "09:05", title: "ພາດຈຸດ", tone: "danger" }]} />
             </div>
           </div>
+        </Sec>
+        <Sec id="roadmap" title="Roadmap & dependency map">
+          <Card><CardContent className="space-y-6 pt-5">
+            <Roadmap start="2026-10-01" end="2027-04-01" today="2026-10-20" rows={[{ id: "p0", label: "P0 · Kit", start: "2026-10-01", end: "2026-11-10", progress: 60, tone: "success" }, { id: "p1", label: "P1 · Foundation", start: "2026-11-01", end: "2027-01-10" }, { id: "p2", label: "P2 · Live duty", start: "2027-01-01", end: "2027-03-20", tone: "gold" }]} milestones={[{ id: "m1", at: "2026-11-10", label: "Kit 0.3" }]} onSelect={(r) => toast(r.label)} onMilestone={(m) => toast(m.label)} />
+            <DependencyMap columns={["P0", "P1", "P2"]} nodes={[{ id: "a", label: "Kit", sub: "done", column: 0, tone: "success" }, { id: "b", label: "Auth", sub: "planned", column: 1, deps: ["a"] }, { id: "c", label: "Schema", sub: "decided", column: 1, deps: ["a"], tone: "gold" }, { id: "d", label: "QR scan", column: 2, deps: ["b", "c"] }]} onSelect={(n) => toast(n.label)} />
+          </CardContent></Card>
         </Sec>
         <Sec id="charts" title="Charts (own entry point, only loaded where used)">
           <div className="grid gap-4 md:grid-cols-3"><Card className="md:col-span-2"><CardHeader><CardTitle>ສະແກນຕໍ່ວັນ</CardTitle></CardHeader><CardContent><BarSeries data={chart} x="d" y={["ok", "late"]} /></CardContent></Card>

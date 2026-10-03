@@ -2,6 +2,7 @@ import * as React from "react"
 import { Avatar, AvatarGroup, UserChip, ProgressRing, Progress, Accordion, AccordionItem, AccordionTrigger, AccordionContent, StarRating, Timeline, KpiStrip, KpiHero, Pagination, Table, THead, TBody, TR, TH, TD, Badge, sortRows, type SortState, DataTable, type Column, Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, Button } from "@vks-kit/ui"
 import { ScanLine, Clock, AlertTriangle, Wallet } from "@vks-kit/ui/icons"
 import { fmtKip, fmtKipShort } from "@vks-kit/core"
+import { Roadmap, DependencyMap } from "@vks-kit/ui"
 import type { Doc } from "./types"
 
 type Row = { id: string; site: string; guard: string; time: string; status: string; shift: string; kip: number }
@@ -133,6 +134,35 @@ const data = sortRows(rows, sort, (r, k) => r[k])
   { id: "2", time: "08:41", title: "ຊ້າ 6 ນາທີ", detail: "ບ່ອນຈອດລົດ", tone: "warning" },
 ]} />`,
     props: [{ name: "items", type: '{ id; time; title; detail?; tone?: "success" | "warning" | "danger" | "neutral" }[]', desc: "" }],
+  },
+  {
+    slug: "roadmap", name: "Roadmap & dependency map", group: "Data display", badge: "New",
+    desc: "Plan views. Roadmap: phases as bars across months (Gantt) with a progress fill, gold milestone diamonds and a red today line. DependencyMap: boxes in columns with arrows from what each one needs; hover or focus a box to light its whole chain. Both are click-to-open (pair with Drawer). Phone: both scroll sideways inside their card.",
+    file: "packages/ui/src/components/roadmap.tsx", importLine: 'import { Roadmap, DependencyMap, planPct, planMonths, layoutDeps, type RoadmapRow, type RoadmapMilestone, type DepNode } from "@vks-kit/ui"',
+    demo: () => <div className="w-full space-y-6">
+      <Roadmap start="2026-10-01" end="2027-04-01" today="2026-10-20"
+        rows={[{ id: "p0", label: "P0 · Kit", start: "2026-10-01", end: "2026-11-10", progress: 60, tone: "success" }, { id: "p1", label: "P1 · Foundation", sub: "3 items", start: "2026-11-01", end: "2027-01-10" }, { id: "p2", label: "P2 · Live duty", start: "2027-01-01", end: "2027-03-20", tone: "gold" }]}
+        milestones={[{ id: "m1", at: "2026-11-10", label: "Kit 0.3" }, { id: "m2", at: "2027-03-20", label: "Pilot" }]} />
+      <DependencyMap columns={["P0", "P1", "P2"]} nodes={[{ id: "a", label: "Kit", sub: "done", column: 0, tone: "success" }, { id: "b", label: "Auth + roles", sub: "planned", column: 1, deps: ["a"] }, { id: "c", label: "Schema", sub: "decided", column: 1, deps: ["a"], tone: "gold" }, { id: "d", label: "QR scan", sub: "planned", column: 2, deps: ["b", "c"] }]} />
+    </div>,
+    code: `<Roadmap start="2026-10-01" end="2027-10-01" today={todayIso}
+  rows={[{ id: "p1", label: "P1 · Foundation", start: "2026-11-01", end: "2027-01-15", progress: 20, tone: "primary" }]}
+  milestones={[{ id: "m1", at: "2027-01-15", label: "Schema migrated" }]}
+  onSelect={(row) => openDrawer(row.id)} onMilestone={(m) => openDrawer(m.id)} />
+
+<DependencyMap columns={["P0", "P1", "P2"]}
+  nodes={[{ id: "auth", label: "Auth", column: 1, deps: ["repo"], tone: "warning" }, …]}
+  onSelect={(n) => openDrawer(n.id)} />`,
+    props: [
+      { name: "start / end / today", type: "ISO date", desc: "Roadmap range; today draws the red line when inside the range." },
+      { name: "rows", type: "{ id; label; sub?; start; end; progress?; tone? }[]", desc: "tone: primary | gold | success | warning | destructive | muted." },
+      { name: "milestones", type: "{ id; at; label }[]", desc: "Gold diamonds on their own row." },
+      { name: "onSelect / onMilestone", type: "(row) => void", desc: "Click a bar or label / a diamond." },
+      { name: "milestoneLabel / todayLabel / locale", type: "string", def: '"Milestones" / "today" / "en"', desc: "Pass Lao strings and \"lo\" for Lao screens." },
+      { name: "nodes", type: "{ id; label; sub?; column; deps?; tone? }[]", desc: "DependencyMap. column = left-to-right group; deps = ids this node needs." },
+      { name: "columns", type: "string[]", desc: "DependencyMap column headings." },
+    ],
+    notes: ["planPct, planMonths and layoutDeps are pure and unit tested.", "No chart library: plain divs and SVG, so it ships in the main entry and costs a few KB."],
   },
   {
     slug: "avatar-progress", name: "Avatar & progress", group: "Data display", badge: "Stable",
