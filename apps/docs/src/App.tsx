@@ -9,7 +9,9 @@ import type { Device } from "./docs/kit"
 import { PreviewBlock, InstallBlock, PropsTable, CodeBlock, H2, H3, P, LangSwitch, readLang, useT, useLang, useTr } from "./docs/kit"
 import type { Doc } from "./docs/types"
 
-const VERSION = "0.6"
+// Read from the package so the header badge can never drift from the published kit.
+import uiPkg from "../../../packages/ui/package.json"
+const VERSION = uiPkg.version
 
 /* ---------- hash router: #/docs/<slug>#<anchor> ---------- */
 function useRoute() {
