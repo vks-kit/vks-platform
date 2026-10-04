@@ -128,8 +128,14 @@ export function StarRating({ value, onChange, max = 5, size = "md", className }:
   )
 }
 
-export type TimelineItem = { id: string; time: string; title: string; detail?: string; tone?: "success" | "warning" | "danger" | "neutral" }
-/** Use for a vertical history of events (patrol log, audit trail, status changes). For a table of records use DataTable instead; for a live feed with read/unread use NotificationList instead. */
+export type TimelineItem = {
+  id: string; time: string; title: string; detail?: string; tone?: "success" | "warning" | "danger" | "neutral"
+  /** Audit trail: who did it (shown next to the time). */
+  actor?: string
+  /** Audit trail: changed fields, usually from diffFields(before, after). */
+  changes?: { field: string; label: string; from: string; to: string }[]
+}
+/** Use for a vertical history of events (patrol log, status changes) and for an audit trail: add actor and changes (from diffFields) to show who changed which field from what to what. For a table of records use DataTable instead; for a live feed with read/unread use NotificationList instead. */
 export function Timeline({ items, className }: { items: TimelineItem[]; className?: string }) {
   const dot = { success: "bg-success", warning: "bg-warning", danger: "bg-destructive", neutral: "bg-muted-foreground" }
   return (
@@ -137,9 +143,19 @@ export function Timeline({ items, className }: { items: TimelineItem[]; classNam
       {items.map((it, i) => (
         <li key={it.id} className="vks-fade-up relative" style={{ animationDelay: Math.min(i, 7) * 40 + "ms" }}>
           <span className={cn("absolute -left-[27px] top-1.5 size-3 rounded-full ring-4 ring-background", dot[it.tone ?? "neutral"])} />
-          <div className="text-xs text-muted-foreground">{it.time}</div>
+          <div className="text-xs text-muted-foreground">{it.time}{it.actor && <> · <span className="font-semibold text-foreground">{it.actor}</span></>}</div>
           <div className="font-semibold leading-snug">{it.title}</div>
           {it.detail && <div className="text-sm text-muted-foreground">{it.detail}</div>}
+          {it.changes && it.changes.length > 0 && (
+            <dl className="mt-2 grid gap-1 rounded-lg bg-muted/60 px-3 py-2 text-sm leading-normal">
+              {it.changes.map((c) => (
+                <div key={c.field} className="flex flex-wrap items-baseline gap-x-2">
+                  <dt className="text-muted-foreground">{c.label}</dt>
+                  <dd className="flex flex-wrap items-baseline gap-x-1.5"><span className="text-muted-foreground line-through">{c.from}</span><span aria-hidden className="text-muted-foreground">→</span><span className="font-semibold">{c.to}</span></dd>
+                </div>
+              ))}
+            </dl>
+          )}
         </li>
       ))}
     </ol>

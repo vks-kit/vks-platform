@@ -1,5 +1,6 @@
 import * as React from "react"
 import { RefreshCw, Search, Inbox } from "@vks-kit/ui/icons"
+import { SyncStatus } from "@vks-kit/ui"
 import { CloseButton, Alert, Button, ConfirmDialog, Skeleton, Spinner, SuccessCheck, OfflineBanner, Empty, LiveDot, toast, Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose, InSheetView, useInSheet, Combobox, FilterChips, Label, Sheet, SheetTrigger, SheetContent, SheetTitle, SheetDescription, Tooltip, TooltipTrigger, TooltipContent, Tip, Drawer, Lightbox, PhotoGrid } from "@vks-kit/ui"
 import type { Doc } from "./types"
 
@@ -163,6 +164,37 @@ toast("ມີວຽກໃໝ່ 2 ລາຍການ", { description: "ຈາກ
       { id: "empty-action", title: "Empty with icon + action", demo: () => <div className="grid w-full max-w-md gap-4"><Empty icon={<Search />} title="ບໍ່ພົບຜົນ" hint="ລອງຄຳຄົ້ນອື່ນ ຫຼື ລ້າງຕົວກອງ" action={<Button size="sm" variant="outline">ລ້າງຕົວກອງ</Button>} /><div className="rounded-xl border bg-card"><Empty size="sm" icon={<Inbox />} title="ບໍ່ມີແຈ້ງເຕືອນໃໝ່" /></div></div>, code: `<Empty icon={<Search />} title="ບໍ່ພົບຜົນ" hint="ລອງຄຳຄົ້ນອື່ນ" action={<Button size="sm" variant="outline">ລ້າງຕົວກອງ</Button>} />
 <Empty size="sm" title="ບໍ່ມີແຈ້ງເຕືອນໃໝ່" />` },
     ],
+  },
+  {
+    slug: "sync-status", name: "Sync status", group: "Feedback", badge: "New",
+    desc: "Is my data on the server yet? Synced, pending N or failing, with the last sync time and a retry button. Reads the OfflineQueue from @vks-kit/core.",
+    file: "packages/ui/src/components/business.tsx", importLine: 'import { SyncStatus, syncState, sinceLabel } from "@vks-kit/ui"',
+    demo: () => <div className="grid w-full max-w-md gap-3"><SyncStatus queued={0} lastSyncAt={Date.now() - 30_000} /><SyncStatus queued={3} lastSyncAt={Date.now() - 12 * 60_000} onRetry={() => toast("retry")} /><SyncStatus queued={2} error="HTTP 500" lastSyncAt={Date.now() - 3 * 3600_000} onRetry={() => toast("retry")} /></div>,
+    code: `// queue = new OfflineQueue(store, send) from @vks-kit/core
+const [queued, setQueued] = useState(0), [dropped, setDropped] = useState(0)
+const [syncing, setSyncing] = useState(false), [err, setErr] = useState<string>(), [last, setLast] = useState<number | null>(null)
+const retry = async () => {
+  setSyncing(true)
+  try { const r = await queue.flush(); setDropped(r.dropped); setQueued(r.left); setErr(undefined); if (!r.left) setLast(Date.now()) }
+  catch (e) { setErr(String(e)) } finally { setSyncing(false) }
+}
+<SyncStatus queued={queued} dropped={dropped} error={err} lastSyncAt={last} syncing={syncing} onRetry={retry} />
+// Have the raw QueueItem[] (e.g. from your Storage)? Pass items={...} to also get the oldest-item time.`,
+    examples: [
+      { id: "compact", title: "Compact pill for a header", demo: () => <div className="flex flex-wrap items-center gap-3"><SyncStatus compact queued={0} /><SyncStatus compact queued={4} onRetry={() => toast("retry")} /><SyncStatus compact queued={1} error onRetry={() => toast("retry")} /></div>, code: `<PageHeader title="ສະແກນ" actions={<SyncStatus compact items={items} error={err} onRetry={retry} />} />` },
+    ],
+    props: [
+      { name: "items", type: "readonly QueueItem[]", desc: "Queue contents. Wins over queued. Gives the oldest-item time and spots items about to be dropped." },
+      { name: "queued", type: "number", desc: "Use when you only have a count (queue.size())." },
+      { name: "error", type: "string | boolean", desc: "Last flush failed. A string is shown under the title." },
+      { name: "dropped", type: "number", desc: "flush() result: items given up on. Above 0 = failing." },
+      { name: "maxTries", type: "number", def: "8", desc: "Same as OfflineQueue. An item one try short of this counts as failing." },
+      { name: "lastSyncAt", type: "number | null", desc: "ms timestamp of the last good flush. Shown as 'now', 'N min ago' or HH:MM." },
+      { name: "syncing / onRetry", type: "boolean / () => void", desc: "Retry shows only when not synced; spins while syncing." },
+      { name: "compact", type: "boolean", def: "false", desc: "One-line Badge for a header." },
+      { name: "labels", type: "Partial<SyncLabels>", desc: "Override any Lao text." },
+    ],
+    notes: ["Pair with OfflineBanner: the banner says there is no network; SyncStatus says what is still waiting.", "Never hide a failing state. Show it until the user retries or the queue drains."],
   },
   {
     slug: "dialog", name: "Dialog", group: "Overlays", badge: "Stable",

@@ -10,7 +10,7 @@ import { PreviewBlock, InstallBlock, PropsTable, CodeBlock, H2, H3, P, LangSwitc
 import type { Doc } from "./docs/types"
 
 // Read from the package so the header badge can never drift from the published kit.
-import uiPkg from "../../../packages/ui/package.json"
+import uiPkg from "@vks-kit/ui/package.json"
 const VERSION = uiPkg.version
 
 /* ---------- hash router: #/docs/<slug>#<anchor> ---------- */

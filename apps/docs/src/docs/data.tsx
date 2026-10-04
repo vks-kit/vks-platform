@@ -3,6 +3,7 @@ import { Avatar, AvatarGroup, UserChip, ProgressRing, Progress, Accordion, Accor
 import { ScanLine, Clock, AlertTriangle, Wallet } from "@vks-kit/ui/icons"
 import { fmtKip, fmtKipShort } from "@vks-kit/core"
 import { Roadmap, DependencyMap } from "@vks-kit/ui"
+import { ApprovalCard, diffFields } from "@vks-kit/ui"
 import type { Doc } from "./types"
 
 type Row = { id: string; site: string; guard: string; time: string; status: string; shift: string; kip: number }
@@ -133,7 +134,51 @@ const data = sortRows(rows, sort, (r, k) => r[k])
   { id: "1", time: "08:12", title: "ສະແກນປະຕູໜ້າ", tone: "success" },
   { id: "2", time: "08:41", title: "ຊ້າ 6 ນາທີ", detail: "ບ່ອນຈອດລົດ", tone: "warning" },
 ]} />`,
-    props: [{ name: "items", type: '{ id; time; title; detail?; tone?: "success" | "warning" | "danger" | "neutral" }[]', desc: "" }],
+    props: [
+      { name: "items", type: '{ id; time; title; detail?; tone?: "success" | "warning" | "danger" | "neutral"; actor?; changes? }[]', desc: "" },
+      { name: "items[].actor", type: "string", desc: "Audit trail: who did it. Shown after the time." },
+      { name: "items[].changes", type: "{ field; label; from; to }[]", desc: "Audit trail: changed fields, old value struck through, then the new one. Build it with diffFields(before, after, { labels, ignore })." },
+    ],
+    examples: [
+      { id: "audit", title: "Audit trail (who, what, when, diff)", note: "Same Timeline with actor and changes. diffFields skips fields that did not change; pass ignore for noise such as updatedAt.", demo: () => <div className="w-full max-w-sm"><Timeline items={[
+        { id: "2", time: "02/10 09:02", actor: "ຫົວໜ້າ ຕົວຢ່າງ", title: "ແກ້ໄຂກະເຂົ້າວຽກ", tone: "warning", changes: diffFields({ shift: "ກາງເວັນ", site: "ຈຸດ A", start: "06:00" }, { shift: "ກາງຄືນ", site: "ຈຸດ B", start: "06:00" }, { labels: { shift: "ກະ", site: "ສະຖານທີ່", start: "ເລີ່ມ" } }) },
+        { id: "1", time: "02/10 08:15", actor: "ພະນັກງານ ຕົວຢ່າງ", title: "ສ້າງລາຍການ", tone: "neutral" },
+      ]} /></div>, code: `import { Timeline, diffFields } from "@vks-kit/ui"
+
+<Timeline items={log.map((e) => ({
+  id: e.id, time: e.at, actor: e.by, title: e.action,
+  changes: diffFields(e.before, e.after, { labels: { shift: "ກະ", site: "ສະຖານທີ່" }, ignore: ["updatedAt"] }),
+}))} />` },
+    ],
+    notes: ["Audit rows are read-only. Never let the user edit history in place."],
+  },
+  {
+    slug: "approval-card", name: "Approval card", group: "Data display", badge: "New",
+    desc: "One request that needs a yes or no from a manager: what, who asked, when. Approve, or Reject with a required reason.",
+    file: "packages/ui/src/components/business.tsx", importLine: 'import { ApprovalCard, rejectReasonError, type ApprovalStatus } from "@vks-kit/ui"',
+    demo: () => <div className="grid w-full max-w-sm gap-4"><ApprovalCard title="ຂໍລາພັກ 2 ມື້" summary="03–04/10 · ທຸລະກິດຄອບຄົວ" requester="ພະນັກງານ ຕົວຢ່າງ" requesterRole="ຍາມ · ຈຸດ A" requestedAt="02/10 08:15" status="pending" onApprove={() => new Promise((r) => setTimeout(r, 600))} onReject={() => new Promise((r) => setTimeout(r, 600))} /></div>,
+    code: `<ApprovalCard
+  title="ຂໍລາພັກ 2 ມື້" summary="03–04/10 · ທຸລະກິດຄອບຄົວ"
+  requester={req.name} requesterRole={req.role} requestedAt={req.at}
+  status={req.status}
+  onApprove={() => api.approve(req.id)}
+  onReject={(reason) => api.reject(req.id, reason)}   // reason is already cleanText()-ed
+/>`,
+    examples: [
+      { id: "states", title: "Approved and rejected", note: "After a decision the buttons go away and the card shows who decided, when, and the reason.", demo: () => <div className="grid w-full max-w-sm gap-4"><ApprovalCard title="ຂໍເຮັດ OT 4 ຊົ່ວໂມງ" requester="ພະນັກງານ ຕົວຢ່າງ" requestedAt="01/10 16:00" status="approved" decidedBy="ຫົວໜ້າ ຕົວຢ່າງ" decidedAt="01/10 16:20" /><ApprovalCard title="ຂໍປ່ຽນຈຸດປະຈຳການ" requester="ພະນັກງານ ຕົວຢ່າງ" requestedAt="30/09 10:00" status="rejected" decidedBy="ຫົວໜ້າ ຕົວຢ່າງ" decidedAt="30/09 11:05" reason="ຈຸດ B ຄົນເຕັມແລ້ວ" /></div>, code: `<ApprovalCard status="approved" decidedBy="…" decidedAt="…" {...req} />
+<ApprovalCard status="rejected" decidedBy="…" decidedAt="…" reason={req.reason} {...req} />` },
+    ],
+    props: [
+      { name: "title / summary", type: "ReactNode", desc: "What is asked. Keep the title to one line." },
+      { name: "requester / requesterRole / requestedAt", type: "string", desc: "Who asked and when (pre-formatted)." },
+      { name: "status", type: '"pending" | "approved" | "rejected"', desc: "Buttons show only when pending." },
+      { name: "decidedBy / decidedAt / reason", type: "string", desc: "Shown after a decision; reason only when rejected." },
+      { name: "onApprove", type: "() => void | Promise", desc: "Button spins until the promise settles." },
+      { name: "onReject", type: "(reason: string) => void | Promise", desc: "Called only when rejectReasonError() passes (not empty, at least 5 characters after cleanText)." },
+      { name: "labels", type: "Partial<ApprovalLabels>", desc: "Override any Lao button or status text." },
+      { name: "children", type: "ReactNode", desc: "Extra detail rows under the summary." },
+    ],
+    notes: ["Reject always needs a reason. The requester sees it.", "Keep the decision on the server too: the card only shows the status you pass."],
   },
   {
     slug: "roadmap", name: "Roadmap & dependency map", group: "Data display", badge: "New",

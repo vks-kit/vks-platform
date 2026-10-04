@@ -10,7 +10,8 @@
     "./kanban": "./src/heavy/kanban.tsx",
     "./scan": "./src/heavy/scan.tsx",
     "./icons": "./src/icons.ts",
-    "./guard": "./bin/guard-lib.mjs"
+    "./guard": "./bin/guard-lib.mjs",
+    "./package.json": "./package.json"
   },
   "dependencies": {
     "@fontsource-variable/noto-sans-lao": "^5.2.0",

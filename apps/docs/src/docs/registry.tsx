@@ -11,6 +11,9 @@ import { mobile2Docs } from "./mobile2"
 import { desktopDocs } from "./desktop"
 import { Introduction, Installation, Theming, Typography, Motion, MobileRules, LayoutRules, DesignThinking, Changelog } from "./guides"
 import { designThinkingMd } from "./design-thinking"
+import { ReportsGuide, FormsGuide } from "./pattern-guides"
+import { reportsMd } from "./reports-guide"
+import { formsMd } from "./form-guide"
 import { Responsive } from "./responsive"
 import { GROUP_ORDER, type Doc, type Group } from "./types"
 
@@ -25,6 +28,8 @@ export const guides: Guide[] = [
   { slug: "layout-rules", name: "Layout rules", group: "Getting Started", badge: "New", desc: "Desktop vs mobile anatomy, the 768 px breakpoint and the motion rules.", page: LayoutRules },
   { slug: "design-thinking", name: "Design thinking", group: "Getting Started", badge: "New", desc: "One job per page, content first, hide what is used sometimes. The rules that keep VKS screens from getting cluttered.", page: DesignThinking, md: designThinkingMd },
   { slug: "responsive", name: "Desktop ↔ Mobile", group: "Getting Started", badge: "New", desc: "When a table becomes cards, a sidebar becomes a bottom nav, a dialog becomes a sheet. Live, at real widths.", page: Responsive },
+  { slug: "forms", name: "Form pattern", group: "Getting Started", badge: "New", desc: "Lao labels, 16 px inputs, errors under the field, one submit button with four states, never lose what was typed.", page: FormsGuide, md: formsMd },
+  { slug: "reports", name: "Reports (PDF & PPTX)", group: "Getting Started", badge: "New", desc: "House layout for PDF and PPTX reports: cover, KPI row, table, footer, and the Lao font settings each format needs.", page: ReportsGuide, md: reportsMd },
   { slug: "changelog", name: "Changelog", group: "Getting Started", desc: "What changed in each version.", page: Changelog },
 ]
 export const docs: Doc[] = [...actionDocs, ...formDocs, ...dateDocs, ...feedbackDocs, ...dataDocs, ...layoutDocs, ...heavyDocs, ...moreDocs, ...mobile2Docs, ...desktopDocs]

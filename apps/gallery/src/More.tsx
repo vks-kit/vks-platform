@@ -12,6 +12,7 @@ import {
   Sidebar, SidebarSheet, Slider, DetailPopover, type NavItem,
   CommandPalette, useCommandK, Breadcrumb, HoverCard, ContextMenu, TreeView, StatCard, ButtonGroup, Dropzone, fmtBytes, FileIcon, TagInput, SplitPane, NotificationList, ScrollArea, type Notice,
   HoverFx, Parallax, ParallaxLayer, SlideHighlight, CursorRing, Logo, Roadmap, DependencyMap,
+  ApprovalCard, SyncStatus, diffFields, type ApprovalStatus,
 } from "@vks-kit/ui"
 import { Share2, Pencil, Phone, Trash2, Heart, Shield, AlertTriangle, CheckCircle2, Clock, Folder, User, Copy as CopyIcon, Search as SearchIcon, ArrowRight } from "@vks-kit/ui/icons"
 import { BarSeries, LineSeries, Donut, Sparkline, ScatterSeries, RadarSeries, RadialBars, ComboSeries, Heatmap, DateGrid, LatencyTimeline, AttendanceBoard } from "@vks-kit/ui/charts"
@@ -143,6 +144,7 @@ export function More() {
             </div>
           </div>
         </Sec>
+        <BusinessKit />
         <Sec id="roadmap" title="Roadmap & dependency map">
           <Card><CardContent className="space-y-6 pt-5">
             <Roadmap start="2026-10-01" end="2027-04-01" today="2026-10-20" rows={[{ id: "p0", label: "P0 · Kit", start: "2026-10-01", end: "2026-11-10", progress: 60, tone: "success" }, { id: "p1", label: "P1 · Foundation", start: "2026-11-01", end: "2027-01-10" }, { id: "p2", label: "P2 · Live duty", start: "2027-01-01", end: "2027-03-20", tone: "gold" }]} milestones={[{ id: "m1", at: "2026-11-10", label: "Kit 0.3" }]} onSelect={(r) => toast(r.label)} onMilestone={(m) => toast(m.label)} />
@@ -197,6 +199,34 @@ export function More() {
       </Drawer>
     </AppShell>
   )
+}
+/** Business patterns: approval, sync status, audit trail (Timeline + diffFields). Demo data only. */
+function BusinessKit() {
+  const [st, setSt] = React.useState<ApprovalStatus>("pending"), [why, setWhy] = React.useState("")
+  const [q, setQ] = React.useState(3), [fail, setFail] = React.useState(false), [busy, setBusy] = React.useState(false), [last, setLast] = React.useState(() => Date.now() - 12 * 60_000)
+  const wait = () => new Promise((r) => setTimeout(r, 700))
+  const retry = async () => { setBusy(true); await wait(); setBusy(false); setFail(false); setQ(0); setLast(Date.now()) }
+  return <Sec id="business" title="Business · approval, sync status, audit trail">
+    <div className="grid gap-6 md:grid-cols-3">
+      <div className="space-y-3">
+        <ApprovalCard title="ຂໍລາພັກ 2 ມື້" summary="03–04/10 · ເຫດຜົນ: ທຸລະກິດຄອບຄົວ" requester="ພະນັກງານ ຕົວຢ່າງ" requesterRole="ຍາມ · ຈຸດ A" requestedAt="02/10 08:15"
+          status={st} decidedBy="ຫົວໜ້າ ຕົວຢ່າງ" decidedAt="02/10 09:00" reason={why}
+          onApprove={async () => { await wait(); setSt("approved"); toast.success("ອະນຸມັດແລ້ວ") }} onReject={async (r) => { await wait(); setWhy(r); setSt("rejected") }} />
+        {st !== "pending" && <Button size="sm" variant="ghost" onClick={() => setSt("pending")}>Reset</Button>}
+      </div>
+      <div className="space-y-3">
+        <SyncStatus queued={0} lastSyncAt={Date.now() - 30_000} />
+        <SyncStatus queued={q} error={fail ? "HTTP 500" : undefined} lastSyncAt={last} syncing={busy} onRetry={retry} />
+        <SyncStatus queued={2} error="ເຊີບເວີບໍ່ຕອບ" lastSyncAt={Date.now() - 3 * 3600_000} onRetry={() => toast("retry")} />
+        <div className="flex flex-wrap gap-2"><Button size="sm" variant="outline" onClick={() => setQ((n) => n + 1)}>+1 ຄິວ</Button><Button size="sm" variant="outline" onClick={() => setFail((v) => !v)}>Toggle fail</Button><SyncStatus compact queued={q} error={fail} syncing={busy} onRetry={retry} /></div>
+      </div>
+      <Timeline items={[
+        { id: "a3", time: "02/10 09:02", actor: "ຫົວໜ້າ ຕົວຢ່າງ", title: "ແກ້ໄຂກະເຂົ້າວຽກ", tone: "warning", changes: diffFields({ shift: "ກາງເວັນ", site: "ຈຸດ A", start: "06:00" }, { shift: "ກາງຄືນ", site: "ຈຸດ B", start: "18:00" }, { labels: { shift: "ກະ", site: "ສະຖານທີ່", start: "ເລີ່ມ" } }) },
+        { id: "a2", time: "02/10 08:15", actor: "ພະນັກງານ ຕົວຢ່າງ", title: "ສົ່ງຄຳຂໍລາພັກ", tone: "neutral" },
+        { id: "a1", time: "01/10 17:40", actor: "HR ຕົວຢ່າງ", title: "ອະນຸມັດເງິນເພີ່ມ", tone: "success", changes: diffFields({ ot: 0 }, { ot: 120000 }, { labels: { ot: "OT (ກີບ)" } }) },
+      ]} />
+    </div>
+  </Sec>
 }
 /** v0.4 motion: collapsible sidebar rail, phone drawer, animated slider, detail popover. */
 function MotionKit() {
