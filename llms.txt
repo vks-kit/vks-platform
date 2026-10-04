@@ -4,6 +4,8 @@
 
 Rules: import only from "@vks-kit/ui" (icons from "@vks-kit/ui/icons", heavy parts from "@vks-kit/ui/charts" | "/map" | "/kanban" | "/scan"); colours only via theme tokens; see AGENTS.md.
 
+Before designing a page, read docs/ai/design-thinking.md: one job per page, content first, one control row, rare filters behind a popover, ≤ 5 numbers, say it once.
+
 ## Foundations
 
 - [Logo](docs/ai/logo.md): The official VKS badge, redrawn as a vector from the brand file used in the QC dashboard. Same colours in both themes, because the badge carries its own field. Exports: Logo, LogoTile, BRAND
@@ -133,5 +135,6 @@ Rules: import only from "@vks-kit/ui" (icons from "@vks-kit/ui/icons", heavy par
 - [Motion](docs/ai/motion.md): The animation kit: small, fast, transform-only.
 - [Mobile rules](docs/ai/mobile.md): The ten rules every VKS screen follows.
 - [Layout rules](docs/ai/layout-rules.md): Desktop vs mobile anatomy, the 768 px breakpoint and the motion rules.
+- [Design thinking](docs/ai/design-thinking.md): One job per page, content first, hide what is used sometimes. The rules that keep VKS screens from getting cluttered.
 - [Desktop ↔ Mobile](docs/ai/responsive.md): When a table becomes cards, a sidebar becomes a bottom nav, a dialog becomes a sheet. Live, at real widths.
 - [Changelog](docs/ai/changelog.md): What changed in each version.

@@ -41,6 +41,7 @@ function llms(linkBase: string): string {
     "# VKS UI (@vks-kit/ui)", "",
     "> Shared React 19 + Tailwind v4 design system for VKS Security apps (Guard Navy + Gold, Lao-first, mobile-first). Search this list before building any UI: reuse a part if it fits, extend it with a prop/variant if it almost fits, and only then add a new part to packages/ui + apps/gallery + apps/docs.", "",
     "Rules: import only from \"@vks-kit/ui\" (icons from \"@vks-kit/ui/icons\", heavy parts from \"@vks-kit/ui/charts\" | \"/map\" | \"/kanban\" | \"/scan\"); colours only via theme tokens; see AGENTS.md.", "",
+    "Before designing a page, read docs/ai/design-thinking.md: one job per page, content first, one control row, rare filters behind a popover, ≤ 5 numbers, say it once.", "",
   ]
   for (const g of GROUP_ORDER) {
     const items = docs.filter((d) => d.group === g)
@@ -55,7 +56,8 @@ function llms(linkBase: string): string {
 }
 
 const guidePage = (g: (typeof guides)[number]) =>
-  `# ${g.name}\n\n> ${oneLine(g.desc)}\n\n- Group: ${g.group}\n- Live docs: #/docs/${g.slug}\n\nThis is a prose guide; read it on the docs site (npm run dev:docs).\n`
+  `# ${g.name}\n\n> ${oneLine(g.desc)}\n\n- Group: ${g.group}\n- Live docs: #/docs/${g.slug}\n\n` +
+  (g.md ? g.md().trim() + "\n" : "This is a prose guide; read it on the docs site (npm run dev:docs).\n")
 
 /** Every generated file, keyed by repo-relative path. */
 export function buildAiIndex(): Map<string, string> {

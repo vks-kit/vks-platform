@@ -1,7 +1,8 @@
 import * as React from "react"
-import { Pointer, MonitorSmartphone, PanelBottom, PanelBottomOpen, Type, Vibrate, MousePointerClick, ImageDown, Cpu, Signal, ArrowRight, Smartphone, Palette, Zap, Languages, WifiOff, ShieldCheck, RefreshCw, Monitor, Home, ClipboardList, Users, BarChart3, Bell, Plus, Ruler, Move, Timer, Package, Coins, Blocks, Eraser, Tag, Columns2, LayoutGrid, Layers, Maximize2, Hand, MousePointer2, Sparkles, Gauge, Accessibility, Navigation } from "@vks-kit/ui/icons"
+import { Pointer, MonitorSmartphone, PanelBottom, PanelBottomOpen, Type, Vibrate, MousePointerClick, ImageDown, Cpu, Signal, ArrowRight, Smartphone, Palette, Zap, Languages, WifiOff, ShieldCheck, RefreshCw, Monitor, Home, ClipboardList, Users, BarChart3, Bell, Plus, Ruler, Move, Timer, Package, Coins, Blocks, Eraser, Tag, Columns2, LayoutGrid, Layers, Maximize2, Hand, MousePointer2, Sparkles, Gauge, Accessibility, Navigation, Check } from "@vks-kit/ui/icons"
 import { Button, Card, CardContent, Badge, SuccessCheck, Logo, Tabs, TabsList, TabsTrigger, Slider, toast, useTheme } from "@vks-kit/ui"
 import { CodeBlock, H2, H3, P, Code, FeatureCard, FeatureGrid, useT, useTr } from "./kit"
+import { BEFORE_AFTER, CHECKLIST, PAGE_QUESTION, RULES } from "./design-thinking"
 
 const Lead = ({ children }: { children: React.ReactNode }) => <p className="text-lg leading-8 text-muted-foreground">{children}</p>
 const Next = ({ to, label }: { to: string; label: string }) => <a href={"#/docs/" + to} className="vks-press vks-lift inline-flex min-h-11 items-center gap-2 rounded-xl border bg-card px-4 font-semibold">{label}<ArrowRight className="size-4 text-gold" /></a>
@@ -335,9 +336,38 @@ const mobile = useIsMobile()   // (max-width: 768px)`} />
   </div>
 }
 
+export function DesignThinking() {
+  const t = useT(), tr = useTr()
+  const [done, setDone] = React.useState<number[]>([])
+  return <div className="space-y-6">
+    <Lead>{t("ໜ້າຈໍທີ່ສະຫງົບ ແລະ ເນັ້ນໃສ່ສິ່ງດຽວ. ກົດລຸ່ມນີ້ໃຊ້ກັບທຸກໜ້າຂອງແອັບ VKS, ທັງຄອມ ແລະ ມືຖື.", "Calm screens that focus on one thing. These rules apply to every VKS app page, desktop and phone.")}</Lead>
+    <div className="rounded-xl border-l-4 border-gold bg-card p-4 text-[15px] leading-7">{tr(PAGE_QUESTION)}</div>
+    <H2 id="rules">{t("ກົດ", "Rules")}</H2>
+    <div className="grid gap-2 md:grid-cols-2">{RULES.map((r, i) => <div key={r.id} className="rounded-xl border bg-card p-4">
+      <div className="flex items-baseline gap-2"><span className="font-mono text-xs text-gold">{String(i + 1).padStart(2, "0")}</span><b>{tr(r.title)}</b></div>
+      <p className="mt-1 text-sm leading-6">{tr(r.rule)}</p>
+      <p className="mt-1 text-xs leading-5 text-muted-foreground">{tr(r.how)}</p>
+    </div>)}</div>
+    <H2 id="before-after">{t("ກ່ອນ → ຫຼັງ", "Before → after")}</H2>
+    <P>{t("ຈາກການຫຍໍ້ໜ້າ VKS Centre (v0.3).", "From the VKS Centre compaction (v0.3).")}</P>
+    <div className="overflow-hidden rounded-xl border text-sm">{BEFORE_AFTER.map(([a, b]) => <div key={a} className="grid border-t first:border-0 md:grid-cols-2">
+      <div className="px-4 py-2.5 text-muted-foreground line-through decoration-destructive/60">{tr(a)}</div>
+      <div className="flex items-center gap-2 px-4 py-2.5"><ArrowRight className="size-4 shrink-0 text-success" />{tr(b)}</div>
+    </div>)}</div>
+    <H2 id="checklist">{t("ກວດກ່ອນສົ່ງ", "Checklist before you ship")}</H2>
+    <ul className="space-y-1">{CHECKLIST.map((c, i) => { const on = done.includes(i); return <li key={c}>
+      <button type="button" aria-pressed={on} onClick={() => setDone(on ? done.filter((x) => x !== i) : [...done, i])} className="vks-press flex min-h-11 w-full items-center gap-3 rounded-lg px-2 text-left text-sm hover:bg-muted">
+        <span className={"flex size-5 shrink-0 items-center justify-center rounded border " + (on ? "border-success bg-success text-success-foreground" : "")}>{on && <Check className="size-3.5" />}</span>{tr(c)}
+      </button></li> })}</ul>
+    <p className="text-sm text-muted-foreground">{done.length}/{CHECKLIST.length}</p>
+    <div className="flex flex-wrap gap-3 pt-2"><Next to="filter-chips" label="Filter chips" /><Next to="page-header" label="Page header" /><Next to="layout-rules" label={t("ກົດ layout", "Layout rules")} /></div>
+  </div>
+}
+
 export function Changelog() {
   const tr = useTr()
   const log: [string, string, string[]][] = [
+    ["0.3.1", "Design thinking guide", ["New Getting Started guide: one job per page, content first, one control row, rare filters behind a popover, at most 5 headline numbers, say it once. Its full text is in the AI catalogue (docs/ai/design-thinking.md) and the AGENTS.md template. No API change."]],
     ["0.3.0", "Roadmap and dependency map", ["New Roadmap (Gantt bars with progress, milestones and a today line) and DependencyMap (columns of boxes with arrows; hover lights the chain). Both click-to-open. Pure helpers planPct, planMonths and layoutDeps. Additive, no breaking change."]],
     ["0.2.3", "Phone chart motion", ["On phones every chart now finishes inside 400 ms in total: stagger delays are capped and the calendar-cell wave (Heatmap, DateGrid, LatencyTimeline, AttendanceBoard) is shortened. Desktop motion is unchanged. No API change."]],
     ["0.2.2", "Docs and publish script", ["Installation page rewritten for the private registry; the shipped AGENTS.md template now has the Vite dev-server note and the registry update steps; chart prop tables list every prop. New npm run kit:publish script replaces kit:pack. No API change."]],

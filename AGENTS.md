@@ -11,6 +11,16 @@
 
 The first three and the icon rule are enforced by `packages/ui/test/guards.test.ts` — `npm test` fails if you break them.
 
+## Design thinking (every page — keep it uncluttered)
+Full guide: `docs/ai/design-thinking.md` (docs site: #/docs/design-thinking).
+- **One job per page**: write the question the page answers; the first screen answers it.
+- **Content first**: PageHeader → one control row (~44 px) → the main content. View switches go in PageHeader actions.
+- **Hide what is used sometimes**: 1-3 everyday controls visible; the rest behind one "Filter" Popover (sheet on phone) with a count badge. Active filters = removable chips; Reset only when something is set.
+- **≤ 5 headline numbers** in one slim row, each leading somewhere. **Say it once**: never show the same fact twice.
+- **Merge, don't stack**: ≤ 3 blocks above the main content; related small cards become one strip.
+- **Help is one muted line**, not a card. **Counts on the controls** (Backend 19), not in a summary block.
+- Check at 360 px and 1440×900 before calling a screen done.
+
 ## Before you build any UI: search the catalogue
 1. Open `llms.txt` (repo root). It lists every part by group with a one-line "what it is" and its exports.
 2. Open the matching `docs/ai/<slug>.md`: import line, "when to use" (from the source doc comment), code, examples, props, notes.
