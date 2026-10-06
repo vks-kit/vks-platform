@@ -21,7 +21,8 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
+      # npm install, not ci: the lockfile is generated on Windows and lacks Linux-only optional deps (@emnapi/*).
+      - run: npm install --no-audit --no-fund
       - run: npm run build:docs
       # Publishes to https://ui.vks-security.com (project vks-ui-docs on the account that owns the domain).
       - name: Deploy to Cloudflare Pages
