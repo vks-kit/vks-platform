@@ -9,6 +9,7 @@
     "build": "npm run build -w @vks-kit/gallery",
     "dev:docs": "npm run dev -w @vks-kit/docs",
     "build:docs": "npm run build -w @vks-kit/docs",
+    "deploy:docs": "npm run build:docs && npx wrangler pages deploy apps/docs/dist --project-name=vks-ui-docs --branch=main --commit-dirty=true",
     "test": "vitest run",
     "kit:publish": "node scripts/publish-kit.mjs",
     "typecheck": "tsc --noEmit -p tsconfig.json",

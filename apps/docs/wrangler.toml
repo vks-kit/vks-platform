@@ -1,0 +1,6 @@
+# VKS UI docs site - Cloudflare Pages (TEST account, same as vks-app centre).
+# Static only: the docs are hash-routed (#/docs/...), so no SPA fallback / Functions needed.
+# Deploy:  npm run deploy:docs   (needs CLOUDFLARE_API_TOKEN, or an interactive `wrangler login`)
+name = "vks-ui-docs"
+compatibility_date = "2026-09-01"
+pages_build_output_dir = "dist"
