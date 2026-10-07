@@ -2,7 +2,7 @@ name: Deploy docs
 on:
   push:
     branches: [main]
-    paths: ["apps/docs/**", "packages/**", ".github/workflows/deploy-docs.yml"]
+    paths: ["apps/docs/**", "apps/gallery/**", "packages/**", ".github/workflows/deploy-docs.yml"]
   workflow_dispatch:
 permissions:
   contents: read
@@ -24,6 +24,7 @@ jobs:
       # npm install, not ci: the lockfile is generated on Windows and lacks Linux-only optional deps (@emnapi/*).
       - run: npm install --no-audit --no-fund
       - run: npm run build:docs
+      - run: npm run build
       # Publishes to https://ui.vks-security.com (project vks-ui-docs on the account that owns the domain).
       - name: Deploy to Cloudflare Pages
         if: env.CF_LIVE_TOKEN != '' && env.CF_LIVE_ACCOUNT != ''
@@ -33,3 +34,14 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID_LIVE }}
           workingDirectory: apps/docs
           command: pages deploy dist --project-name=vks-ui-docs --branch=main
+
+      # Gallery (live component demos) -> project vks-ui-gallery (https://vks-ui-gallery.pages.dev until a domain is attached).
+      - name: Deploy gallery to Cloudflare Pages
+        if: env.CF_LIVE_TOKEN != '' && env.CF_LIVE_ACCOUNT != ''
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN_LIVE }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID_LIVE }}
+          workingDirectory: apps/gallery
+          preCommands: npx wrangler pages project create vks-ui-gallery --production-branch=main || true
+          command: pages deploy dist --project-name=vks-ui-gallery --branch=main
