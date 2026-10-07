@@ -107,6 +107,13 @@
   .vks-modal[data-state=open]   { animation: vks-zoom-in .42s var(--ease-spring) both; }
   .vks-modal[data-state=closed] { animation: vks-zoom-out .2s var(--ease-ios) both; }
 }
+/* phone menu/popover: Radix wraps the content in a fixed, transformed popper wrapper placed next to the trigger.
+   Re-dock that wrapper to the bottom edge so the content really behaves as a bottom sheet. */
+[data-radix-popper-content-wrapper]:has(> .vks-sheet-mode) {
+  position: fixed !important; transform: none !important; inset: auto 0 0 0 !important;
+  width: 100% !important; min-width: 0 !important; z-index: 60 !important;
+}
+.vks-sheet-mode { transform-origin: bottom center; }
 .vks-sheet-up[data-state=open]     { animation: vks-up-in .44s var(--ease-ios) both; }
 .vks-sheet-up[data-state=closed]   { animation: vks-up-out .32s var(--ease-ios) both; }
 .vks-sheet-side[data-state=open]   { animation: vks-side-in .44s var(--ease-ios) both; }

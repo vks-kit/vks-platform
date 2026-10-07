@@ -1,7 +1,34 @@
 import * as React from "react"
-import { Input, Textarea, Label, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Checkbox, Switch, Tabs, TabsList, TabsTrigger, TabsContent, Combobox, FilterChips, SearchBox, OtpInput, Slider, RadioGroup, RadioGroupItem, Stepper } from "@vks-kit/ui"
+import { Input, Textarea, Label, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Checkbox, Switch, Tabs, TabsList, TabsTrigger, TabsContent, Combobox, FilterChips, SearchBox, OtpInput, Slider, RadioGroup, RadioGroupItem, Stepper, TextInput, PhoneInput, MoneyInput, TimeInput, NumberInput, isPhoneLa, phoneLaE164 } from "@vks-kit/ui"
 import { fmtKip } from "@vks-kit/core"
 import type { Doc } from "./types"
+
+const Row = ({ label, out, children }: { label: string; out: string; children: React.ReactNode }) => (
+  <div className="grid min-w-0 gap-1.5"><Label>{label}</Label>{children}<code className="truncate text-xs text-muted-foreground">value = {out}</code></div>
+)
+function FieldsDemo() {
+  const [txt, setTxt] = React.useState("")
+  const [phone, setPhone] = React.useState("")
+  const [money, setMoney] = React.useState<number | null>(1500000)
+  const [thb, setThb] = React.useState<number | null>(null)
+  const [time, setTime] = React.useState("")
+  const [num, setNum] = React.useState<number | null>(3)
+  const [tried, setTried] = React.useState(false)
+  const bad = tried && !isPhoneLa(phone)
+  return (
+    <div className="grid w-full min-w-0 max-w-md grid-cols-[minmax(0,1fr)] gap-4">
+      <Row label="ຊື່ / ໝາຍເຫດ (TextInput)" out={JSON.stringify(txt)}><TextInput value={txt} onChange={setTxt} maxLength={30} placeholder="ພິມຢູ່ນີ້…" /></Row>
+      <Row label="ເບີໂທ (PhoneInput)" out={JSON.stringify(phone) + (phone ? " · " + (isPhoneLa(phone) ? "ຄົບ " + phoneLaE164(phone) : "ຍັງບໍ່ຄົບ") : "")}>
+        <PhoneInput value={phone} onChange={(v) => { setPhone(v); setTried(false) }} onBlur={() => setTried(!!phone)} invalid={bad} />
+        {bad && <span className="text-xs text-destructive">ເບີບໍ່ຄົບ: 020 XXXX XXXX</span>}
+      </Row>
+      <Row label="ເງິນເດືອນ (MoneyInput LAK)" out={String(money)}><MoneyInput value={money} onChange={setMoney} /></Row>
+      <Row label="ລາຄາ (MoneyInput THB, 2 decimals)" out={String(thb)}><MoneyInput value={thb} onChange={setThb} currency="THB" /></Row>
+      <Row label="ເວລາເຂົ້າກະ (TimeInput)" out={JSON.stringify(time)}><TimeInput value={time} onChange={setTime} /></Row>
+      <Row label="ຈຳນວນ ຍາມ (NumberInput 1-20)" out={String(num)}><NumberInput value={num} onChange={setNum} min={1} max={20} unit="ຄົນ" /></Row>
+    </div>
+  )
+}
 
 const sites = [{ value: "a", label: "ປະຕູໜ້າ", hint: "A-01" }, { value: "b", label: "ບ່ອນຈອດລົດ", hint: "A-02" }, { value: "c", label: "ຄັງສິນຄ້າ", hint: "B-01" }, { value: "d", label: "ຫ້ອງຄວບຄຸມ", hint: "B-02" }]
 
@@ -75,6 +102,29 @@ export const formDocs: Doc[] = [
       { name: "...props", type: 'React.ComponentProps<"input">', desc: "Everything a normal input takes." },
     ],
     notes: ["Run cleanText() from @vks-kit/types on free text before you save it."],
+  },
+  {
+    slug: "input-types", name: "Input types", group: "Form", badge: "New",
+    desc: "The standard fields: text, phone (020 XXXX XXXX), money, time, number. Same 44 px / 16 px shell as Input, right keyboard on phones.",
+    file: "packages/ui/src/components/fields.tsx", importLine: 'import { TextInput, PhoneInput, MoneyInput, TimeInput, NumberInput, isPhoneLa, phoneLaE164 } from "@vks-kit/ui"',
+    demo: () => <FieldsDemo />,
+    code: `const [phone, setPhone] = useState("")
+<PhoneInput value={phone} onChange={setPhone} invalid={!!phone && !isPhoneLa(phone)} />   // "020 5512 3456"
+phoneLaE164(phone)                                                                     // "+8562055123456"
+
+<MoneyInput value={salary} onChange={setSalary} />                  // number | null, 1,500,000 ກີບ
+<MoneyInput value={p} onChange={setP} currency="THB" max={99999} /> // 2 decimals
+<TimeInput value={t} onChange={setT} step={5} />                    // "08:30", ↑↓ ± step, ຕອນນີ້
+<NumberInput value={n} onChange={setN} min={1} max={20} unit="ຄົນ" />
+<TextInput value={s} onChange={setS} maxLength={30} />              // clear button + counter`,
+    props: [
+      { name: "PhoneInput value / onChange", type: "(v: string, info: { digits; complete }) => void", desc: "Value is \"020 XXXX XXXX\" or \"\". 020 is locked; max 8 more digits. Pastes like +856 20…, 020…, 20… are cleaned." },
+      { name: "MoneyInput value / onChange", type: "number | null", desc: "Commas while typing. currency: LAK (no decimals) | THB | USD (2). max clamps." },
+      { name: "TimeInput value / step", type: "\"HH:mm\" | \"\"", desc: "24 h. Type 0905 → 09:05. Value is \"\" until valid. step defaults to 5 min." },
+      { name: "NumberInput min / max / step / decimals / unit", type: "number | null", desc: "Clamps on blur, ↑ ↓ and − + buttons step." },
+      { name: "invalid", type: "boolean", desc: "Red border + shake, like Input." },
+    ],
+    notes: ["Phones open the right keyboard: tel / numeric / decimal. Fonts are 16 px so iOS never zooms.", "Validate with isPhoneLa(); send phoneLaE164() to SMS / WhatsApp APIs.", "For free text, run cleanText() from @vks-kit/types before saving."],
   },
   {
     slug: "select", name: "Select", group: "Form", badge: "Stable",

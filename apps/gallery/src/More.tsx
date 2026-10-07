@@ -12,7 +12,7 @@ import {
   Sidebar, SidebarSheet, Slider, DetailPopover, type NavItem,
   CommandPalette, useCommandK, Breadcrumb, HoverCard, ContextMenu, TreeView, StatCard, ButtonGroup, Dropzone, fmtBytes, FileIcon, TagInput, SplitPane, NotificationList, ScrollArea, type Notice,
   HoverFx, Parallax, ParallaxLayer, SlideHighlight, CursorRing, Logo, Roadmap, DependencyMap,
-  ApprovalCard, SyncStatus, diffFields, type ApprovalStatus,
+  ApprovalCard, SyncStatus, diffFields, type ApprovalStatus, TextInput, PhoneInput, MoneyInput, TimeInput, NumberInput, isPhoneLa, phoneLaE164,
 } from "@vks-kit/ui"
 import { Share2, Pencil, Phone, Trash2, Heart, Shield, AlertTriangle, CheckCircle2, Clock, Folder, User, Copy as CopyIcon, Search as SearchIcon, ArrowRight } from "@vks-kit/ui/icons"
 import { BarSeries, LineSeries, Donut, Sparkline, ScatterSeries, RadarSeries, RadialBars, ComboSeries, Heatmap, DateGrid, LatencyTimeline, AttendanceBoard } from "@vks-kit/ui/charts"
@@ -20,6 +20,20 @@ import { MapView } from "@vks-kit/ui/map"
 import { Kanban, type KanbanCard } from "@vks-kit/ui/kanban"
 import { QrScanner, PhotoCapture, CaptureStamp, stampPhoto, stampTime } from "@vks-kit/ui/scan"
 import { fmtKip, fmtKipShort, t, setLang, getLang } from "@vks-kit/core"
+
+function FieldsGallery() {
+  const [txt, setTxt] = React.useState(""); const [phone, setPhone] = React.useState(""); const [money, setMoney] = React.useState<number | null>(1500000)
+  const [time, setTime] = React.useState(""); const [num, setNum] = React.useState<number | null>(3)
+  return (
+    <div className="grid gap-4 md:grid-cols-2">
+      <div className="space-y-1"><Label>ຂໍ້ຄວາມ</Label><TextInput value={txt} onChange={setTxt} maxLength={30} /></div>
+      <div className="space-y-1"><Label>ເບີໂທ 020 XXXX XXXX</Label><PhoneInput value={phone} onChange={setPhone} invalid={!!phone && !isPhoneLa(phone)} /><code className="text-xs text-muted-foreground">{phone || "—"} {phoneLaE164(phone)}</code></div>
+      <div className="space-y-1"><Label>ຈຳນວນເງິນ</Label><MoneyInput value={money} onChange={setMoney} /><code className="text-xs text-muted-foreground">{String(money)}</code></div>
+      <div className="space-y-1"><Label>ເວລາ</Label><TimeInput value={time} onChange={setTime} /><code className="text-xs text-muted-foreground">{time || "—"}</code></div>
+      <div className="space-y-1"><Label>ຈຳນວນ</Label><NumberInput value={num} onChange={setNum} min={1} max={20} unit="ຄົນ" /></div>
+    </div>
+  )
+}
 
 const Sec = ({ id, title, children }: { id: string; title: string; children: React.ReactNode }) => (
   <section id={id} className="scroll-mt-20 space-y-3"><h2 className="text-lg font-bold">{title}</h2>{children}</section>
@@ -74,6 +88,7 @@ export function More() {
             <Card><CardContent className="flex items-center gap-3 pt-5"><StarRating value={stars} onChange={setStars} /><span className="text-sm">{stars}/5</span></CardContent></Card>
             <Card><CardContent className="flex items-center justify-between pt-5"><span className="text-sm">{fmtKip(1234500)}</span><Sparkline values={[3, 5, 4, 7, 6, 9, 8]} /></CardContent></Card></div>
         </Sec>
+        <Sec id="fields" title="Input types: text, phone, money, time, number"><FieldsGallery /></Sec>
         <Sec id="pickers" title="Date picker, dropdown, chips, search">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-1"><Label>ວັນທີ (popover on desktop, wheel on phone)</Label><DatePicker value={date} onChange={setDate} /></div>
@@ -394,11 +409,17 @@ function DesktopKit() {
 }
 
 function StampDemo() {
-  const [now, setNow] = React.useState(() => stampTime()), [out, setOut] = React.useState<string | null>(null)
-  React.useEffect(() => { const t = setInterval(() => setNow(stampTime()), 1000); return () => clearInterval(t) }, [])
+  const [now, setNow] = React.useState(() => stampTime())
+  const [img, setImg] = React.useState<string | null>(null)
+  React.useEffect(() => { const i = setInterval(() => setNow(stampTime()), 1000); return () => clearInterval(i) }, [])
   const data = { time: now, site: "ຄັງສິນຄ້າ ໂຮງງານເບຍລາວ ສາຂາວຽງຈັນ", gps: "17.97570, 102.63310 (±8 m)" }
-  return <div className="grid gap-4 md:grid-cols-2">
-    <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-gradient-to-br from-primary via-primary/70 to-muted md:aspect-video"><CaptureStamp data={data} /></div>
-    <div className="space-y-3"><PhotoCapture label="ຖ່າຍ + ຕີຕາ" onPhoto={async (p) => setOut(URL.createObjectURL(await stampPhoto(p.blob, { ...data, time: stampTime() })))} />{out && <img src={out} alt="" className="w-full rounded-2xl border" />}</div>
-  </div>
+  return (
+    <div className="grid gap-4 md:grid-cols-2">
+      <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-gradient-to-br from-primary via-primary/70 to-muted md:aspect-video"><CaptureStamp data={data} /></div>
+      <div className="space-y-3">
+        <PhotoCapture label="ຖ່າຍ + ຕີຕາ" onPhoto={async (ph) => setImg(URL.createObjectURL(await stampPhoto(ph.blob, { ...data, time: stampTime() })))} />
+        {img && <img src={img} alt="" className="w-full rounded-2xl border" />}
+      </div>
+    </div>
+  )
 }

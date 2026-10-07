@@ -24,6 +24,7 @@ Before designing a page, read docs/ai/design-thinking.md: one job per page, cont
 
 - [Slider](docs/ai/slider.md): iOS-size 28 px thumb. While dragging the track thickens, a halo grows round the thumb, a value bubble springs up and Android phones tick on every step. Tick marks light up as the fill passes. Exports: Slider
 - [Input & Textarea](docs/ai/input.md): 44 px tall, 16 px text (iOS never zooms), red border + shake when invalid. Exports: Input, Textarea, Label
+- [Input types](docs/ai/input-types.md): The standard fields: text, phone (020 XXXX XXXX), money, time, number. Same 44 px / 16 px shell as Input, right keyboard on phones. Exports: TextInput, PhoneInput, MoneyInput, TimeInput, NumberInput, isPhoneLa, phoneLaE164
 - [Select](docs/ai/select.md): Radix Select with a 44 px trigger. For long lists or search, use Combobox. Exports: Select, SelectTrigger, SelectValue, SelectContent, SelectItem
 - [Checkbox & Switch](docs/ai/checkbox-switch.md): Press in and hold: the box sinks with a soft halo, the switch knob stretches into a pill. Let go: green grows out from the centre, the tick draws, the knob springs across and one ring pulses. Unticking is quicker and quiet. Both have a 44 px hit area and a tiny haptic on Android. Exports: Checkbox, Switch, Label
 - [Tabs](docs/ai/tabs.md): Segmented tabs. Keep to 2-4 on a phone. Exports: Tabs, TabsList, TabsTrigger, TabsContent
