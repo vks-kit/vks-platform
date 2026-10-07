@@ -3,7 +3,7 @@ import { Home, ClipboardList, Users, BarChart3, Settings, Bell, Plus, Moon, Sun,
 import {
   AppShell, PageHeader, Fab, LoginCard, Button, Card, CardContent, CardHeader, CardTitle, Input, Label, Badge, useTheme,
   IOSAlert, ActionSheet, Banner, ListGroup, ListRow, SkeletonList, SkeletonCard, NumberTicker, FloatingInput, PasswordInput, Chip, CopyButton, Menu, MenuTrigger, MenuContent, MenuItem, PerfToggle,
-  DatePicker, Calendar, Combobox, FilterChips, SearchBox, OtpInput, SignaturePad, Lightbox, DataTable, Drawer, Wizard,
+  DatePicker, Calendar, TimePicker, TimeRangePicker, Combobox, FilterChips, SearchBox, OtpInput, SignaturePad, Lightbox, DataTable, Drawer, Wizard,
   Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose, InSheetView,
   Avatar, Progress, Accordion, DateRangePicker, Alert, ConfirmDialog, SwipeRow, PullToRefresh, toast, Toaster, type Range, AccordionItem, AccordionTrigger, AccordionContent, StarRating, Timeline, KpiStrip, KpiHero, Pagination, LoginScreen, ProfileView, type Column,
 } from "@vks-kit/ui"
@@ -63,6 +63,7 @@ export function More() {
   const [drawer, setDrawer] = React.useState<Row | null>(null), [lb, setLb] = React.useState<number | null>(null), [page, setPage] = React.useState(3), [stars, setStars] = React.useState(4)
   const [range, setRange] = React.useState<Range>({ from: "2026-09-10", to: "2026-09-16" }), [confirm, setConfirm] = React.useState<null | "warning" | "danger" | "hold">(null), [rows2, setRows2] = React.useState(["ສົມຊາຍ", "ນາງບົວ", "ທ້າວດາວ"]), [al, setAl] = React.useState(true)
   const [dSite, setDSite] = React.useState<string[]>([]), [dDate, setDDate] = React.useState(""), [dRange, setDRange] = React.useState<Range>({}), [dKind, setDKind] = React.useState<string[]>(["door"]), [dPush, setDPush] = React.useState(false)
+  const [tm, setTm] = React.useState("09:30"), [shift, setShift] = React.useState({ s: "18:00", e: "06:00" }), [dShift, setDShift] = React.useState({ s: "06:00", e: "18:00" })
   const [lang, setL] = React.useState(getLang()), [scan, setScan] = React.useState(false), [last, setLast] = React.useState("")
   const [cards, setCards] = React.useState<KanbanCard[]>([{ id: "a", column: "todo", title: "ກວດປະຕູ 3", meta: "ດ່ວນ" }, { id: "b", column: "todo", title: "ສົ່ງລາຍງານ" }, { id: "c", column: "doing", title: "ຝຶກອົບຮົມ" }])
   const sites = [{ value: "a", label: "ປະຕູໜ້າ", hint: "A-01" }, { value: "b", label: "ບ່ອນຈອດລົດ", hint: "A-02" }, { value: "c", label: "ຄັງສິນຄ້າ", hint: "B-01" }, { value: "d", label: "ຫ້ອງຄວບຄຸມ", hint: "B-02" }]
@@ -95,6 +96,8 @@ export function More() {
             <div className="space-y-1"><Label>ຈຸດ (single, searchable)</Label><Combobox options={sites} value={sel} onChange={setSel} /></div>
             <div className="space-y-1"><Label>ຈຸດ (multiple)</Label><Combobox multiple options={sites} value={multi} onChange={setMulti} /></div>
             <div className="space-y-1"><Label>ຄົ້ນຫາ</Label><SearchBox value={q} onChange={setQ} /></div>
+            <div className="space-y-1"><Label htmlFor="g-time">ເວລາ (TimePicker)</Label><TimePicker id="g-time" value={tm} onChange={setTm} /></div>
+            <TimeRangePicker id="g-shift" starts={shift.s} ends={shift.e} onChange={(s, e) => setShift({ s, e })} />
           </div>
           <FilterChips options={[{ value: "all", label: "ທັງໝົດ" }, { value: "ok", label: "ສຳເລັດ" }, { value: "wait", label: "ລໍຖ້າ" }, { value: "late", label: "ຊ້າ" }]} value={chip} onChange={setChip} />
           <Dialog><DialogTrigger asChild><Button variant="outline" data-testid="picker-in-dialog">Pickers inside a Dialog</Button></DialogTrigger><DialogContent>
@@ -103,6 +106,7 @@ export function More() {
             <div className="space-y-1"><Label>ຈຸດ</Label><Combobox options={sites} value={dSite} onChange={setDSite} /></div>
             <div className="space-y-1"><Label>ວັນທີ</Label><DatePicker value={dDate} onChange={setDDate} /></div>
             <div className="space-y-1"><Label>ໄລຍະເວລາ</Label><DateRangePicker value={dRange} onChange={setDRange} /></div>
+            <TimeRangePicker starts={dShift.s} ends={dShift.e} onChange={(s, e) => setDShift({ s, e })} />
             <Button variant="ghost" onClick={() => setDPush(true)}>InSheetView (custom step) ›</Button>
             <InSheetView open={dPush} onBack={() => setDPush(false)} title="ຂັ້ນຕອນທີ 2"><p className="text-sm leading-6 text-muted-foreground">Any content. ‹ or Esc goes back to the form.</p></InSheetView>
             <DialogFooter><DialogClose asChild><Button>ສົ່ງ</Button></DialogClose></DialogFooter>

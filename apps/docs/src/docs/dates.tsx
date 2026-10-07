@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Calendar, DateWheel, DatePicker, DateRangePicker, RangeCalendar, Card, CardContent, type Range, formatRange } from "@vks-kit/ui"
+import { Calendar, DateWheel, DatePicker, DateRangePicker, RangeCalendar, TimePicker, TimeRangePicker, Card, CardContent, type Range, formatRange } from "@vks-kit/ui"
 import type { Doc } from "./types"
 
 function DP() { const [d, setD] = React.useState("2026-09-30"); return <div className="w-full max-w-xs"><DatePicker value={d} onChange={setD} /></div> }
@@ -7,6 +7,8 @@ function Cal() { const [d, setD] = React.useState("2026-09-30"); return <Card cl
 function Wheel() { const [d, setD] = React.useState("2026-09-30"); return <div className="w-full max-w-xs space-y-2"><DateWheel value={d} onChange={setD} /><p className="text-center text-sm text-muted-foreground">{d}</p></div> }
 function DRP({ lang }: { lang?: "lo" | "en" }) { const [r, setR] = React.useState<Range>({ from: "2026-09-10", to: "2026-09-16" }); return <div className="w-full max-w-sm"><DateRangePicker value={r} onChange={setR} lang={lang} /></div> }
 function RC() { const [r, setR] = React.useState<Range>({ from: "2026-09-10", to: "2026-09-16" }); return <div className="space-y-2"><Card className="w-fit"><CardContent className="pt-5"><RangeCalendar value={r} onChange={setR} months={2} /></CardContent></Card><p className="text-center text-sm text-muted-foreground">{formatRange(r) || "—"}</p></div> }
+function TP() { const [t, setT] = React.useState("09:30"); return <div className="w-full max-w-xs"><TimePicker value={t} onChange={setT} /></div> }
+function TRP({ s0 = "06:00", e0 = "18:00", presets }: { s0?: string; e0?: string; presets?: number[] }) { const [v, setV] = React.useState({ s: s0, e: e0 }); return <div className="w-full max-w-sm"><TimeRangePicker starts={v.s} ends={v.e} presets={presets} onChange={(s, e) => setV({ s, e })} /></div> }
 
 export const dateDocs: Doc[] = [
   {
@@ -44,5 +46,34 @@ export const dateDocs: Doc[] = [
       { name: "placeholder", type: "string", def: '"ເລືອກໄລຍະເວລາ"', desc: "" }, { name: "lang", type: '"lo" | "en"', def: '"lo"', desc: "Preset labels." },
     ],
     notes: ["Helpers in the same package: PRESETS, pickRange, clampRange, daysBetween (inclusive), addDays, inSpan."],
+  },
+  {
+    slug: "time-picker", name: "Time picker", group: "Dates", badge: "New",
+    desc: "24 h only. Tap an hour, then :00 / :15 / :30 / :45. TimeRangePicker adds a shift's end, a 24 h bar and length presets (12 / 8 ຊມ / ອື່ນໆ); overnight shows +1 ມື້. Popover on desktop, sheet on phone.",
+    file: "packages/ui/src/components/time-picker.tsx", importLine: 'import { TimePicker, TimeRangePicker, timeToMin, minToTime, spanMin, isHHMM } from "@vks-kit/ui"',
+    demo: () => <TRP s0="18:00" e0="06:00" />,
+    code: `const [v, setV] = useState({ s: "18:00", e: "06:00" })   // "HH:MM", 24 h
+<TimeRangePicker starts={v.s} ends={v.e} onChange={(s, e) => setV({ s, e })} />`,
+    examples: [
+      { id: "single", title: "One time (TimePicker)", note: "A meeting or visit time. Picking a minute closes the panel.", demo: () => <TP />, code: `const [t, setT] = useState("09:30")
+<Label htmlFor="mt">ເວລາ</Label>
+<TimePicker id="mt" value={t} onChange={setT} />` },
+      { id: "presets", title: "Other lengths", note: "presets are hours. Picking a start keeps the current length, then moves on to ເລີກ.", demo: () => <TRP presets={[12, 8, 6]} />, code: `<TimeRangePicker starts={s} ends={e} onChange={set} presets={[12, 8, 6]} />` },
+    ],
+    props: [
+      { name: "value (TimePicker)", type: "string", desc: '"HH:MM" or "" (shows --:--).' }, { name: "onChange (TimePicker)", type: "(v: string) => void", desc: "" },
+      { name: "starts / ends", type: "string", desc: '"HH:MM". ends < starts means the shift crosses midnight.' },
+      { name: "onChange (TimeRangePicker)", type: "(starts: string, ends: string) => void", desc: "Both values every time (a length preset moves the end)." },
+      { name: "presets", type: "number[]", def: "[12, 8]", desc: "Shift lengths in hours, plus ອື່ນໆ." },
+      { name: "labels", type: "boolean", def: "true", desc: "Show ເລີ່ມ / ເລີກ labels over the two fields." },
+      { name: "id", type: "string", desc: "TimePicker: the field id. TimeRangePicker: fields get id-start / id-end." },
+      { name: "invalid", type: "boolean", desc: "Red border (TimeRangePicker: the end field)." },
+    ],
+    notes: [
+      "Shifts are named by their time only (06:00–18:00); never add a day/night word. Group lengths 12 / 8 / ອື່ນໆ.",
+      "Inside a Dialog on a phone the panel is a pushed view in the same sheet (no sheet on a sheet).",
+      "Keyboard: arrows move across the hour grid, Enter picks. To type a time instead, use TimeInput (Input types).",
+      "Helpers: timeToMin, minToTime (wraps past midnight), spanMin (overnight aware), spanSegments, hourInSpan, isHHMM.",
+    ],
   },
 ]
