@@ -272,6 +272,9 @@
 .vks-rise > * { animation: vks-rise .6s var(--ease-out-quint) both; }
 .vks-rise > *:nth-child(2) { animation-delay: .05s } .vks-rise > *:nth-child(3) { animation-delay: .1s } .vks-rise > *:nth-child(4) { animation-delay: .15s } .vks-rise > *:nth-child(n+5) { animation-delay: .2s }
 @keyframes vks-rise { from { opacity: 0; transform: translate3d(0,10px,0) } }
+/* A preview stage appearing when the Desktop / Phone / Both switch changes. Transform + opacity only. */
+@keyframes vks-stage-in { from { opacity: 0; transform: translate3d(0,8px,0) scale(.985) } }
+.vks-stage-in { animation: vks-stage-in .34s var(--ease-out-quint) both; }
 
 /* ---- LoginScreen entrance: one choreographed sequence, transform + opacity only. Delay per piece via --d. ---- */
 .vks-li { animation: var(--li-a, vks-li-up) var(--li-t, .7s) var(--ease-out-quint) both; animation-delay: var(--d, 0ms); }

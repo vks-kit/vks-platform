@@ -122,10 +122,10 @@ export function PreviewBlock({ demo: Demo, code, className, title, frame, device
   return (
     <div className="vks-fade-up min-w-0 overflow-hidden rounded-2xl border bg-card shadow-sm">
       <div className={cn(side && "grid grid-cols-[minmax(0,1fr)_auto] divide-x")}>
-        {showDesktop && <div className={cn("vks-stage relative flex min-h-[220px] min-w-0 flex-wrap items-center justify-center gap-3 p-4 sm:p-8 md:min-h-[280px]", side ? "md:p-8" : "md:p-12", className)}>
+        {showDesktop && <div className={cn("vks-stage vks-stage-in relative flex min-h-[220px] min-w-0 flex-wrap items-center justify-center gap-3 p-4 sm:p-8 md:min-h-[280px]", side ? "md:p-8" : "md:p-12", className)}>
           <React.Suspense fallback={<span className="text-sm text-muted-foreground">{t("ກຳລັງໂຫຼດ…", "Loading…")}</span>}><Demo key={run} /></React.Suspense>
         </div>}
-        {showPhone && frame && <div key={"p" + run} className={cn("vks-stage flex min-w-0 items-start justify-center p-4 sm:p-6", view === "both" && !side && "border-t", side && "px-5 py-6")}>
+        {showPhone && frame && <div key={"p" + run} className={cn("vks-stage vks-stage-in flex min-w-0 items-start justify-center p-4 sm:p-6", view === "both" && !side && "border-t", side && "px-5 py-6")}>
           <PhoneFrame frame={frame} src={"#/demo/" + frame} h={side ? 520 : 560} scale={side ? 0.8 : 1} />
         </div>}
       </div>
