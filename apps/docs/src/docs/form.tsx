@@ -1,5 +1,6 @@
 import * as React from "react"
-import { Input, Textarea, Label, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Checkbox, Switch, Tabs, TabsList, TabsTrigger, TabsContent, Combobox, FilterChips, SearchBox, OtpInput, Slider, RadioGroup, RadioGroupItem, Stepper, TextInput, PhoneInput, MoneyInput, TimeInput, NumberInput, isPhoneLa, phoneLaE164 } from "@vks-kit/ui"
+import { Input, Textarea, Label, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Checkbox, Switch, Tabs, TabsList, TabsTrigger, TabsContent, Combobox, FilterChips, SearchBox, OtpInput, Slider, RadioGroup, RadioGroupItem, Stepper, TextInput, PhoneInput, MoneyInput, TimeInput, NumberInput, isPhoneLa, phoneLaE164,
+  Button, Dialog, DialogTrigger, DialogClose, FormDialogContent, Field, FormSection, SelectHeader, Facts, FactGrid, WeekdayPicker, workDaysText } from "@vks-kit/ui"
 import { fmtKip } from "@vks-kit/core"
 import type { Doc } from "./types"
 
@@ -62,7 +63,86 @@ function SliderRange() {
   return <div className="w-full max-w-sm pt-10"><Slider value={v} onValueChange={setV} min={0} max={24} step={1} ticks={true} showValue="always" tone="primary" format={(x) => String(x).padStart(2, "0") + ":00"} aria-label="ກະ" minStepsBetweenThumbs={1} /></div>
 }
 
+function FormDialogDemo({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
+  const [name, setName] = React.useState(""), [tried, setTried] = React.useState(false)
+  return (
+    <Dialog>
+      <DialogTrigger asChild><Button>ເພີ່ມສະຖານທີ່</Button></DialogTrigger>
+      <FormDialogContent size={size} title="ເພີ່ມສະຖານທີ່" description="ຂໍ້ມູນຈະບັນທຶກເຂົ້າລະບົບ"
+        footer={<><DialogClose asChild><Button variant="outline">ຍົກເລີກ</Button></DialogClose><Button onClick={() => setTried(true)}>ບັນທຶກ</Button></>}>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <FormSection className="sm:col-span-2">ຂໍ້ມູນທົ່ວໄປ</FormSection>
+          <Field label="ຊື່ສະຖານທີ່" htmlFor="fd-name" error={tried && !name ? "ກະລຸນາໃສ່ຊື່" : undefined}><Input id="fd-name" value={name} invalid={tried && !name} onChange={(e) => setName(e.target.value)} /></Field>
+          <Field label="ລະຫັດ" htmlFor="fd-id" hint="ເຊັ່ນ VKS26-001"><Input id="fd-id" placeholder="VKS26-001" /></Field>
+        </div>
+      </FormDialogContent>
+    </Dialog>
+  )
+}
+function GroupedSelectDemo() {
+  return <div className="w-full max-w-xs"><Select><SelectTrigger><SelectValue placeholder="ເລືອກເວລາກະ" /></SelectTrigger><SelectContent>
+    <div role="group" aria-label="12 ຊົ່ວໂມງ"><SelectHeader>12 ຊົ່ວໂມງ · 2</SelectHeader><SelectItem value="a">06:00–18:00</SelectItem><SelectItem value="b">18:00–06:00</SelectItem></div>
+    <div role="group" aria-label="8 ຊົ່ວໂມງ"><SelectHeader>8 ຊົ່ວໂມງ · 3</SelectHeader><SelectItem value="c">06:00–14:00</SelectItem><SelectItem value="d">14:00–22:00</SelectItem><SelectItem value="e">22:00–06:00</SelectItem></div>
+  </SelectContent></Select></div>
+}
+function WeekdayDemo() { const [m, setM] = React.useState("1111100"); return <div className="w-full max-w-sm space-y-2"><WeekdayPicker value={m} onChange={setM} /><code className="text-xs text-muted-foreground">value = "{m}" · workDaysText → {workDaysText(m)}</code></div> }
+const factRows: [string, React.ReactNode][] = [["ລູກຄ້າ", "ບໍລິສັດ ລາວ ເທຣດດິ້ງ"], ["ໂທ", "020 5512 3456"], ["ໝາຍເຫດ", ""]]
+
 export const formDocs: Doc[] = [
+  {
+    slug: "form-dialog", name: "Form dialog", group: "Form", badge: "New",
+    desc: "The frame for every form in a popup: sticky title and footer, only the body scrolls and never sideways. sm / md / lg widths on desktop, a sheet on a phone. Field = label + control + error or hint; FormSection = a muted group title.",
+    file: "packages/ui/src/components/form-dialog.tsx", importLine: 'import { FormDialogContent, Field, FormSection, type FormDialogSize } from "@vks-kit/ui"',
+    demo: () => <FormDialogDemo />,
+    code: `<Dialog open={open} onOpenChange={setOpen}>
+  <FormDialogContent size="md" title="ເພີ່ມສະຖານທີ່"
+    footer={<><Button variant="outline" onClick={close}>ຍົກເລີກ</Button><Button onClick={save}>ບັນທຶກ</Button></>}>
+    <div className="grid gap-4 sm:grid-cols-2">
+      <FormSection className="sm:col-span-2">ຂໍ້ມູນທົ່ວໄປ</FormSection>
+      <Field label="ຊື່ສະຖານທີ່" htmlFor="name" error={err.name}><Input id="name" … /></Field>
+      <Field label="ລະຫັດ" htmlFor="id" hint="ເຊັ່ນ VKS26-001"><Input id="id" … /></Field>
+    </div>
+  </FormDialogContent>
+</Dialog>`,
+    examples: [{ id: "large", title: "Large (long forms)", note: "lg is 64rem wide on desktop; use a 2-column grid in the body.", demo: () => <FormDialogDemo size="lg" />, code: `<FormDialogContent size="lg" title="…" footer={…}>…</FormDialogContent>` }],
+    props: [
+      { name: "title / description", type: "ReactNode", desc: "Sticky header. Keep the description to one line." },
+      { name: "footer", type: "ReactNode", desc: "Sticky footer, buttons right-aligned; respects the phone safe area." },
+      { name: "size", type: '"sm" | "md" | "lg"', def: '"md"', desc: "Desktop width: 36 / 48 / 64 rem. A phone always gets the full-width sheet." },
+      { name: "bodyClassName", type: "string", desc: "Extra classes on the scrolling body." },
+      { name: "Field: label / htmlFor / error / hint", type: "ReactNode / string", desc: "error (red) replaces hint (muted) when set." },
+    ],
+    notes: ["Put it inside a Dialog, in place of DialogContent.", "Records open read-only first (Facts / FactGrid) with a ແກ້ໄຂ button; the form is the edit step.", "Run cleanText() on free text before saving."],
+  },
+  {
+    slug: "weekday-picker", name: "Weekday picker", group: "Form", badge: "New",
+    desc: "Seven 44 px day toggles (ຈ ອ ພ ພຫ ສ ສ ອາ), Monday first. Value is a 7-char mask like \"1111100\". workDaysText turns a mask into short Lao text.",
+    file: "packages/ui/src/components/weekday-picker.tsx", importLine: 'import { WeekdayPicker, workDaysText, workDaysCount, WEEKDAYS_LO, WEEKDAY_NAMES_LO } from "@vks-kit/ui"',
+    demo: () => <WeekdayDemo />,
+    code: `const [days, setDays] = useState("1111100")   // Mon-first, "1" = works
+<WeekdayPicker value={days} onChange={setDays} />
+workDaysText("1111111") // "ທຸກມື້"
+workDaysText("1111110") // "ຈ–ສ (6 ມື້)"
+workDaysText("1010100") // "ຈ ພ ສ"`,
+    props: [
+      { name: "value / onChange", type: "string / (mask: string) => void", desc: "7 chars of 0/1, Monday first. Anything else shows all days off." },
+      { name: "summary", type: "boolean", def: "true", desc: "Muted line under the days: \"ຈ–ສ · 5 ມື້\"." },
+      { name: "invalid / disabled", type: "boolean", desc: "" },
+    ],
+    notes: ["ສຸກ and ເສົາ share the initial ສ, so workDaysText only shortens the Mon–Fri and Mon–Sat runs; other sets list the initials."],
+  },
+  {
+    slug: "facts", name: "Facts", group: "Form", badge: "New",
+    desc: "The read-only half of view-first. Facts = label/value rows for a narrow side panel; FactGrid = label-over-value cells in 2 columns for a record popup. Empty values show —.",
+    file: "packages/ui/src/components/facts.tsx", importLine: 'import { Facts, FactGrid } from "@vks-kit/ui"',
+    demo: () => <div className="grid w-full max-w-md gap-4"><Facts rows={factRows} /><FactGrid rows={[...factRows, ["ທີ່ຢູ່", "ບ້ານ ໂພນສະອາດ, ເມືອງ ສີສັດຕະນາກ, ນະຄອນຫຼວງວຽງຈັນ", true]]} /></div>,
+    code: `<Facts rows={[["ລູກຄ້າ", c.name], ["ໂທ", c.phone], ["ໝາຍເຫດ", c.note]]} />
+<FactGrid rows={[["ລູກຄ້າ", c.name], ["ໂທ", c.phone], ["ທີ່ຢູ່", c.address, true]]} />  // true = full width`,
+    props: [
+      { name: "rows (Facts)", type: "[label, value][]", desc: "" }, { name: "cols", type: '"6rem" | "8rem"', def: '"8rem"', desc: "Label column width." },
+      { name: "rows (FactGrid)", type: "[label, value, wide?][]", desc: "wide spans both columns." },
+    ],
+  },
   {
     slug: "slider", name: "Slider", group: "Form", badge: "New",
     desc: "iOS-size 28 px thumb. While dragging the track thickens, a halo grows round the thumb, a value bubble springs up and Android phones tick on every step. Tick marks light up as the fill passes.",
@@ -129,7 +209,7 @@ phoneLaE164(phone)                                                              
   {
     slug: "select", name: "Select", group: "Form", badge: "Stable",
     desc: "Radix Select with a 44 px trigger. For long lists or search, use Combobox.",
-    file: "packages/ui/src/components/form.tsx", importLine: 'import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@vks-kit/ui"',
+    file: "packages/ui/src/components/form.tsx", importLine: 'import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem, SelectHeader } from "@vks-kit/ui"',
     demo: () => <div className="w-full max-w-xs"><Select><SelectTrigger><SelectValue placeholder="ເລືອກຈຸດ…" /></SelectTrigger><SelectContent>{sites.map((s) => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}</SelectContent></Select></div>,
     code: `<Select onValueChange={setSite}>
   <SelectTrigger><SelectValue placeholder="ເລືອກຈຸດ…" /></SelectTrigger>
@@ -142,6 +222,12 @@ phoneLaE164(phone)                                                              
       { name: "value / onValueChange", type: "string / (v: string) => void", desc: "Controlled mode (Radix Select.Root)." },
       { name: "defaultValue", type: "string", desc: "Uncontrolled start value." },
     ],
+    examples: [{ id: "grouped", title: "Grouped with headers (SelectHeader)", note: "A sticky, non-selectable header per group. Wrap each group in role=\"group\" with an aria-label.", demo: () => <GroupedSelectDemo />, code: `<SelectContent>
+  <div role="group" aria-label="12 ຊົ່ວໂມງ">
+    <SelectHeader>12 ຊົ່ວໂມງ · 2</SelectHeader>
+    <SelectItem value="a">06:00–18:00</SelectItem>
+  </div>
+</SelectContent>` }],
   },
   {
     slug: "checkbox-switch", name: "Checkbox & Switch", group: "Form", badge: "New",

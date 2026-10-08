@@ -1,0 +1,54 @@
+import * as React from "react"
+import { cn } from "../lib/cn"
+import { DialogContent, DialogDescription, DialogHeader, DialogTitle } from "./overlay"
+import { Label } from "./input"
+
+/* Width AND left are overridden together at md+: the kit DialogContent is a 28rem card that is
+   positioned by left, so a wider form must move its left edge too (never centre .vks-modal with translate). */
+const FORM_SIZE = {
+  sm: "md:max-w-xl md:left-[calc(50%-min(18rem,50%-1rem))] md:top-[12vh] md:max-h-[76dvh]",
+  md: "md:max-w-3xl md:left-[calc(50%-min(24rem,50%-1rem))] md:top-[8vh] md:max-h-[84dvh]",
+  lg: "md:max-w-5xl md:left-[calc(50%-min(32rem,50%-1rem))] md:top-[5vh] md:max-h-[90dvh]",
+} as const
+export type FormDialogSize = keyof typeof FORM_SIZE
+
+/** Use for any form inside a Dialog: sticky header + footer, only the body scrolls (never sideways), sm/md/lg widths on desktop, sheet on phone; for a yes/no question use ConfirmDialog instead. */
+export function FormDialogContent({ title, description, footer, children, size = "md", className, bodyClassName }: {
+  title: React.ReactNode; description?: React.ReactNode; footer?: React.ReactNode; children: React.ReactNode
+  /** sm 1–3 fields, md default, lg long forms (use a 2-column grid in the body). */
+  size?: FormDialogSize; className?: string; bodyClassName?: string
+}) {
+  return (
+    <DialogContent className={cn("flex flex-col gap-0 overflow-hidden p-0 md:p-0 [&>.vks-grabber]:mt-2 [&>.vks-grabber]:shrink-0", FORM_SIZE[size], className)}>
+      <DialogHeader className="shrink-0 border-b px-5 pt-4 pb-3 pr-14 md:px-6 md:pt-5 md:pb-4">
+        <DialogTitle className="leading-normal">{title}</DialogTitle>
+        {description && <DialogDescription className="leading-relaxed">{description}</DialogDescription>}
+      </DialogHeader>
+      <div className={cn("min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-contain px-5 py-4 leading-normal md:px-6 md:py-5", bodyClassName)}>{children}</div>
+      {footer && <div className="flex shrink-0 flex-wrap items-center justify-end gap-2 border-t bg-popover px-5 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:px-6 md:py-4">{footer}</div>}
+    </DialogContent>
+  )
+}
+
+/** Use for one labelled control in a form (label, the control, then an error or a muted hint); for a read-only value use Facts instead. */
+export function Field({ label, htmlFor, error, hint, className, children }: {
+  label: React.ReactNode; htmlFor?: string; error?: React.ReactNode; hint?: React.ReactNode; className?: string; children: React.ReactNode
+}) {
+  return (
+    <div className={cn("grid min-w-0 content-start gap-1.5", className)}>
+      <Label htmlFor={htmlFor} className="leading-normal">{label}</Label>
+      {children}
+      {error ? <p className="text-sm leading-normal text-destructive">{error}</p> : hint ? <p className="text-xs leading-normal text-muted-foreground">{hint}</p> : null}
+    </div>
+  )
+}
+
+/** Use for a muted section title between groups of fields in a form body; for a page title use PageHeader instead. */
+export function FormSection({ children, className }: { children: React.ReactNode; className?: string }) {
+  return <div className={cn("text-xs font-semibold uppercase leading-normal tracking-wide text-muted-foreground", className)}>{children}</div>
+}
+
+/** Use for a non-selectable group header inside SelectContent (e.g. 12 ຊົ່ວໂມງ · 4); for a searchable grouped list use Combobox instead. */
+export function SelectHeader({ children, className }: { children: React.ReactNode; className?: string }) {
+  return <div role="presentation" className={cn("sticky top-0 z-10 -mx-1 border-b bg-popover px-3 pb-1.5 pt-2.5 text-xs font-semibold leading-normal text-muted-foreground first:pt-1.5", className)}>{children}</div>
+}

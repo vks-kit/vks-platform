@@ -22,10 +22,13 @@ Before designing a page, read docs/ai/design-thinking.md: one job per page, cont
 
 ## Form
 
+- [Form dialog](ai/form-dialog.md): The frame for every form in a popup: sticky title and footer, only the body scrolls and never sideways. sm / md / lg widths on desktop, a sheet on a phone. Field = label + control + error or hint; FormSection = a muted group title. Exports: FormDialogContent, Field, FormSection, FormDialogSize
+- [Weekday picker](ai/weekday-picker.md): Seven 44 px day toggles (ຈ ອ ພ ພຫ ສ ສ ອາ), Monday first. Value is a 7-char mask like "1111100". workDaysText turns a mask into short Lao text. Exports: WeekdayPicker, workDaysText, workDaysCount, WEEKDAYS_LO, WEEKDAY_NAMES_LO
+- [Facts](ai/facts.md): The read-only half of view-first. Facts = label/value rows for a narrow side panel; FactGrid = label-over-value cells in 2 columns for a record popup. Empty values show —. Exports: Facts, FactGrid
 - [Slider](ai/slider.md): iOS-size 28 px thumb. While dragging the track thickens, a halo grows round the thumb, a value bubble springs up and Android phones tick on every step. Tick marks light up as the fill passes. Exports: Slider
 - [Input & Textarea](ai/input.md): 44 px tall, 16 px text (iOS never zooms), red border + shake when invalid. Exports: Input, Textarea, Label
 - [Input types](ai/input-types.md): The standard fields: text, phone (020 XXXX XXXX), money, time, number. Same 44 px / 16 px shell as Input, right keyboard on phones. Exports: TextInput, PhoneInput, MoneyInput, TimeInput, NumberInput, isPhoneLa, phoneLaE164
-- [Select](ai/select.md): Radix Select with a 44 px trigger. For long lists or search, use Combobox. Exports: Select, SelectTrigger, SelectValue, SelectContent, SelectItem
+- [Select](ai/select.md): Radix Select with a 44 px trigger. For long lists or search, use Combobox. Exports: Select, SelectTrigger, SelectValue, SelectContent, SelectItem, SelectHeader
 - [Checkbox & Switch](ai/checkbox-switch.md): Press in and hold: the box sinks with a soft halo, the switch knob stretches into a pill. Let go: green grows out from the centre, the tick draws, the knob springs across and one ring pulses. Unticking is quicker and quiet. Both have a 44 px hit area and a tiny haptic on Android. Exports: Checkbox, Switch, Label
 - [Tabs](ai/tabs.md): Segmented tabs. Keep to 2-4 on a phone. Exports: Tabs, TabsList, TabsTrigger, TabsContent
 - [Combobox](ai/combobox.md): Searchable picker. Bottom sheet on a phone, popover on desktop; inside a Dialog on a phone it pushes a view in the same sheet. Single or multi. Exports: Combobox, Option

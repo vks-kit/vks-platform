@@ -7,7 +7,7 @@
 - Live docs: #/docs/select
 
 ```ts
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@vks-kit/ui"
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem, SelectHeader } from "@vks-kit/ui"
 ```
 
 ## When to use
@@ -17,6 +17,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 - **SelectValue**: Use inside SelectTrigger to show the chosen value or a placeholder. For free text entry use Input instead.
 - **SelectContent**: Use for the dropdown panel that holds SelectItems. For a menu of actions use MenuContent instead.
 - **SelectItem**: Use for one option inside SelectContent (tick shows when chosen). For an action row use MenuItem instead.
+- **SelectHeader**: Use for a non-selectable group header inside SelectContent (e.g. 12 ຊົ່ວໂມງ · 4); for a searchable grouped list use Combobox instead.
 
 ## Example
 
@@ -28,6 +29,19 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
     <SelectItem value="b">ບ່ອນຈອດລົດ</SelectItem>
   </SelectContent>
 </Select>
+```
+
+### Grouped with headers (SelectHeader)
+
+A sticky, non-selectable header per group. Wrap each group in role="group" with an aria-label.
+
+```tsx
+<SelectContent>
+  <div role="group" aria-label="12 ຊົ່ວໂມງ">
+    <SelectHeader>12 ຊົ່ວໂມງ · 2</SelectHeader>
+    <SelectItem value="a">06:00–18:00</SelectItem>
+  </div>
+</SelectContent>
 ```
 
 ## Props

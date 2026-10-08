@@ -13,6 +13,7 @@ import {
   CommandPalette, useCommandK, Breadcrumb, HoverCard, ContextMenu, TreeView, StatCard, ButtonGroup, Dropzone, fmtBytes, FileIcon, TagInput, SplitPane, NotificationList, ScrollArea, type Notice,
   HoverFx, Parallax, ParallaxLayer, SlideHighlight, CursorRing, Logo, Roadmap, DependencyMap,
   ApprovalCard, SyncStatus, diffFields, type ApprovalStatus, TextInput, PhoneInput, MoneyInput, TimeInput, NumberInput, isPhoneLa, phoneLaE164,
+  FormDialogContent, Field, FormSection, SelectHeader, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Facts, FactGrid, WeekdayPicker, workDaysText,
 } from "@vks-kit/ui"
 import { Share2, Pencil, Phone, Trash2, Heart, Shield, AlertTriangle, CheckCircle2, Clock, Folder, User, Copy as CopyIcon, Search as SearchIcon, ArrowRight } from "@vks-kit/ui/icons"
 import { BarSeries, LineSeries, Donut, Sparkline, ScatterSeries, RadarSeries, RadialBars, ComboSeries, Heatmap, DateGrid, LatencyTimeline, AttendanceBoard } from "@vks-kit/ui/charts"
@@ -56,6 +57,34 @@ const nav = [
   { id: "reports", label: "ລາຍງານ", icon: <BarChart3 /> }, { id: "alerts", label: "ແຈ້ງເຕືອນ", icon: <Bell /> }, { id: "settings", label: "ຕັ້ງຄ່າ", icon: <Settings /> },
 ]
 
+function FormKitGallery() {
+  const [days, setDays] = React.useState("1111110"), [name, setName] = React.useState(""), [tried, setTried] = React.useState(false)
+  const rows: [string, React.ReactNode, boolean?][] = [["ລູກຄ້າ", "ບໍລິສັດ ລາວ ເທຣດດິ້ງ"], ["ໂທ", "020 5512 3456"], ["ມື້ເຮັດວຽກ", workDaysText(days)], ["ໝາຍເຫດ", ""], ["ທີ່ຢູ່", "ບ້ານ ໂພນສະອາດ, ເມືອງ ສີສັດຕະນາກ, ນະຄອນຫຼວງວຽງຈັນ", true]]
+  return <Sec id="form-kit" title="Form dialog, field, weekday picker, grouped select, facts">
+    <div className="grid gap-4 lg:grid-cols-2">
+      <Card><CardContent className="grid gap-4 pt-5">
+        <Dialog><DialogTrigger asChild><Button className="w-fit">ເພີ່ມສະຖານທີ່ (FormDialogContent)</Button></DialogTrigger>
+          <FormDialogContent title="ເພີ່ມສະຖານທີ່" description="ຂໍ້ມູນຈະບັນທຶກເຂົ້າລະບົບ" footer={<><DialogClose asChild><Button variant="outline">ຍົກເລີກ</Button></DialogClose><Button onClick={() => setTried(true)}>ບັນທຶກ</Button></>}>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <FormSection className="sm:col-span-2">ຂໍ້ມູນທົ່ວໄປ</FormSection>
+              <Field label="ຊື່ສະຖານທີ່" htmlFor="g-fd-name" error={tried && !name ? "ກະລຸນາໃສ່ຊື່" : undefined}><Input id="g-fd-name" value={name} invalid={tried && !name} onChange={(e) => setName(e.target.value)} /></Field>
+              <Field label="ລະຫັດ" htmlFor="g-fd-id" hint="ເຊັ່ນ VKS26-001"><Input id="g-fd-id" placeholder="VKS26-001" /></Field>
+              <FormSection className="sm:col-span-2">ກະ</FormSection>
+              <Field label="ມື້ເຮັດວຽກ" className="sm:col-span-2"><WeekdayPicker value={days} onChange={setDays} /></Field>
+            </div>
+          </FormDialogContent>
+        </Dialog>
+        <Field label="ມື້ເຮັດວຽກ (WeekdayPicker)"><WeekdayPicker value={days} onChange={setDays} /></Field>
+        <Field label="ເວລາກະ (SelectHeader)"><Select><SelectTrigger><SelectValue placeholder="ເລືອກເວລາກະ" /></SelectTrigger><SelectContent>
+          <div role="group" aria-label="12 ຊົ່ວໂມງ"><SelectHeader>12 ຊົ່ວໂມງ · 2</SelectHeader><SelectItem value="a">06:00–18:00</SelectItem><SelectItem value="b">18:00–06:00</SelectItem></div>
+          <div role="group" aria-label="8 ຊົ່ວໂມງ"><SelectHeader>8 ຊົ່ວໂມງ · 3</SelectHeader><SelectItem value="c">06:00–14:00</SelectItem><SelectItem value="d">14:00–22:00</SelectItem><SelectItem value="e">22:00–06:00</SelectItem></div>
+        </SelectContent></Select></Field>
+      </CardContent></Card>
+      <Card><CardContent className="grid gap-4 pt-5"><Facts rows={rows.slice(0, 4).map(([k, v]) => [k, v] as [string, React.ReactNode])} /><FactGrid rows={rows} /></CardContent></Card>
+    </div>
+  </Sec>
+}
+
 export function More() {
   const { theme, setTheme } = useTheme()
   const [nv, setNv] = React.useState("home"), [date, setDate] = React.useState("2026-09-30"), [sel, setSel] = React.useState<string[]>([]), [multi, setMulti] = React.useState<string[]>(["a"])
@@ -90,6 +119,7 @@ export function More() {
             <Card><CardContent className="flex items-center justify-between pt-5"><span className="text-sm">{fmtKip(1234500)}</span><Sparkline values={[3, 5, 4, 7, 6, 9, 8]} /></CardContent></Card></div>
         </Sec>
         <Sec id="fields" title="Input types: text, phone, money, time, number"><FieldsGallery /></Sec>
+        <FormKitGallery />
         <Sec id="pickers" title="Date picker, dropdown, chips, search">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-1"><Label>ວັນທີ (popover on desktop, wheel on phone)</Label><DatePicker value={date} onChange={setDate} /></div>
