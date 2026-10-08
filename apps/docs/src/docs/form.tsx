@@ -1,6 +1,7 @@
 import * as React from "react"
 import { Input, Textarea, Label, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Checkbox, Switch, Tabs, TabsList, TabsTrigger, TabsContent, Combobox, FilterChips, SearchBox, OtpInput, Slider, RadioGroup, RadioGroupItem, Stepper, TextInput, PhoneInput, MoneyInput, TimeInput, NumberInput, isPhoneLa, phoneLaE164,
-  Button, Dialog, DialogTrigger, DialogClose, FormDialogContent, Field, FormSection, SelectHeader, Facts, FactGrid, WeekdayPicker, workDaysText } from "@vks-kit/ui"
+  Button, Dialog, DialogTrigger, DialogClose, FormDialogContent, Field, FormSection, SelectHeader, Facts, FactGrid, WeekdayPicker, workDaysText,
+  SettingsPage, SettingsSection, SettingsRow, SettingsSaveBar, SettingsHoldButton, SettingsTimeRange, defineSettings, toast } from "@vks-kit/ui"
 import { fmtKip } from "@vks-kit/core"
 import type { Doc } from "./types"
 
@@ -85,6 +86,66 @@ function GroupedSelectDemo() {
     <div role="group" aria-label="8 ຊົ່ວໂມງ"><SelectHeader>8 ຊົ່ວໂມງ · 3</SelectHeader><SelectItem value="c">06:00–14:00</SelectItem><SelectItem value="d">14:00–22:00</SelectItem><SelectItem value="e">22:00–06:00</SelectItem></div>
   </SelectContent></Select></div>
 }
+const settingsDemo = defineSettings({
+  appLabel: "ການຕັ້ງຄ່າຂອງແອັບ",
+  events: [{ id: "late", label: "ມາວຽກຊ້າ", default: "1100" }],
+  permissions: [{ id: "approveLeave", label: "ອະນຸມັດວັນພັກ", default: "1100" }],
+  app: [
+    { header: "ກຸ່ມ A — ຄ່າ ແລະ ຕົວເລກ", sub: "ຕົວຢ່າງ: ຄຳນຳໜ້າ, ເກນ, ໄລຍະເວລາ", tone: "success", rows: [
+      { key: "prefix", type: "text", label: "ຄຳນຳໜ້າລະຫັດ", help: "ໃຊ້ກັບລະຫັດເອກະສານໃໝ່.", default: "VKS-", mono: true },
+      { key: "keepDays", type: "number", label: "ເກັບຂໍ້ມູນ", unit: "ມື້", min: 1, max: 999, default: 90 },
+      { key: "hours", type: "time-range", label: "ຊ່ວງເວລາ", default: "08:00-17:00" },
+      { key: "days", type: "days", label: "ມື້ທີ່ໃຊ້", default: "1111100" },
+    ] },
+    { header: "ກຸ່ມ B — ຕົວເລືອກ", sub: "ຕົວຢ່າງ: ເປີດ/ປິດ, ຮູບແບບ, ລາຍການ", tone: "primary", rows: [
+      { key: "enabled", type: "switch", label: "ເປີດໃຊ້", default: true },
+      { key: "option", type: "select", label: "ຕົວເລືອກ", default: "1", options: [{ value: "1", label: "ຕົວເລືອກ 1" }, { value: "2", label: "ຕົວເລືອກ 2" }, { value: "3", label: "ຕົວເລືອກ 3" }] },
+      { key: "mode", type: "segmented", label: "ຮູບແບບ", default: "auto", options: [{ value: "auto", label: "ອັດຕະໂນມັດ" }, { value: "manual", label: "ດ້ວຍມື" }] },
+      { key: "require", type: "checkbox-list", label: "ຕ້ອງມີ", default: ["photo"], options: [{ value: "photo", label: "ຮູບຖ່າຍ" }, { value: "note", label: "ໝາຍເຫດ" }, { value: "sign", label: "ລາຍເຊັນ" }] },
+      { key: "seed", type: "action", label: "ຂໍ້ມູນຕົວຢ່າງ", help: "ບໍ່ນັບເຂົ້າການບັນທຶກ.", actionLabel: "ສ້າງຂໍ້ມູນໃໝ່" },
+    ] },
+  ],
+  members: [
+    { id: "1", name: "ສົມສັກ ພົມມະ", dept: "ບໍລິຫານ", role: "ເຈົ້າຂອງ", status: "active", lastSeen: "ມື້ນີ້ 09:12" },
+    { id: "2", name: "ນາລີ ແກ້ວມະນີ", dept: "ບັນຊີ", role: "ຜູ້ຈັດການ", status: "active", lastSeen: "ມື້ວານ" },
+    { id: "3", name: "ບຸນມີ ສີສະຫວັດ", dept: "ປະຕິບັດການ", role: "ພະນັກງານ", status: "active", lastSeen: "3 ມື້ກ່ອນ" },
+    { id: "4", name: "ວັນນາ ໄຊຍະວົງ", dept: "ປະຕິບັດການ", role: "ພະນັກງານ", status: "pending" },
+    { id: "5", name: "ຄຳພອນ ອິນທະວົງ", dept: "ລູກຄ້າ", role: "ຜູ້ເບິ່ງ", status: "pending" },
+  ],
+  devices: [
+    { id: "a", name: "Chrome · Windows", where: "ວຽງຈັນ", lastSeen: "ດຽວນີ້", current: true },
+    { id: "b", name: "Safari · iPhone", where: "ວຽງຈັນ", lastSeen: "2 ຊົ່ວໂມງກ່ອນ", kind: "phone" },
+    { id: "c", name: "Chrome · Android", where: "ປາກເຊ", lastSeen: "5 ມື້ກ່ອນ", kind: "phone" },
+  ],
+  integrations: [
+    { id: "sheets", name: "Google Sheets", detail: "ຊິ້ງລ່າສຸດ 5 ນາທີກ່ອນ", status: "connected", actionLabel: "ຊິ້ງດຽວນີ້" },
+    { id: "telegram", name: "Telegram", detail: "@vks_alert_bot", status: "connected", actionLabel: "ທົດສອບ" },
+    { id: "drive", name: "Google Drive", detail: "ໝົດອາຍຸ 2 ມື້ກ່ອນ", status: "expired" },
+    { id: "push", name: "Web Push", status: "off" },
+  ],
+  audit: [
+    { who: "ນາລີ ແກ້ວມະນີ", field: "ເຂດເວລາ", from: "Asia/Bangkok", to: "Asia/Vientiane", at: "12/09 14:20" },
+    { who: "ສົມສັກ ພົມມະ", field: "ສິດ: ສົ່ງອອກຂໍ້ມູນ", from: "1000", to: "1100", at: "10/09 09:05" },
+  ],
+  storage: { usedGb: 11.2, totalGb: 15 },
+  info: { passwordAge: "42 ມື້ກ່ອນ", lastBackup: "ມື້ນີ້ 02:00 · ສຳເລັດ" },
+  load: () => ({ "profile.name": "ສົມສັກ ພົມມະ", "profile.code": "G001", "profile.phone": "55123456", "profile.email": "somsak@vks.la", "general.orgName": "VKS Security" }),
+  save: async () => { await new Promise((r) => setTimeout(r, 600)) },
+  onAction: (id) => toast(id),
+})
+function BlocksDemo() {
+  const [on, setOn] = React.useState(true), [range, setRange] = React.useState("22:00-06:00")
+  const changed = !on || range !== "22:00-06:00"
+  return <div className="w-full max-w-2xl space-y-3">
+    <SettingsSection header="ແຈ້ງເຕືອນ" sub="ຂໍ້ຄວາມສັ້ນ">
+      <SettingsRow label="ເປີດໃຊ້" help="ໜຶ່ງແຖວ" dirty={!on}><Switch checked={on} onCheckedChange={setOn} /></SettingsRow>
+      <SettingsRow label="ເວລາ" dirty={range !== "22:00-06:00"}><SettingsTimeRange value={range} onChange={setRange} /></SettingsRow>
+      <SettingsRow label="ລ້າງ" help="ກົດຄ້າງ 1.5 ວິ"><SettingsHoldButton onConfirm={() => toast("ລ້າງແລ້ວ")}>ກົດຄ້າງ ເພື່ອລຶບ</SettingsHoldButton></SettingsRow>
+    </SettingsSection>
+    {changed && <SettingsSaveBar count={(on ? 0 : 1) + (range !== "22:00-06:00" ? 1 : 0)} onCancel={() => { setOn(true); setRange("22:00-06:00") }} onSave={() => toast.success("ບັນທຶກແລ້ວ")} />}
+  </div>
+}
+
 function WeekdayDemo() { const [m, setM] = React.useState("1111100"); return <div className="w-full max-w-sm space-y-2"><WeekdayPicker value={m} onChange={setM} /><code className="text-xs text-muted-foreground">value = "{m}" · workDaysText → {workDaysText(m)}</code></div> }
 const factRows: [string, React.ReactNode][] = [["ລູກຄ້າ", "ບໍລິສັດ ລາວ ເທຣດດິ້ງ"], ["ໂທ", "020 5512 3456"], ["ໝາຍເຫດ", ""]]
 
@@ -131,6 +192,50 @@ workDaysText("1010100") // "ຈ ພ ສ"`,
       { name: "invalid / disabled", type: "boolean", desc: "" },
     ],
     notes: ["ສຸກ and ເສົາ share the initial ສ, so workDaysText only shortens the Mon–Fri and Mon–Sat runs; other sets list the initials."],
+  },
+  {
+    slug: "settings-page", name: "Settings page", group: "Form", badge: "New",
+    desc: "The one settings screen every app shares: 10 standard pages (ໂປຣໄຟລ໌, ຄວາມປອດໄພ, ແຈ້ງເຕືອນ, ການສະແດງຜົນ, ທົ່ວໄປ, ສະມາຊິກ & ສິດ, ການເຊື່ອມຕໍ່, ປະຫວັດ, ຂໍ້ມູນ, ເຂດອັນຕະລາຍ) plus one app page built only from 9 standard row types. Left nav with change counts, Ctrl K search, sticky save bar; on a phone a grouped list that opens each page full screen. save() gets only the diff, which also feeds the audit log.",
+    file: "packages/ui/src/components/settings.tsx",
+    importLine: 'import { SettingsPage, SettingsSection, SettingsRow, SettingsControl, SettingsSaveBar, SettingsHoldButton, SettingsTimeRange, defineSettings, settingsDiff } from "@vks-kit/ui"',
+    demo: () => <div className="w-full"><SettingsPage config={settingsDemo} showKinds commandK={false} /></div>,
+    code: `const settings = defineSettings({
+  core: ["profile", "security", "notifications", "display", "general", "members", "integrations", "audit", "data", "danger"],
+  events: [{ id: "late", label: "ມາວຽກຊ້າ" }],            // extra rows in the notification matrix
+  permissions: [{ id: "approveLeave", label: "ອະນຸມັດວັນພັກ" }], // extra rows in the role matrix
+  app: [{ header: "ການກວດ", rows: [
+    { key: "keepDays", type: "number", label: "ເກັບຂໍ້ມູນ", unit: "ມື້", min: 1, max: 999, default: 90 },
+    { key: "hours", type: "time-range", label: "ຊ່ວງເວລາ", default: "08:00-17:00" },
+  ] }],
+  load: () => api.get("settings"),
+  save: (diff) => api.post("settings", diff),   // [{ key: "app.keepDays", from: 90, to: 30 }]
+})
+<SettingsPage config={settings} />`,
+    props: [
+      { name: "config.core", type: "CoreSettingsPage[]", def: "all 10", desc: "Which shared pages to show. Order inside the nav groups is fixed." },
+      { name: "config.app", type: "{ header, sub?, icon?, tone?, rows }[]", desc: "Row types: text, number, switch, select, segmented, time-range, days, checkbox-list, action. Keys are stored as app.<key>." },
+      { name: "config.events / permissions", type: "{ id, label, default? }[]", desc: "Rows appended to the notification and role matrices (4-char masks)." },
+      { name: "config.load / save", type: "() => values / (diff) => void", desc: "save receives only changed keys; throw to keep the page dirty." },
+      { name: "config.members / devices / integrations / audit / storage / info", type: "lists", desc: "Read-only data the shared pages show." },
+      { name: "config.onAction", type: "(id, target?) => void", desc: "Buttons outside the save: security.password, members.invite, danger.reset, app.<key>…" },
+      { name: "commandK", type: "boolean", def: "true", desc: "Ctrl K opens the settings search. Set false when the app shell already uses Ctrl K." },
+      { name: "showKinds", type: "boolean", def: "false", desc: "Template view: row-type tags, the 'slot' badge and the add-group placeholder." },
+    ],
+    examples: [
+      { id: "settings-blocks", title: "Building blocks on their own", note: "Use the parts directly when a screen only needs a few settings.", demo: () => <BlocksDemo />, code: `<SettingsSection icon={<Bell />} header="ແຈ້ງເຕືອນ" sub="ຂໍ້ຄວາມສັ້ນ">
+  <SettingsRow label="ເປີດໃຊ້" help="ໜຶ່ງແຖວ" dirty={changed}><Switch checked={on} onCheckedChange={setOn} /></SettingsRow>
+  <SettingsRow label="ເວລາ"><SettingsTimeRange value={range} onChange={setRange} /></SettingsRow>
+</SettingsSection>
+{count > 0 && <SettingsSaveBar count={count} onCancel={reset} onSave={save} />}
+<SettingsHoldButton onConfirm={wipe}>ກົດຄ້າງ ເພື່ອລຶບ</SettingsHoldButton>` },
+    ],
+    notes: [
+      "Apps only fill the app page; every other page looks and behaves the same everywhere.",
+      "Layout follows the width the page gets: under 720 px (or on a phone) it switches to the grouped list.",
+      "The theme switch applies at once and is not part of the save.",
+      "Time ranges show their length (\"9 ຊມ\", \"8 ຊມ · ຂ້າມຄືນ\"); Save is disabled while any row has an error.",
+      "vks-app's @vks-app/settings (SettingsLayout, SettingRow) is the older per-app version; new screens use this one.",
+    ],
   },
   {
     slug: "facts", name: "Facts", group: "Form", badge: "New",

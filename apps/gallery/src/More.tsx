@@ -14,6 +14,7 @@ import {
   HoverFx, Parallax, ParallaxLayer, SlideHighlight, CursorRing, Logo, Roadmap, DependencyMap,
   ApprovalCard, SyncStatus, diffFields, type ApprovalStatus, TextInput, PhoneInput, MoneyInput, TimeInput, NumberInput, isPhoneLa, phoneLaE164,
   FormDialogContent, Field, FormSection, SelectHeader, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Facts, FactGrid, WeekdayPicker, workDaysText,
+  SettingsPage, defineSettings,
 } from "@vks-kit/ui"
 import { Share2, Pencil, Phone, Trash2, Heart, Shield, AlertTriangle, CheckCircle2, Clock, Folder, User, Copy as CopyIcon, Search as SearchIcon, ArrowRight } from "@vks-kit/ui/icons"
 import { BarSeries, LineSeries, Donut, Sparkline, ScatterSeries, RadarSeries, RadialBars, ComboSeries, Heatmap, DateGrid, LatencyTimeline, AttendanceBoard } from "@vks-kit/ui/charts"
@@ -85,6 +86,60 @@ function FormKitGallery() {
   </Sec>
 }
 
+const settingsDemo = defineSettings({
+  appLabel: "ການຕັ້ງຄ່າຂອງແອັບ",
+  events: [{ id: "late", label: "ມາວຽກຊ້າ", default: "1100" }],
+  permissions: [{ id: "approveLeave", label: "ອະນຸມັດວັນພັກ", default: "1100" }],
+  app: [
+    { header: "ກຸ່ມ A — ຄ່າ ແລະ ຕົວເລກ", sub: "ຕົວຢ່າງ: ຄຳນຳໜ້າ, ເກນ, ໄລຍະເວລາ", tone: "success", rows: [
+      { key: "prefix", type: "text", label: "ຄຳນຳໜ້າລະຫັດ", help: "ໃຊ້ກັບລະຫັດເອກະສານໃໝ່.", default: "VKS-", mono: true },
+      { key: "keepDays", type: "number", label: "ເກັບຂໍ້ມູນ", unit: "ມື້", min: 1, max: 999, default: 90 },
+      { key: "hours", type: "time-range", label: "ຊ່ວງເວລາ", default: "08:00-17:00" },
+      { key: "days", type: "days", label: "ມື້ທີ່ໃຊ້", default: "1111100" },
+    ] },
+    { header: "ກຸ່ມ B — ຕົວເລືອກ", sub: "ຕົວຢ່າງ: ເປີດ/ປິດ, ຮູບແບບ, ລາຍການ", tone: "primary", rows: [
+      { key: "enabled", type: "switch", label: "ເປີດໃຊ້", default: true },
+      { key: "option", type: "select", label: "ຕົວເລືອກ", default: "1", options: [{ value: "1", label: "ຕົວເລືອກ 1" }, { value: "2", label: "ຕົວເລືອກ 2" }, { value: "3", label: "ຕົວເລືອກ 3" }] },
+      { key: "mode", type: "segmented", label: "ຮູບແບບ", default: "auto", options: [{ value: "auto", label: "ອັດຕະໂນມັດ" }, { value: "manual", label: "ດ້ວຍມື" }] },
+      { key: "require", type: "checkbox-list", label: "ຕ້ອງມີ", default: ["photo"], options: [{ value: "photo", label: "ຮູບຖ່າຍ" }, { value: "note", label: "ໝາຍເຫດ" }, { value: "sign", label: "ລາຍເຊັນ" }] },
+      { key: "seed", type: "action", label: "ຂໍ້ມູນຕົວຢ່າງ", help: "ບໍ່ນັບເຂົ້າການບັນທຶກ.", actionLabel: "ສ້າງຂໍ້ມູນໃໝ່" },
+    ] },
+  ],
+  members: [
+    { id: "1", name: "ສົມສັກ ພົມມະ", dept: "ບໍລິຫານ", role: "ເຈົ້າຂອງ", status: "active", lastSeen: "ມື້ນີ້ 09:12" },
+    { id: "2", name: "ນາລີ ແກ້ວມະນີ", dept: "ບັນຊີ", role: "ຜູ້ຈັດການ", status: "active", lastSeen: "ມື້ວານ" },
+    { id: "3", name: "ບຸນມີ ສີສະຫວັດ", dept: "ປະຕິບັດການ", role: "ພະນັກງານ", status: "active", lastSeen: "3 ມື້ກ່ອນ" },
+    { id: "4", name: "ວັນນາ ໄຊຍະວົງ", dept: "ປະຕິບັດການ", role: "ພະນັກງານ", status: "pending" },
+    { id: "5", name: "ຄຳພອນ ອິນທະວົງ", dept: "ລູກຄ້າ", role: "ຜູ້ເບິ່ງ", status: "pending" },
+  ],
+  devices: [
+    { id: "a", name: "Chrome · Windows", where: "ວຽງຈັນ", lastSeen: "ດຽວນີ້", current: true },
+    { id: "b", name: "Safari · iPhone", where: "ວຽງຈັນ", lastSeen: "2 ຊົ່ວໂມງກ່ອນ", kind: "phone" },
+    { id: "c", name: "Chrome · Android", where: "ປາກເຊ", lastSeen: "5 ມື້ກ່ອນ", kind: "phone" },
+  ],
+  integrations: [
+    { id: "sheets", name: "Google Sheets", detail: "ຊິ້ງລ່າສຸດ 5 ນາທີກ່ອນ", status: "connected", actionLabel: "ຊິ້ງດຽວນີ້" },
+    { id: "telegram", name: "Telegram", detail: "@vks_alert_bot", status: "connected", actionLabel: "ທົດສອບ" },
+    { id: "drive", name: "Google Drive", detail: "ໝົດອາຍຸ 2 ມື້ກ່ອນ", status: "expired" },
+    { id: "push", name: "Web Push", status: "off" },
+  ],
+  audit: [
+    { who: "ນາລີ ແກ້ວມະນີ", field: "ເຂດເວລາ", from: "Asia/Bangkok", to: "Asia/Vientiane", at: "12/09 14:20" },
+    { who: "ສົມສັກ ພົມມະ", field: "ສິດ: ສົ່ງອອກຂໍ້ມູນ", from: "1000", to: "1100", at: "10/09 09:05" },
+  ],
+  storage: { usedGb: 11.2, totalGb: 15 },
+  info: { passwordAge: "42 ມື້ກ່ອນ", lastBackup: "ມື້ນີ້ 02:00 · ສຳເລັດ" },
+  load: () => ({ "profile.name": "ສົມສັກ ພົມມະ", "profile.code": "G001", "profile.phone": "55123456", "profile.email": "somsak@vks.la", "general.orgName": "VKS Security" }),
+  save: async () => { await new Promise((r) => setTimeout(r, 600)) },
+  onAction: (id) => toast(id),
+})
+
+function SettingsGallery() {
+  return <Sec id="settings-page" title="Settings page (10 shared pages + app slot, search, save bar)">
+    <SettingsPage config={settingsDemo} showKinds commandK={false} />
+  </Sec>
+}
+
 export function More() {
   const { theme, setTheme } = useTheme()
   const [nv, setNv] = React.useState("home"), [date, setDate] = React.useState("2026-09-30"), [sel, setSel] = React.useState<string[]>([]), [multi, setMulti] = React.useState<string[]>(["a"])
@@ -120,6 +175,7 @@ export function More() {
         </Sec>
         <Sec id="fields" title="Input types: text, phone, money, time, number"><FieldsGallery /></Sec>
         <FormKitGallery />
+        <SettingsGallery />
         <Sec id="pickers" title="Date picker, dropdown, chips, search">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-1"><Label>ວັນທີ (popover on desktop, wheel on phone)</Label><DatePicker value={date} onChange={setDate} /></div>
