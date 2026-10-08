@@ -47,6 +47,7 @@ lg is 64rem wide on desktop; use a 2-column grid in the body.
 | footer | ReactNode |  | Sticky footer, buttons right-aligned; respects the phone safe area. |
 | size | "sm" \| "md" \| "lg" | "md" | Desktop width: 36 / 48 / 64 rem. A phone always gets the full-width sheet. |
 | bodyClassName | string |  | Extra classes on the scrolling body. |
+| icon | ReactNode |  | Optional icon tile left of the title; desktop only (hidden on phone). |
 | Field: label / htmlFor / error / hint | ReactNode / string |  | error (red) replaces hint (muted) when set. |
 
 ## Notes

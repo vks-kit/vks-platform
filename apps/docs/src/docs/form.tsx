@@ -110,6 +110,7 @@ export const formDocs: Doc[] = [
       { name: "footer", type: "ReactNode", desc: "Sticky footer, buttons right-aligned; respects the phone safe area." },
       { name: "size", type: '"sm" | "md" | "lg"', def: '"md"', desc: "Desktop width: 36 / 48 / 64 rem. A phone always gets the full-width sheet." },
       { name: "bodyClassName", type: "string", desc: "Extra classes on the scrolling body." },
+      { name: "icon", type: "ReactNode", desc: "Optional icon tile left of the title; desktop only (hidden on phone)." },
       { name: "Field: label / htmlFor / error / hint", type: "ReactNode / string", desc: "error (red) replaces hint (muted) when set." },
     ],
     notes: ["Put it inside a Dialog, in place of DialogContent.", "Records open read-only first (Facts / FactGrid) with a ແກ້ໄຂ button; the form is the edit step.", "Run cleanText() on free text before saving."],

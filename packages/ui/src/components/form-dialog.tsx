@@ -13,16 +13,28 @@ const FORM_SIZE = {
 export type FormDialogSize = keyof typeof FORM_SIZE
 
 /** Use for any form inside a Dialog: sticky header + footer, only the body scrolls (never sideways), sm/md/lg widths on desktop, sheet on phone; for a yes/no question use ConfirmDialog instead. */
-export function FormDialogContent({ title, description, footer, children, size = "md", className, bodyClassName }: {
+export function FormDialogContent({ title, description, footer, children, size = "md", className, bodyClassName, icon }: {
   title: React.ReactNode; description?: React.ReactNode; footer?: React.ReactNode; children: React.ReactNode
+  /** Optional icon tile left of the title (desktop only; hidden on phone to save height). */
+  icon?: React.ReactNode
   /** sm 1–3 fields, md default, lg long forms (use a 2-column grid in the body). */
   size?: FormDialogSize; className?: string; bodyClassName?: string
 }) {
   return (
     <DialogContent className={cn("flex flex-col gap-0 overflow-hidden p-0 md:p-0 [&>.vks-grabber]:mt-2 [&>.vks-grabber]:shrink-0", FORM_SIZE[size], className)}>
-      <DialogHeader className="shrink-0 border-b px-5 pt-4 pb-3 pr-14 md:px-6 md:pt-5 md:pb-4">
-        <DialogTitle className="leading-normal">{title}</DialogTitle>
-        {description && <DialogDescription className="leading-relaxed">{description}</DialogDescription>}
+      <DialogHeader className={cn("shrink-0 border-b px-5 pt-4 pb-3 pr-14 md:px-6 md:pt-5 md:pb-4", icon && "flex-row items-center gap-3")}>
+        {icon && <span className="hidden size-10 shrink-0 place-items-center rounded-xl bg-muted text-foreground md:grid [&>svg]:size-5">{icon}</span>}
+        {icon ? (
+          <div className="min-w-0">
+            <DialogTitle className="leading-normal">{title}</DialogTitle>
+            {description && <DialogDescription className="leading-relaxed">{description}</DialogDescription>}
+          </div>
+        ) : (
+          <>
+            <DialogTitle className="leading-normal">{title}</DialogTitle>
+            {description && <DialogDescription className="leading-relaxed">{description}</DialogDescription>}
+          </>
+        )}
       </DialogHeader>
       <div className={cn("min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-contain px-5 py-4 leading-normal md:px-6 md:py-5", bodyClassName)}>{children}</div>
       {footer && <div className="flex shrink-0 flex-wrap items-center justify-end gap-2 border-t bg-popover px-5 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:px-6 md:py-4">{footer}</div>}
