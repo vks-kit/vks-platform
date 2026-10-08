@@ -134,9 +134,12 @@ const settingsDemo = defineSettings({
   onAction: (id) => toast(id),
 })
 
+const settingsBarDemo = { ...settingsDemo, saveMode: "bar" as const }
 function SettingsGallery() {
-  return <Sec id="settings-page" title="Settings page (10 shared pages + app slot, search, save bar)">
+  return <Sec id="settings-page" title="Settings page (view first: details open on ແກ້ໄຂ, preferences auto-save with Undo)">
     <SettingsPage config={settingsDemo} showKinds commandK={false} />
+    <p className="mt-6 mb-2 text-sm leading-normal text-muted-foreground">saveMode "bar" — preferences wait in the sticky save bar</p>
+    <SettingsPage config={settingsBarDemo} commandK={false} />
   </Sec>
 }
 

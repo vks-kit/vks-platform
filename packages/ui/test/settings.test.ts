@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { defineSettings, settingsDefaults, settingsDiff, dirtyByPage, rangeLengthLabel, validateSettingRow, settingPhoneError, splitTimeRange, settingMatches, settingText, CORE_SETTINGS_PAGES, settingsLabels, settingsErrors } from "../src/lib/settings"
+import { defineSettings, settingsDefaults, settingsDiff, dirtyByPage, rangeLengthLabel, validateSettingRow, settingPhoneError, splitTimeRange, settingMatches, settingText, CORE_SETTINGS_PAGES, settingsLabels, settingsErrors, settingEditSection, settingViewText, SETTINGS_EDIT_SECTIONS } from "../src/lib/settings"
 
 const cfg = defineSettings({
   events: [{ id: "late", label: "ມາຊ້າ" }],
@@ -79,5 +79,30 @@ describe("labels + errors", () => {
     const v = { ...settingsDefaults(cfg), "app.keep": 0, "notifications.quietHours": "22:00-22:00" }
     expect(Object.keys(settingsErrors(cfg, v)).sort()).toEqual(["app.keep", "notifications.quietHours"])
     expect(Object.keys(settingsErrors(cfg, { ...v, "notifications.quiet": false }))).toEqual(["app.keep"])
+  })
+})
+
+describe("view first / auto-save split", () => {
+  it("details are view-first sections, preferences are not", () => {
+    expect(settingEditSection("profile.phone")).toBe("profile.info")
+    expect(settingEditSection("general.currency")).toBe("general.org")
+    expect(settingEditSection("general.workHours")).toBe("general.hours")
+    expect(settingEditSection("profile.code")).toBeUndefined()
+    expect(settingEditSection("display.lang")).toBeUndefined()
+    expect(settingEditSection("app.keep")).toBeUndefined()
+  })
+  it("every section key has a default", () => {
+    const d = settingsDefaults(cfg)
+    for (const k of Object.values(SETTINGS_EDIT_SECTIONS).flat()) expect(k in d).toBe(true)
+  })
+  it("renders read-only text people can read", () => {
+    expect(settingViewText("profile.phone", "020 5512 3456")).toBe("020 5512 3456")
+    expect(settingViewText("profile.phone", "")).toBe("")
+    expect(settingViewText("general.currency", "LAK")).toBe("ກີບ (LAK)")
+    expect(settingViewText("general.weekStart", "sun")).toBe("ວັນອາທິດ")
+    expect(settingViewText("general.workDays", "1111110")).toBe("ຈ–ສ (6 ມື້)")
+    expect(settingViewText("general.workHours", "08:00-17:00")).toBe("08:00 – 17:00 · 9 ຊມ")
+    expect(settingViewText("profile.name", "ສົມໃຈ")).toBe("ສົມໃຈ")
+    expect(settingViewText("profile.email", undefined)).toBe("")
   })
 })

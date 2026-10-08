@@ -27,17 +27,19 @@ export const Dialog = D.Root
 export const DialogTrigger = D.Trigger
 /** Use to wrap a custom button that closes its Dialog (use asChild). The X in the corner is already built in; for confirm + cancel use ConfirmDialog instead. */
 export const DialogClose = D.Close
+/* A tap on a toast (Undo, close) is not "outside" the open panel. */
+const keepOpenForToast = (fn?: (e: Event) => void) => (e: Event) => { if ((e.target as Element | null)?.closest?.("[data-sonner-toaster]")) e.preventDefault(); fn?.(e) }
 const Overlay = ({ className, ...p }: React.ComponentProps<typeof D.Overlay>) => (
   <D.Overlay className={cn("vks-scrim fixed inset-0 z-50 bg-[color-mix(in_oklab,var(--foreground)_45%,transparent)]", className)} {...p} />
 )
 /** Use for the panel of a Dialog (scrim, grabber on phones, close X built in). For a panel from the side use SheetContent instead. */
-export function DialogContent({ className, children, onEscapeKeyDown, ...p }: React.ComponentProps<typeof D.Content>) {
+export function DialogContent({ className, children, onEscapeKeyDown, onInteractOutside, ...p }: React.ComponentProps<typeof D.Content>) {
   const { nest, onEsc, pushed, hostEl } = useNest(onEscapeKeyDown)
   return (
     <D.Portal>
       <Overlay />
       <D.Content
-        data-pushed={pushed || undefined} onEscapeKeyDown={onEsc}
+        data-pushed={pushed || undefined} onEscapeKeyDown={onEsc} onInteractOutside={keepOpenForToast(onInteractOutside as (e: Event) => void)}
         className={cn("vks-modal fixed inset-x-0 bottom-0 z-50 grid max-h-[90dvh] w-full gap-4 overflow-auto", PANEL_SURFACE, PANEL_DESKTOP, "md:left-[calc(50%-min(14rem,50%-1rem))] md:top-[18vh] md:max-w-md data-[pushed]:overflow-hidden data-[pushed]:min-h-[min(34rem,85dvh)]", className)}
         {...p}
       >
@@ -79,12 +81,12 @@ export const SheetTitle = DialogTitle
 /** Use for one muted line under SheetTitle (same as DialogDescription). */
 export const SheetDescription = DialogDescription
 /** Use for the sliding panel of a Sheet; side = bottom / right / left / fullscreen. For a centred modal panel use DialogContent instead. */
-export function SheetContent({ className, side, children, onEscapeKeyDown, ...p }: React.ComponentProps<typeof D.Content> & VariantProps<typeof sheetVariants>) {
+export function SheetContent({ className, side, children, onEscapeKeyDown, onInteractOutside, ...p }: React.ComponentProps<typeof D.Content> & VariantProps<typeof sheetVariants>) {
   const { nest, onEsc, pushed, hostEl } = useNest(onEscapeKeyDown)
   return (
     <D.Portal>
       <Overlay />
-      <D.Content data-pushed={pushed || undefined} onEscapeKeyDown={onEsc} className={cn(sheetVariants({ side }), "data-[pushed]:overflow-hidden", side !== "fullscreen" && side !== "right" && side !== "left" && "data-[pushed]:min-h-[min(34rem,85dvh)]", className)} {...p}>
+      <D.Content data-pushed={pushed || undefined} onEscapeKeyDown={onEsc} onInteractOutside={keepOpenForToast(onInteractOutside as (e: Event) => void)} className={cn(sheetVariants({ side }), "data-[pushed]:overflow-hidden", side !== "fullscreen" && side !== "right" && side !== "left" && "data-[pushed]:min-h-[min(34rem,85dvh)]", className)} {...p}>
         <NestCtx.Provider value={nest}>
           {side === "bottom" && <div aria-hidden className="vks-grabber" />}
           {children}

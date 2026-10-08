@@ -204,6 +204,8 @@
 .vks-btn-soft { box-shadow: inset 0 1px 0 rgb(255 255 255 / .6), 0 1px 2px rgb(20 23 61 / .06); }
 .dark .vks-btn-soft { box-shadow: inset 0 1px 0 rgb(255 255 255 / .05), 0 1px 2px rgb(0 0 0 / .3); }
 
+/* An open Dialog/Sheet sets pointer-events:none on <body>; toasts sit above it and must stay tappable (Undo, close). */
+[data-sonner-toaster] [data-sonner-toast] { pointer-events: auto; }
 /* sonner ships its own font stack; force Noto Sans Lao and a softer iOS card */
 [data-sonner-toaster], [data-sonner-toaster] [data-sonner-toast], [data-sonner-toast] [data-title], [data-sonner-toast] [data-description], [data-sonner-toast] button { font-family: var(--font-sans) !important; }
 /* VKS toast: glass card + gold hairline, round tone badge (same as IOSAlert), spring in, drain bar, pill action */

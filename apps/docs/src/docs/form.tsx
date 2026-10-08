@@ -1,7 +1,8 @@
 import * as React from "react"
 import { Input, Textarea, Label, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Checkbox, Switch, Tabs, TabsList, TabsTrigger, TabsContent, Combobox, FilterChips, SearchBox, OtpInput, Slider, RadioGroup, RadioGroupItem, Stepper, TextInput, PhoneInput, MoneyInput, TimeInput, NumberInput, isPhoneLa, phoneLaE164,
   Button, Dialog, DialogTrigger, DialogClose, FormDialogContent, Field, FormSection, SelectHeader, Facts, FactGrid, WeekdayPicker, workDaysText,
-  SettingsPage, SettingsSection, SettingsRow, SettingsSaveBar, SettingsHoldButton, SettingsTimeRange, defineSettings, toast } from "@vks-kit/ui"
+  SettingsPage, SettingsSection, SettingsRow, SettingsValue, SettingsEditBar, SettingsSaveBar, SettingsHoldButton, SettingsTimeRange, defineSettings, toast } from "@vks-kit/ui"
+import { Pencil, Lock } from "@vks-kit/ui/icons"
 import { fmtKip } from "@vks-kit/core"
 import type { Doc } from "./types"
 
@@ -146,6 +147,16 @@ function BlocksDemo() {
   </div>
 }
 
+function ViewFirstDemo() {
+  const [saved, setSaved] = React.useState("ສົມໃຈ ພົມມະຈັນ"), [name, setName] = React.useState(saved), [editing, setEditing] = React.useState(false)
+  return <div className="w-full max-w-2xl">
+    <SettingsSection header="ຂໍ້ມູນສ່ວນຕົວ" action={!editing && <Button variant="outline" size="sm" onClick={() => setEditing(true)}><Pencil />ແກ້ໄຂ</Button>}>
+      <SettingsRow label="ຊື່">{editing ? <TextInput aria-label="ຊື່" value={name} onChange={setName} autoFocus className="w-[300px] max-w-full" /> : <SettingsValue>{saved}</SettingsValue>}</SettingsRow>
+      <SettingsRow label="ລະຫັດພະນັກງານ" help={<span className="inline-flex items-center gap-1"><Lock className="size-3.5" />ປ່ຽນໄດ້ໂດຍ HR ເທົ່ານັ້ນ</span>}><SettingsValue mono>VKS-0142</SettingsValue></SettingsRow>
+      {editing && <SettingsEditBar onCancel={() => { setName(saved); setEditing(false) }} onSave={() => { setSaved(name); setEditing(false); toast.success("ບັນທຶກແລ້ວ") }} disabled={!name.trim()} />}
+    </SettingsSection>
+  </div>
+}
 function WeekdayDemo() { const [m, setM] = React.useState("1111100"); return <div className="w-full max-w-sm space-y-2"><WeekdayPicker value={m} onChange={setM} /><code className="text-xs text-muted-foreground">value = "{m}" · workDaysText → {workDaysText(m)}</code></div> }
 const factRows: [string, React.ReactNode][] = [["ລູກຄ້າ", "ບໍລິສັດ ລາວ ເທຣດດິ້ງ"], ["ໂທ", "020 5512 3456"], ["ໝາຍເຫດ", ""]]
 
@@ -195,9 +206,9 @@ workDaysText("1010100") // "ຈ ພ ສ"`,
   },
   {
     slug: "settings-page", name: "Settings page", group: "Form", badge: "New",
-    desc: "The one settings screen every app shares: 10 standard pages (ໂປຣໄຟລ໌, ຄວາມປອດໄພ, ແຈ້ງເຕືອນ, ການສະແດງຜົນ, ທົ່ວໄປ, ສະມາຊິກ & ສິດ, ການເຊື່ອມຕໍ່, ປະຫວັດ, ຂໍ້ມູນ, ເຂດອັນຕະລາຍ) plus one app page built only from 9 standard row types. Left nav with change counts, Ctrl K search, sticky save bar; on a phone a grouped list that opens each page full screen. save() gets only the diff, which also feeds the audit log.",
+    desc: "The one settings screen every app shares: 10 standard pages (ໂປຣໄຟລ໌, ຄວາມປອດໄພ, ແຈ້ງເຕືອນ, ການສະແດງຜົນ, ທົ່ວໄປ, ສະມາຊິກ & ສິດ, ການເຊື່ອມຕໍ່, ປະຫວັດ, ຂໍ້ມູນ, ເຂດອັນຕະລາຍ) plus one app page built only from 9 standard row types. View first: Profile and General show plain values with an ແກ້ໄຂ button per section (Edit → ບັນທຶກ / ຍົກເລີກ); preferences (toggles, matrices, display, app rows) save on their own with an Undo toast. Left nav + Ctrl K search; on a phone a grouped list that opens each page full screen. save() gets only the diff, which also feeds the audit log.",
     file: "packages/ui/src/components/settings.tsx",
-    importLine: 'import { SettingsPage, SettingsSection, SettingsRow, SettingsControl, SettingsSaveBar, SettingsHoldButton, SettingsTimeRange, defineSettings, settingsDiff } from "@vks-kit/ui"',
+    importLine: 'import { SettingsPage, SettingsSection, SettingsRow, SettingsValue, SettingsEditBar, SettingsControl, SettingsSaveBar, SettingsHoldButton, SettingsTimeRange, defineSettings, settingsDiff } from "@vks-kit/ui"',
     demo: () => <div className="w-full"><SettingsPage config={settingsDemo} showKinds commandK={false} /></div>,
     code: `const settings = defineSettings({
   core: ["profile", "security", "notifications", "display", "general", "members", "integrations", "audit", "data", "danger"],
@@ -215,13 +226,19 @@ workDaysText("1010100") // "ຈ ພ ສ"`,
       { name: "config.core", type: "CoreSettingsPage[]", def: "all 10", desc: "Which shared pages to show. Order inside the nav groups is fixed." },
       { name: "config.app", type: "{ header, sub?, icon?, tone?, rows }[]", desc: "Row types: text, number, switch, select, segmented, time-range, days, checkbox-list, action. Keys are stored as app.<key>." },
       { name: "config.events / permissions", type: "{ id, label, default? }[]", desc: "Rows appended to the notification and role matrices (4-char masks)." },
-      { name: "config.load / save", type: "() => values / (diff) => void", desc: "save receives only changed keys; throw to keep the page dirty." },
+      { name: "config.load / save", type: "() => values / (diff) => void", desc: "save receives only changed keys; throw to keep the page dirty (auto-save puts the old value back and shows an error)." },
+      { name: "config.saveMode", type: '"auto" | "bar"', def: '"auto"', desc: "auto: each preference saves ~0.7 s after the last change, with Undo in the toast; rows with an error wait. bar: preferences wait in the sticky N-changes bar. Profile and General always save per section." },
       { name: "config.members / devices / integrations / audit / storage / info", type: "lists", desc: "Read-only data the shared pages show." },
       { name: "config.onAction", type: "(id, target?) => void", desc: "Buttons outside the save: security.password, members.invite, danger.reset, app.<key>…" },
       { name: "commandK", type: "boolean", def: "true", desc: "Ctrl K opens the settings search. Set false when the app shell already uses Ctrl K." },
       { name: "showKinds", type: "boolean", def: "false", desc: "Template view: row-type tags, the 'slot' badge and the add-group placeholder." },
     ],
     examples: [
+      { id: "settings-view-first", title: "View first, edit on press", note: "Details show as text until ແກ້ໄຂ; only that section opens. Never show a disabled input for something people cannot change — show the text with a lock line instead.", demo: () => <ViewFirstDemo />, code: `<SettingsSection header="ຂໍ້ມູນສ່ວນຕົວ" action={!editing && <Button variant="outline" size="sm" onClick={() => setEditing(true)}><Pencil />ແກ້ໄຂ</Button>}>
+  <SettingsRow label="ຊື່">{editing ? <TextInput value={name} onChange={setName} /> : <SettingsValue>{name}</SettingsValue>}</SettingsRow>
+  <SettingsRow label="ລະຫັດພະນັກງານ" help={<><Lock /> ປ່ຽນໄດ້ໂດຍ HR ເທົ່ານັ້ນ</>}><SettingsValue mono>VKS-0142</SettingsValue></SettingsRow>
+  {editing && <SettingsEditBar onCancel={cancel} onSave={save} />}
+</SettingsSection>` },
       { id: "settings-blocks", title: "Building blocks on their own", note: "Use the parts directly when a screen only needs a few settings.", demo: () => <BlocksDemo />, code: `<SettingsSection icon={<Bell />} header="ແຈ້ງເຕືອນ" sub="ຂໍ້ຄວາມສັ້ນ">
   <SettingsRow label="ເປີດໃຊ້" help="ໜຶ່ງແຖວ" dirty={changed}><Switch checked={on} onCheckedChange={setOn} /></SettingsRow>
   <SettingsRow label="ເວລາ"><SettingsTimeRange value={range} onChange={setRange} /></SettingsRow>
@@ -232,6 +249,9 @@ workDaysText("1010100") // "ຈ ພ ສ"`,
     notes: [
       "Apps only fill the app page; every other page looks and behaves the same everywhere.",
       "Layout follows the width the page gets: under 720 px (or on a phone) it switches to the grouped list.",
+      "View first: details (name, phone, email, organisation, work hours) are plain text until ແກ້ໄຂ; one section edits at a time and saves only its own keys.",
+      "Preferences save on their own — no Save button to forget. The toast says what changed (ເກົ່າ → ໃໝ່) and has ຍົກເລີກ to put it back; every save lands in ປະຫວັດ.",
+      "Things people cannot change (employee code) are text with a 🔒 line, never a greyed-out input.",
       "The theme switch applies at once and is not part of the save.",
       "Time ranges show their length (\"9 ຊມ\", \"8 ຊມ · ຂ້າມຄືນ\"); Save is disabled while any row has an error.",
       "vks-app's @vks-app/settings (SettingsLayout, SettingRow) is the older per-app version; new screens use this one.",

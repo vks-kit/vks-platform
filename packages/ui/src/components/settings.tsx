@@ -1,12 +1,13 @@
 import * as React from "react"
-import { Bell, Clock, Database, Download, Globe, History, Info, Lock, LogOut, Monitor, Moon, Plug, Plus, RefreshCw, Search, Settings, Shield, SlidersHorizontal, Smartphone, Sun, TriangleAlert, Upload, User, Users } from "lucide-react"
+import { Bell, Clock, Database, Download, Globe, History, Info, Lock, LogOut, Monitor, Moon, Pencil, Plug, Plus, RefreshCw, Search, Settings, Shield, SlidersHorizontal, Smartphone, Sun, TriangleAlert, Upload, User, Users } from "lucide-react"
 import { haptics } from "@vks-kit/core"
 import { cn } from "../lib/cn"
 import { useTheme } from "../lib/theme"
 import { useIsMobile } from "../lib/use-media"
 import { normTime } from "../lib/field-format"
 import {
-  type SettingsConfig, type SettingsValues, type SettingValue, type SettingRowDef, type SettingTone, type SettingsPageId, type SettingsAuditEntry,
+  type SettingsConfig, type SettingsValues, type SettingValue, type SettingRowDef, type SettingTone, type SettingsPageId, type SettingsAuditEntry, type SettingChange, type SettingsEditSection,
+  settingEditSection, settingViewText, SETTINGS_EDIT_SECTIONS, SETTINGS_OPTIONS,
   settingsDefaults, settingsDiff, dirtyByPage, settingsErrors, settingsLabels, splitTimeRange, rangeLengthLabel, settingText, settingPage,
   CORE_SETTINGS_PAGES, SETTINGS_CHANNELS, SETTINGS_EVENTS, SETTINGS_PERMISSIONS, SETTINGS_ROLES, SETTINGS_PAGE_LABELS,
 } from "../lib/settings"
@@ -107,6 +108,25 @@ export function SettingsSaveBar({ count, onCancel, onSave, saving, disabled, not
         <b className="tabular-nums">{count}</b> ການປ່ຽນແປງທີ່ຍັງບໍ່ບັນທຶກ
         {note && <span className="block text-xs text-destructive">{note}</span>}
       </div>
+      <Button variant="ghost" size="sm" onClick={onCancel} disabled={saving}>ຍົກເລີກ</Button>
+      <Button size="sm" onClick={onSave} loading={saving} disabled={disabled}>ບັນທຶກ</Button>
+    </div>
+  )
+}
+
+/** Use for the read-only value of a setting row before the user presses Edit (plain text; a muted "ຍັງບໍ່ໄດ້ໃສ່" when empty). For a value people may change, show the field itself inside SettingsRow instead. */
+export function SettingsValue({ children, mono, empty = "ຍັງບໍ່ໄດ້ໃສ່", className }: { children?: React.ReactNode; mono?: boolean; empty?: React.ReactNode; className?: string }) {
+  const blank = children == null || children === "" || children === false
+  return <span className={cn("block max-w-full break-words text-[14.5px] leading-normal sm:max-w-[300px] sm:text-right", mono && !blank && "font-mono tabular-nums", blank && "text-muted-foreground", className)}>{blank ? empty : children}</span>
+}
+
+/** Use for the Cancel / Save footer of one settings section while it is being edited (view first, Edit opens only that section). For the page-wide "N unsaved changes" bar use SettingsSaveBar instead. */
+export function SettingsEditBar({ onCancel, onSave, saving, disabled, note, className }: {
+  onCancel: () => void; onSave: () => void; saving?: boolean; disabled?: boolean; note?: string; className?: string
+}) {
+  return (
+    <div className={cn("flex flex-wrap items-center justify-end gap-2 bg-muted/40 px-4 py-3 sm:px-5", className)}>
+      {note && <span role="alert" className="mr-auto text-xs leading-normal text-destructive">{note}</span>}
       <Button variant="ghost" size="sm" onClick={onCancel} disabled={saving}>ຍົກເລີກ</Button>
       <Button size="sm" onClick={onSave} loading={saving} disabled={disabled}>ບັນທຶກ</Button>
     </div>
@@ -237,7 +257,8 @@ function Matrix({ cols, rows, mask, onFlip, dirty }: { cols: readonly string[]; 
 /**
  * Use for the one settings screen every VKS app shares: 10 standard pages (profile, security, notifications, display, general, members,
  * integrations, audit, data, danger) plus one app page built only from the 9 standard row types; save() receives only the diff.
- * Desktop: left nav with per-page change counts + Ctrl K search + sticky save bar. Phone: grouped list that opens each page full screen.
+ * Profile and General show values first (Edit -> Save / Cancel per section); preferences save on their own with Undo (saveMode "bar" brings back the save bar).
+ * Desktop: left nav + Ctrl K search. Phone: grouped list that opens each page full screen.
  * For a single small form use FormDialogContent instead.
  */
 export function SettingsPage({ config, showKinds = false, commandK = true, className }: {
@@ -281,26 +302,96 @@ export function SettingsPage({ config, showKinds = false, commandK = true, class
 
   const diff = React.useMemo(() => settingsDiff(saved, v), [saved, v])
   const dirtyKeys = React.useMemo(() => new Set(diff.map((d) => d.key)), [diff])
-  const counts = React.useMemo(() => dirtyByPage(diff), [diff])
+
   const errors = React.useMemo(() => settingsErrors(config, v), [config, v])
-  const errCount = Object.keys(errors).length
   const set = (k: string) => (x: SettingValue) => setV((o) => ({ ...o, [k]: x }))
   const str = (k: string) => asText(v[k])
   const act = (id: string, target?: string) => config.onAction?.(id, target)
   const pageLabel = (p: SettingsPageId) => (p === "app" ? config.appLabel ?? SETTINGS_PAGE_LABELS.app : SETTINGS_PAGE_LABELS[p])
 
-  const save = async () => {
-    if (!diff.length || errCount) return
-    setSaving(true)
+  /* Profile + General show values first and save per section; everything else is a preference (auto-save, or the bar when saveMode is "bar"). */
+  const mode = config.saveMode ?? "auto"
+  const prefDiff = React.useMemo(() => diff.filter((d) => !settingEditSection(d.key)), [diff])
+  const prefErrCount = prefDiff.filter((d) => errors[d.key]).length
+  const counts = React.useMemo(() => dirtyByPage(prefDiff), [prefDiff])
+  const savedRef = React.useRef(saved); savedRef.current = saved
+  const vRef = React.useRef(v); vRef.current = v
+  const busy = React.useRef(new Set<string>())
+  const [editing, setEditing] = React.useState<Partial<Record<SettingsEditSection, boolean>>>({})
+  const [secSaving, setSecSaving] = React.useState<SettingsEditSection | null>(null)
+  const shown = (k: string, x: SettingValue) => settingViewText(k, x) || settingText(x)
+  const put = (changes: SettingChange[], pick: "from" | "to", only?: "to" | "from") => setV((o) => {
+    const n = { ...o }
+    for (const c of changes) if (!only || JSON.stringify(n[c.key] ?? null) === JSON.stringify(c[only] ?? null)) n[c.key] = c[pick]
+    return n
+  })
+
+  /** Send changes to config.save, then mark them saved, log them and toast. Returns false when save threw. */
+  const commit = async (changes: SettingChange[], o: { undo?: boolean; revertOnFail?: boolean; quiet?: boolean } = {}) => {
+    if (!changes.length) return true
+    for (const c of changes) busy.current.add(c.key)
     try {
-      await config.save?.(diff)
+      await config.save?.(changes)
       const at = new Date().toLocaleString("en-GB", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })
-      setLog((l) => [...diff.map((d) => ({ who: "ທ່ານ", field: labels[d.key] ?? d.key, from: settingText(d.from), to: settingText(d.to), at })), ...l])
-      setSaved(v); toast.success("ບັນທຶກແລ້ວ · " + diff.length + " ລາຍການ")
-    } catch (e) { toast.error("ບັນທຶກບໍ່ສຳເລັດ", { description: e instanceof Error ? e.message : undefined }) }
-    finally { setSaving(false) }
+      setLog((l) => [...changes.map((d) => ({ who: "ທ່ານ", field: labels[d.key] ?? d.key, from: shown(d.key, d.from), to: shown(d.key, d.to), at })), ...l])
+      setSaved((s) => { const n = { ...s }; for (const c of changes) n[c.key] = c.to; return n })
+      if (!o.quiet) {
+        const one = changes.length === 1 ? changes[0] : null
+        toast.success(one ? "ບັນທຶກແລ້ວ · " + (labels[one.key] ?? one.key) : "ບັນທຶກແລ້ວ · " + changes.length + " ລາຍການ", {
+          description: one ? shown(one.key, one.from) + " → " + shown(one.key, one.to) : undefined,
+          action: o.undo ? { label: "ຍົກເລີກ", onClick: () => undo(changes) } : undefined,
+        })
+      }
+      return true
+    } catch (e) {
+      if (o.revertOnFail) put(changes, "from", "to")
+      toast.error("ບັນທຶກບໍ່ສຳເລັດ", { description: e instanceof Error ? e.message : undefined })
+      return false
+    } finally { for (const c of changes) busy.current.delete(c.key) }
   }
-  const cancel = () => setV(saved)
+  const undo = (changes: SettingChange[]) => {
+    const back = changes.map((c) => ({ key: c.key, from: c.to, to: c.from }))
+    put(back, "to")
+    void commit(back, { quiet: true, revertOnFail: true }).then((ok) => { if (ok) toast("ກັບຄືນຄ່າເກົ່າແລ້ວ") })
+  }
+
+  /* Auto-save: a short pause after the last change (so typing and quick matrix taps go out as one save). Rows with an error wait. */
+  React.useEffect(() => {
+    if (mode !== "auto" || !prefDiff.length) return
+    const t = window.setTimeout(() => {
+      const errs = settingsErrors(config, vRef.current)
+      const due = settingsDiff(savedRef.current, vRef.current).filter((d) => !settingEditSection(d.key) && !errs[d.key] && !busy.current.has(d.key))
+      void commit(due, { undo: true, revertOnFail: true })
+    }, 700)
+    return () => window.clearTimeout(t)
+  }, [prefDiff, mode]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  /* Save bar (saveMode "bar"): preferences only. */
+  const save = async () => {
+    if (!prefDiff.length || prefErrCount) return
+    setSaving(true)
+    await commit(prefDiff)
+    setSaving(false)
+  }
+  const cancel = () => put(prefDiff, "from")
+
+  /* View-first sections. */
+  const secKeys = (id: SettingsEditSection) => SETTINGS_EDIT_SECTIONS[id] as readonly string[]
+  const secErr = (id: SettingsEditSection) => secKeys(id).filter((k) => errors[k]).length
+  const startEdit = (id: SettingsEditSection) => { haptics.tap(); setEditing((e) => ({ ...e, [id]: true })) }
+  const stopEdit = (id: SettingsEditSection) => setEditing((e) => ({ ...e, [id]: false }))
+  const cancelSection = (id: SettingsEditSection) => { put(diff.filter((d) => secKeys(id).includes(d.key)), "from"); stopEdit(id) }
+  const saveSection = async (id: SettingsEditSection) => {
+    if (secErr(id)) return
+    setSecSaving(id)
+    const ok = await commit(diff.filter((d) => secKeys(id).includes(d.key)))
+    setSecSaving(null)
+    if (ok) stopEdit(id)
+  }
+  const editAction = (id: SettingsEditSection) => !editing[id] && <Button variant="outline" size="sm" onClick={() => startEdit(id)}><Pencil />ແກ້ໄຂ</Button>
+  const editFooter = (id: SettingsEditSection) => editing[id] && (
+    <SettingsEditBar onCancel={() => cancelSection(id)} onSave={() => saveSection(id)} saving={secSaving === id} disabled={secErr(id) > 0} note={secErr(id) ? "ແກ້ " + secErr(id) + " ຈຸດທີ່ຜິດກ່ອນບັນທຶກ" : undefined} />
+  )
 
   const goTo = (key: string) => {
     const p = settingPage(key) as SettingsPageId
@@ -312,21 +403,27 @@ export function SettingsPage({ config, showKinds = false, commandK = true, class
     .map(([k, label]) => ({ id: k, label, group: pageLabel(settingPage(k) as SettingsPageId), onRun: () => goTo(k) })), [labels, pages]) // eslint-disable-line react-hooks/exhaustive-deps
 
   /** One standard row bound to key. */
-  const R = (key: string, control: React.ReactNode, o: { help?: React.ReactNode; wide?: boolean; kind?: string; label?: React.ReactNode } = {}) => (
+  const R = (key: string, control: React.ReactNode, o: { help?: React.ReactNode; wide?: boolean; kind?: string; label?: React.ReactNode; showError?: boolean } = {}) => (
     <SettingsRow key={key} id={rowDomId(key)} label={o.label ?? labels[key] ?? key} help={o.help} wide={o.wide} kind={showKinds ? o.kind : undefined}
-      dirty={dirtyKeys.has(key)} error={dirtyKeys.has(key) || key.startsWith("app.") ? errors[key] : undefined} flash={flashKey === key}>{control}</SettingsRow>
+      dirty={dirtyKeys.has(key)} error={o.showError || dirtyKeys.has(key) || key.startsWith("app.") ? errors[key] : undefined} flash={flashKey === key}>{control}</SettingsRow>
   )
+  /** A row of a view-first section: plain text until the section's Edit is pressed, then the field. */
+  const V = (key: string, control: React.ReactNode, o: { help?: React.ReactNode; mono?: boolean } = {}) => {
+    const sec = settingEditSection(key)
+    return sec && editing[sec] ? R(key, control, { help: o.help, showError: true }) : R(key, <SettingsValue mono={o.mono}>{settingViewText(key, v[key])}</SettingsValue>, { help: o.help })
+  }
 
   const pane = (p: SettingsPageId): React.ReactNode => {
     switch (p) {
       case "profile": return (
-        <SettingsSection icon={<User />} tone="primary" header="ຂໍ້ມູນສ່ວນຕົວ">
+        <SettingsSection icon={<User />} tone="primary" header="ຂໍ້ມູນສ່ວນຕົວ" action={editAction("profile.info")}>
           {R("profile.photo", <div className="flex items-center gap-2"><Button variant="outline" size="sm" onClick={() => act("profile.photo")}>ປ່ຽນຮູບ</Button><Button variant="ghost" size="sm" onClick={() => act("profile.photoRemove")}>ລຶບ</Button></div>,
             { label: <span className="flex items-center gap-3"><Avatar name={str("profile.name") || "?"} size={48} />{labels["profile.photo"]}</span> })}
-          {R("profile.name", <TextInput aria-label={labels["profile.name"]} value={str("profile.name")} onChange={set("profile.name")} className="w-[300px] max-w-full" />)}
-          {R("profile.code", <TextInput aria-label={labels["profile.code"]} value={str("profile.code")} onChange={() => {}} disabled clearable={false} className="w-[300px] max-w-full font-mono" />, { help: "ປ່ຽນໄດ້ໂດຍ HR ເທົ່ານັ້ນ." })}
-          {R("profile.phone", <PhoneInput aria-label={labels["profile.phone"]} value={str("profile.phone")} onChange={(x) => set("profile.phone")(x)} invalid={!!errors["profile.phone"] && dirtyKeys.has("profile.phone")} className="w-[300px] max-w-full font-mono" />)}
-          {R("profile.email", <TextInput aria-label={labels["profile.email"]} inputMode="email" autoComplete="email" value={str("profile.email")} onChange={set("profile.email")} className="w-[300px] max-w-full" />)}
+          {V("profile.name", <TextInput aria-label={labels["profile.name"]} value={str("profile.name")} onChange={set("profile.name")} autoFocus className="w-[300px] max-w-full" />)}
+          {R("profile.code", <SettingsValue mono>{str("profile.code")}</SettingsValue>, { help: <span className="inline-flex items-center gap-1"><Lock className="size-3.5" aria-hidden />ປ່ຽນໄດ້ໂດຍ HR ເທົ່ານັ້ນ</span> })}
+          {V("profile.phone", <PhoneInput aria-label={labels["profile.phone"]} value={str("profile.phone")} onChange={(x) => set("profile.phone")(x)} invalid={!!errors["profile.phone"]} className="w-[300px] max-w-full font-mono" />, { mono: true })}
+          {V("profile.email", <TextInput aria-label={labels["profile.email"]} inputMode="email" autoComplete="email" value={str("profile.email")} onChange={set("profile.email")} className="w-[300px] max-w-full" />)}
+          {editFooter("profile.info")}
         </SettingsSection>
       )
       case "security": {
@@ -335,7 +432,7 @@ export function SettingsPage({ config, showKinds = false, commandK = true, class
           <SettingsSection icon={<Lock />} tone="bar" header="ການເຂົ້າລະບົບ">
             {R("security.password", <Button variant="outline" onClick={() => act("security.password")}>ປ່ຽນລະຫັດຜ່ານ</Button>, { help: config.info?.passwordAge ? "ປ່ຽນຄັ້ງສຸດທ້າຍ " + config.info.passwordAge : undefined })}
             {R("security.twoFactor", <Switch aria-label={labels["security.twoFactor"]} checked={v["security.twoFactor"] === true} onCheckedChange={set("security.twoFactor")} />, { help: "ໃສ່ລະຫັດຈາກໂທລະສັບ ທຸກຄັ້ງທີ່ເຂົ້າຈາກເຄື່ອງໃໝ່." })}
-            {R("security.autoLock", <Pick label={labels["security.autoLock"]} value={str("security.autoLock")} onChange={set("security.autoLock")} options={[{ value: "5", label: "5 ນາທີ" }, { value: "15", label: "15 ນາທີ" }, { value: "30", label: "30 ນາທີ" }, { value: "60", label: "1 ຊົ່ວໂມງ" }, { value: "never", label: "ບໍ່ລັອກ" }]} />)}
+            {R("security.autoLock", <Pick label={labels["security.autoLock"]} value={str("security.autoLock")} onChange={set("security.autoLock")} options={SETTINGS_OPTIONS["security.autoLock"]} />)}
           </SettingsSection>
           <SettingsSection id={rowDomId("security.devices")} icon={<Monitor />} tone="primary" header="ອຸປະກອນທີ່ເຂົ້າລະບົບ" sub={devices.length + " ອຸປະກອນ"}
             action={devices.length > 1 && <Button variant="ghost" size="sm" className="text-destructive" onClick={() => act("security.signoutAll")}>ອອກຈາກທຸກເຄື່ອງ</Button>}>
@@ -362,7 +459,7 @@ export function SettingsPage({ config, showKinds = false, commandK = true, class
       }
       case "display": return <>
         <SettingsSection icon={<Sun />} tone="warning" header="ຮູບແບບ">
-          <SettingsRow id={rowDomId("display.theme")} label={labels["display.theme"]} help="ປ່ຽນທັນທີ, ບໍ່ຕ້ອງບັນທຶກ." flash={flashKey === "display.theme"}>
+          <SettingsRow id={rowDomId("display.theme")} label={labels["display.theme"]} help="ປ່ຽນທັນທີ." flash={flashKey === "display.theme"}>
             <Seg label={labels["display.theme"]} width={300} value={themeMode} options={[{ value: "light", label: "ແຈ້ງ" }, { value: "dark", label: "ມືດ" }, { value: "system", label: "ຕາມລະບົບ" }]}
               onChange={(m) => { setThemeMode(m as typeof themeMode); setTheme(m === "system" ? (window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light") : (m as "light" | "dark")) }} />
           </SettingsRow>
@@ -376,16 +473,18 @@ export function SettingsPage({ config, showKinds = false, commandK = true, class
         </SettingsSection>
       </>
       case "general": return <>
-        <SettingsSection icon={<Settings />} tone="bar" header="ອົງກອນ">
-          {R("general.orgName", <TextInput aria-label={labels["general.orgName"]} value={str("general.orgName")} onChange={set("general.orgName")} className="w-[300px] max-w-full" />)}
+        <SettingsSection icon={<Settings />} tone="bar" header="ອົງກອນ" action={editAction("general.org")}>
+          {V("general.orgName", <TextInput aria-label={labels["general.orgName"]} value={str("general.orgName")} onChange={set("general.orgName")} autoFocus className="w-[300px] max-w-full" />)}
           {R("general.logo", <div className="flex items-center gap-3"><span className="flex size-12 items-center justify-center rounded-xl bg-bar text-sm font-bold text-gold">{(str("general.orgName") || "VKS").slice(0, 3)}</span><Button variant="outline" onClick={() => act("general.logo")}><Upload />ອັບໂຫຼດ</Button></div>, { help: "PNG ຫຼື SVG, ສີ່ຫຼ່ຽມ, ຢ່າງໜ້ອຍ 256 px." })}
-          {R("general.timezone", <Pick label={labels["general.timezone"]} value={str("general.timezone")} onChange={set("general.timezone")} options={[{ value: "Asia/Vientiane", label: "Asia/Vientiane (UTC+7)" }, { value: "Asia/Bangkok", label: "Asia/Bangkok (UTC+7)" }]} />)}
-          {R("general.currency", <Pick label={labels["general.currency"]} value={str("general.currency")} onChange={set("general.currency")} options={[{ value: "LAK", label: "ກີບ (LAK)" }, { value: "THB", label: "ບາດ (THB)" }, { value: "USD", label: "ໂດລາ (USD)" }]} />)}
+          {V("general.timezone", <Pick label={labels["general.timezone"]} value={str("general.timezone")} onChange={set("general.timezone")} options={SETTINGS_OPTIONS["general.timezone"]} />)}
+          {V("general.currency", <Pick label={labels["general.currency"]} value={str("general.currency")} onChange={set("general.currency")} options={SETTINGS_OPTIONS["general.currency"]} />)}
+          {editFooter("general.org")}
         </SettingsSection>
-        <SettingsSection icon={<Clock />} tone="primary" header="ເວລາເຮັດວຽກ" sub="ໃຊ້ຄິດໄລ່ ມື້ເຮັດວຽກ ແລະ ເວລາຕອບກັບ">
-          {R("general.workDays", <WeekdayPicker aria-label={labels["general.workDays"]} value={str("general.workDays")} onChange={set("general.workDays")} />)}
-          {R("general.workHours", <SettingsTimeRange aria-label={labels["general.workHours"]} value={str("general.workHours")} onChange={set("general.workHours")} invalid={!!errors["general.workHours"]} />)}
-          {R("general.weekStart", <Seg label={labels["general.weekStart"]} width={240} value={str("general.weekStart")} onChange={set("general.weekStart")} options={[{ value: "mon", label: "ວັນຈັນ" }, { value: "sun", label: "ວັນອາທິດ" }]} />)}
+        <SettingsSection icon={<Clock />} tone="primary" header="ເວລາເຮັດວຽກ" sub="ໃຊ້ຄິດໄລ່ ມື້ເຮັດວຽກ ແລະ ເວລາຕອບກັບ" action={editAction("general.hours")}>
+          {V("general.workDays", <WeekdayPicker aria-label={labels["general.workDays"]} value={str("general.workDays")} onChange={set("general.workDays")} />)}
+          {V("general.workHours", <SettingsTimeRange aria-label={labels["general.workHours"]} value={str("general.workHours")} onChange={set("general.workHours")} invalid={!!errors["general.workHours"]} />, { mono: true })}
+          {V("general.weekStart", <Seg label={labels["general.weekStart"]} width={240} value={str("general.weekStart")} onChange={set("general.weekStart")} options={SETTINGS_OPTIONS["general.weekStart"]} />)}
+          {editFooter("general.hours")}
         </SettingsSection>
       </>
       case "members": {
@@ -472,7 +571,7 @@ export function SettingsPage({ config, showKinds = false, commandK = true, class
         return <>
           <SettingsSection icon={<Database />} tone="muted" header="ພື້ນທີ່ເກັບໄຟລ໌">
             {s && R("data.storage", <div className="w-[300px] max-w-full"><Progress value={s.usedGb} max={s.totalGb} label={s.usedGb + " / " + s.totalGb + " GB"} /></div>)}
-            {R("data.autoDelete", <Pick label={labels["data.autoDelete"]} value={str("data.autoDelete")} onChange={set("data.autoDelete")} options={[{ value: "3m", label: "3 ເດືອນ" }, { value: "6m", label: "6 ເດືອນ" }, { value: "1y", label: "1 ປີ" }, { value: "never", label: "ບໍ່ລຶບ" }]} />, { help: "ລຶບແຕ່ຮູບ ແລະ ໄຟລ໌ແນບ, ບໍ່ລຶບບັນທຶກ." })}
+            {R("data.autoDelete", <Pick label={labels["data.autoDelete"]} value={str("data.autoDelete")} onChange={set("data.autoDelete")} options={SETTINGS_OPTIONS["data.autoDelete"]} />, { help: "ລຶບແຕ່ຮູບ ແລະ ໄຟລ໌ແນບ, ບໍ່ລຶບບັນທຶກ." })}
           </SettingsSection>
           <SettingsSection icon={<RefreshCw />} tone="success" header="ສຳຮອງຂໍ້ມູນ" sub={config.info?.lastBackup ? "ລ່າສຸດ: " + config.info.lastBackup : undefined}>
             {R("data.backup", <Switch aria-label={labels["data.backup"]} checked={v["data.backup"] === true} onCheckedChange={set("data.backup")} />)}
@@ -497,11 +596,12 @@ export function SettingsPage({ config, showKinds = false, commandK = true, class
       <p className="text-sm leading-normal text-muted-foreground">{PAGE_META[p].head}</p>
     </div>
   )
-  const saveBar = diff.length > 0 && (
-    <SettingsSaveBar count={diff.length} onCancel={cancel} onSave={save} saving={saving} disabled={errCount > 0} note={errCount ? "ແກ້ " + errCount + " ຈຸດທີ່ຜິດກ່ອນບັນທຶກ" : undefined} />
+  /* Auto mode saves on its own, so the bar only exists in saveMode "bar" (and never counts view-first sections, they have their own Save). */
+  const saveBar = mode === "bar" && prefDiff.length > 0 && (
+    <SettingsSaveBar count={prefDiff.length} onCancel={cancel} onSave={save} saving={saving} disabled={prefErrCount > 0} note={prefErrCount ? "ແກ້ " + prefErrCount + " ຈຸດທີ່ຜິດກ່ອນບັນທຶກ" : undefined} />
   )
   const palette = <CommandPalette open={cmdOpen} onOpenChange={setCmdOpen} commands={commands} placeholder="ຄົ້ນຫາການຕັ້ງຄ່າ..." />
-  const tag = (p: SettingsPageId) => counts[p] ? <span className="rounded-full bg-gold px-2 py-0.5 text-[11px] font-bold tabular-nums text-gold-foreground">{counts[p]}</span> : null
+  const tag = (p: SettingsPageId) => mode === "bar" && counts[p] ? <span className="rounded-full bg-gold px-2 py-0.5 text-[11px] font-bold tabular-nums text-gold-foreground">{counts[p]}</span> : null
 
   if (mobile) return (
     <div ref={box} className={cn("space-y-5", className)}>
@@ -511,7 +611,7 @@ export function SettingsPage({ config, showKinds = false, commandK = true, class
           {g.pages.map((p) => <ListRow key={p} icon={PAGE_META[p].icon} iconClass={TONE[PAGE_META[p].tone]} label={pageLabel(p)} destructive={p === "danger"} detail={tag(p)} onPress={() => { setPage(p); setSheetOpen(true) }} />)}
         </ListGroup>
       ))}
-      {diff.length > 0 && !sheetOpen && saveBar}
+      {!sheetOpen && saveBar}
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
         <SheetContent side="fullscreen">
           <SheetTitle className="sr-only">{pageLabel(page)}</SheetTitle>

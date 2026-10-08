@@ -4,7 +4,8 @@
  */
 import type { ReactNode } from "react"
 import { spanMin, timeToMin } from "./time"
-import { isPhoneLa } from "./field-format"
+import { isPhoneLa, parsePhoneLa, fmtPhoneLaFull } from "./field-format"
+import { workDaysText } from "./weekdays"
 
 /** One stored setting. Masks ("1100") and ranges ("08:00-17:00") are plain strings so a diff reads well in the audit log. */
 export type SettingValue = string | number | boolean | string[] | null
@@ -57,8 +58,15 @@ export type SettingsConfig = {
   onAction?: (id: string, target?: string) => void
   /** Saved values; missing keys fall back to defaults. */
   load?: () => Promise<Partial<SettingsValues>> | Partial<SettingsValues>
-  /** Receives only the changed keys. Throw to keep the page dirty. */
+  /** Receives only the changed keys. Throw to keep the page dirty (auto-save puts the old value back). */
   save?: (diff: SettingChange[]) => Promise<void> | void
+  /**
+   * How preference pages (security, notifications, display, members, data, app) save.
+   * "auto" (default): each change saves on its own after a short pause and shows a toast with Undo.
+   * "bar": changes wait in the sticky "N changes · Cancel / Save" bar.
+   * Profile and General always show values first and save per section (Edit -> Save / Cancel).
+   */
+  saveMode?: "auto" | "bar"
 }
 
 /** Identity helper that fills defaults, so a typo in core shows up in the editor. */
@@ -156,6 +164,42 @@ export function validateSettingRow(row: Pick<SettingRowDef, "type" | "min" | "ma
 export function settingPhoneError(v: SettingValue | undefined): string | undefined {
   const s = String(v ?? "")
   return s.replace(/\D/g, "") === "" || isPhoneLa(s) ? undefined : "ເບີບໍ່ຄົບ — ຕ້ອງມີ 10 ຕົວເລກ"
+}
+
+/** Options of the core select / segmented rows, shared by the controls and the read-only view. */
+export const SETTINGS_OPTIONS: Record<string, SettingOption[]> = {
+  "security.autoLock": [{ value: "5", label: "5 ນາທີ" }, { value: "15", label: "15 ນາທີ" }, { value: "30", label: "30 ນາທີ" }, { value: "60", label: "1 ຊົ່ວໂມງ" }, { value: "never", label: "ບໍ່ລັອກ" }],
+  "general.timezone": [{ value: "Asia/Vientiane", label: "Asia/Vientiane (UTC+7)" }, { value: "Asia/Bangkok", label: "Asia/Bangkok (UTC+7)" }],
+  "general.currency": [{ value: "LAK", label: "ກີບ (LAK)" }, { value: "THB", label: "ບາດ (THB)" }, { value: "USD", label: "ໂດລາ (USD)" }],
+  "general.weekStart": [{ value: "mon", label: "ວັນຈັນ" }, { value: "sun", label: "ວັນອາທິດ" }],
+  "data.autoDelete": [{ value: "3m", label: "3 ເດືອນ" }, { value: "6m", label: "6 ເດືອນ" }, { value: "1y", label: "1 ປີ" }, { value: "never", label: "ບໍ່ລຶບ" }],
+}
+
+/** The sections that show values first and save on their own (Edit -> Save / Cancel). Keys not listed here are preferences. */
+export const SETTINGS_EDIT_SECTIONS = {
+  "profile.info": ["profile.name", "profile.phone", "profile.email"],
+  "general.org": ["general.orgName", "general.timezone", "general.currency"],
+  "general.hours": ["general.workDays", "general.workHours", "general.weekStart"],
+} as const
+export type SettingsEditSection = keyof typeof SETTINGS_EDIT_SECTIONS
+
+/** The view-first section a key belongs to, or undefined for a preference (auto-saved / save bar). */
+export function settingEditSection(key: string): SettingsEditSection | undefined {
+  for (const [id, keys] of Object.entries(SETTINGS_EDIT_SECTIONS)) if ((keys as readonly string[]).includes(key)) return id as SettingsEditSection
+  return undefined
+}
+
+/** Read-only text of a core value: "020 5512 3456", "ກີບ (LAK)", "ຈ–ສ (6 ມື້)", "08:00 – 17:00 · 9 ຊມ". "" when empty, so the page can say "not set". */
+export function settingViewText(key: string, v: SettingValue | undefined): string {
+  if (v == null || v === "") return ""
+  if (key === "profile.phone") return parsePhoneLa(String(v)) ? fmtPhoneLaFull(parsePhoneLa(String(v))) : ""
+  if (key === "general.workDays") return workDaysText(String(v))
+  if (key === "general.workHours" || key === "notifications.quietHours") {
+    const [s, e] = splitTimeRange(v)
+    return s ? s + " – " + e + " · " + rangeLengthLabel(s, e) : String(v)
+  }
+  const opt = SETTINGS_OPTIONS[key]?.find((o) => o.value === String(v))
+  return opt ? opt.label : settingText(v)
 }
 
 /** Short display text of a value for the audit log and toasts. */
