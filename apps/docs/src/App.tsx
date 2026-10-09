@@ -247,6 +247,7 @@ function Docs() {
           <a href="#/docs/introduction" className={cn("rounded-md px-3 py-1.5 hover:bg-white/10", guide && "bg-white/10")}>{t("ເອກະສານ", "Docs")}</a>
           <a href="#/docs/button" className={cn("rounded-md px-3 py-1.5 hover:bg-white/10", doc && "bg-white/10")}>{t("ອົງປະກອບ", "Components")}</a>
           <a href="#/docs/responsive" className={cn("rounded-md px-3 py-1.5 hover:bg-white/10", slug === "responsive" && "bg-white/10")}>{tr("Desktop ↔ Mobile")}</a>
+          <a href="#/docs/settings-page" className={cn("rounded-md px-3 py-1.5 hover:bg-white/10", slug === "settings-page" && "bg-white/10")}>{t("ຕັ້ງຄ່າ", "Settings")}</a>
         </nav>
         <div className="flex-1" />
         <button type="button" onClick={() => setSearch(true)} className="hidden h-9 w-44 items-center gap-2 rounded-lg border border-white/15 bg-white/5 px-3 text-sm opacity-80 transition-opacity hover:opacity-100 md:flex lg:w-56">
