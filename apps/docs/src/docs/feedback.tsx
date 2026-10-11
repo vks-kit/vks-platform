@@ -1,6 +1,8 @@
 import * as React from "react"
 import { RefreshCw, Search, Inbox } from "@vks-kit/ui/icons"
-import { SyncStatus } from "@vks-kit/ui"
+import { SyncStatus, PageBoundary } from "@vks-kit/ui"
+
+function Boom(): React.ReactNode { throw new Error("Failed to fetch dynamically imported module: /src/pages/Scan.tsx") }
 import { CloseButton, Alert, Button, ConfirmDialog, Skeleton, Spinner, SuccessCheck, OfflineBanner, Empty, LiveDot, toast, Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose, InSheetView, useInSheet, Combobox, FilterChips, Label, Sheet, SheetTrigger, SheetContent, SheetTitle, SheetDescription, Tooltip, TooltipTrigger, TooltipContent, Tip, Drawer, Lightbox, PhotoGrid } from "@vks-kit/ui"
 import type { Doc } from "./types"
 
@@ -152,7 +154,7 @@ toast("ມີວຽກໃໝ່ 2 ລາຍການ", { description: "ຈາກ
   {
     slug: "offline-empty", name: "Offline & empty", group: "Feedback", badge: "Mobile",
     desc: "Offline banner shows the number of scans waiting (classic bar, or the navy Dynamic-Island pill). Empty state with a floating icon orb for lists with nothing in them; Combobox, CommandPalette, NotificationList, IndexedList and DataTable use it too.",
-    file: "packages/ui/src/components/feedback.tsx", importLine: 'import { OfflineBanner, Empty } from "@vks-kit/ui"',
+    file: "packages/ui/src/components/feedback.tsx", importLine: 'import { OfflineBanner, Empty, PageBoundary, isChunkLoadError } from "@vks-kit/ui"',
     demo: () => <div className="grid w-full max-w-md gap-4"><div className="overflow-hidden rounded-lg"><OfflineBanner queued={3} /></div><div className="overflow-hidden rounded-lg"><OfflineBanner queued={3} syncing /></div><Empty title="ຍັງບໍ່ມີຂໍ້ມູນ" hint="ສະແກນຈຸດທຳອິດເພື່ອເລີ່ມ" /></div>,
     code: `<OfflineBanner queued={queue.size} syncing={flushing} />
 <Empty title="ຍັງບໍ່ມີຂໍ້ມູນ" hint="ສະແກນຈຸດທຳອິດເພື່ອເລີ່ມ" />`,
@@ -163,6 +165,8 @@ toast("ມີວຽກໃໝ່ 2 ລາຍການ", { description: "ຈາກ
 </div>` },
       { id: "empty-action", title: "Empty with icon + action", demo: () => <div className="grid w-full max-w-md gap-4"><Empty icon={<Search />} title="ບໍ່ພົບຜົນ" hint="ລອງຄຳຄົ້ນອື່ນ ຫຼື ລ້າງຕົວກອງ" action={<Button size="sm" variant="outline">ລ້າງຕົວກອງ</Button>} /><div className="rounded-xl border bg-card"><Empty size="sm" icon={<Inbox />} title="ບໍ່ມີແຈ້ງເຕືອນໃໝ່" /></div></div>, code: `<Empty icon={<Search />} title="ບໍ່ພົບຜົນ" hint="ລອງຄຳຄົ້ນອື່ນ" action={<Button size="sm" variant="outline">ລ້າງຕົວກອງ</Button>} />
 <Empty size="sm" title="ບໍ່ມີແຈ້ງເຕືອນໃໝ່" />` },
+      { id: "page-boundary", title: "Page that failed to load", note: "AppShell wraps every page in PageBoundary already. A page file that will not download (stale deploy, dev restart, no signal) reloads the app once, then shows this; a crash shows 'try again'. Never a white screen.", demo: () => <div className="w-full max-w-md"><PageBoundary><Boom /></PageBoundary></div>, code: `// only needed outside AppShell
+<PageBoundary resetKey={pageId}><Suspense fallback={<Skeleton />}><Page /></Suspense></PageBoundary>` },
     ],
   },
   {

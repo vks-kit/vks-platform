@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Check, Inbox, Loader2, WifiOff } from "lucide-react"
+import { Check, Inbox, Loader2, RefreshCw, TriangleAlert, WifiOff } from "lucide-react"
 import { cn } from "../lib/cn"
 import { ToneBadge } from "../lib/tone-badge"
 
@@ -54,6 +54,48 @@ export function Empty({ title, hint, icon, action, size = "md", className }: { t
     </div>
   )
 }
+const RELOAD_KEY = "vks.chunk-reload"
+/** True for "this page's code file could not be downloaded" (stale deploy, dev server restart, no signal). */
+export function isChunkLoadError(err: unknown) {
+  const m = String((err as Error | undefined)?.message ?? err)
+  return /dynamically imported module|Importing a module script failed|error loading dynamically imported|Loading (CSS )?chunk .* failed|Unable to preload CSS/i.test(m)
+}
+
+/**
+ * Use around a page (AppShell already wraps every page in one) so a crash or a page file that will not download shows a
+ * message with "reload" instead of a blank white screen. A missing page file reloads the app once by itself (the new
+ * version is usually there). Change `resetKey` (e.g. the page id) to clear the error. For a list with no rows use Empty instead.
+ */
+export class PageBoundary extends React.Component<{ children: React.ReactNode; resetKey?: string; className?: string }, { err: unknown }> {
+  state: { err: unknown } = { err: null }
+  static getDerivedStateFromError(err: unknown) { return { err: err ?? new Error("error") } }
+  componentDidCatch(err: unknown) {
+    console.error("[PageBoundary]", err)
+    if (!isChunkLoadError(err) || typeof window === "undefined") return
+    try {
+      const last = Number(sessionStorage.getItem(RELOAD_KEY) || 0)
+      if (Date.now() - last > 30_000) { sessionStorage.setItem(RELOAD_KEY, String(Date.now())); window.location.reload() }
+    } catch {}
+  }
+  componentDidUpdate(prev: { resetKey?: string }) { if (prev.resetKey !== this.props.resetKey && this.state.err) this.setState({ err: null }) }
+  render() {
+    const { err } = this.state
+    if (!err) return this.props.children
+    const chunk = isChunkLoadError(err)
+    return (
+      <div role="alert" className={cn("flex flex-col gap-3 py-6 leading-relaxed", this.props.className)}>
+        <Empty icon={chunk ? <WifiOff /> : <TriangleAlert />} title="ເປີດໜ້ານີ້ບໍ່ໄດ້"
+          hint={chunk ? "ໂຫຼດໜ້ານີ້ບໍ່ສຳເລັດ — ອາດເປັນເພາະເນັດ ຫຼື ແອັບຫາກໍອັບເດດ" : "ມີບາງຢ່າງຜິດພາດໃນໜ້ານີ້"}
+          action={<div className="flex flex-wrap justify-center gap-2">
+            <button type="button" onClick={() => window.location.reload()} className="vks-press inline-flex min-h-11 items-center gap-2 rounded-xl bg-primary px-4 font-semibold text-primary-foreground"><RefreshCw className="size-4" />ໂຫຼດໃໝ່</button>
+            {!chunk && <button type="button" onClick={() => this.setState({ err: null })} className="vks-press inline-flex min-h-11 items-center rounded-xl border px-4 font-semibold">ລອງອີກຄັ້ງ</button>}
+          </div>} />
+        {!chunk && <p className="break-words text-center text-xs text-muted-foreground">{String((err as Error).message ?? err).slice(0, 200)}</p>}
+      </div>
+    )
+  }
+}
+
 /** Use for a pulsing green "live / online now" dot. For a coloured status word use Badge instead. */
 export function LiveDot({ className }: { className?: string }) {
   return <span className={cn("vks-ripple relative inline-block size-3 rounded-full bg-success", className)} />

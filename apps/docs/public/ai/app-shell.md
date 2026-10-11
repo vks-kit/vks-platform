@@ -12,7 +12,7 @@ import { AppShell, Fab, type NavItem } from "@vks-kit/ui"
 
 ## When to use
 
-- **AppShell**: One breakpoint, whole system pivots on it: 768 px (rule from vks-kit RESPONSIVE.md). Desktop = sidebar rail (collapsible, remembered). Mobile = bottom nav, max 5 items, the rest under "More". Pages slide in the direction you moved in the nav and a thin gold bar sweeps across the top.
+- **AppShell**: One breakpoint, whole system pivots on it: 768 px (rule from vks-kit RESPONSIVE.md). Desktop = sidebar rail (collapsible, remembered). Mobile = bottom nav, max 5 items, the rest under "More". Pages slide in the direction you moved in the nav and a thin gold bar sweeps across the top. Every page sits in a PageBoundary: a crash or a page file that will not load shows "reload", never a white screen.
 - **Fab**: Create button (navy + gold ring, brand-lit). Desktop: sits in the header (use inline). Mobile: floating. Icon must say what it creates. extended = pill with label.
 
 ## Example

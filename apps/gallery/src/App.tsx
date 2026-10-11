@@ -2,12 +2,15 @@ import * as React from "react"
 import { BookOpen, Moon, ScanLine, Search, Sun, Trash2 } from "@vks-kit/ui/icons"
 import {
   Badge, Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Checkbox, Dialog, DialogContent,
-  DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, Empty, Input, Label, LiveDot, Logo, OfflineBanner,
+  DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, Empty, Input, Label, LiveDot, Logo, OfflineBanner, PageBoundary,
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Sheet, SheetContent, SheetDescription, SheetTitle, SheetTrigger,
   Skeleton, Spinner, SuccessCheck, Switch, Toggle, ToggleGroup, ToggleGroupItem, Table, TBody, TD, TH, THead, Tabs, TabsContent, TabsList, TabsTrigger, TR,
   Toaster, Tip, CloseButton, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, toast, useTheme,
 } from "@vks-kit/ui"
 import { haptics } from "@vks-kit/core"
+
+/** Gallery only: a page whose file failed to download, to show PageBoundary. */
+function PageFail(): React.ReactNode { throw new Error("Failed to fetch dynamically imported module: /src/pages/Scan.tsx") }
 
 const Sec = ({ id, title, children }: { id: string; title: string; children: React.ReactNode }) => (
   <section id={id} className="scroll-mt-20 space-y-3">
@@ -86,6 +89,7 @@ export function App() {
             <Empty title="ຍັງບໍ່ມີຂໍ້ມູນ" hint="ສະແກນຈຸດກວດທຳອິດເພື່ອເລີ່ມ" />
             <Empty icon={<Search />} title="ບໍ່ພົບຜົນ" hint="ລອງຄຳຄົ້ນອື່ນ" action={<Button size="sm" variant="outline">ລ້າງຕົວກອງ</Button>} />
           </div>
+          <PageBoundary><PageFail /></PageBoundary>
           <div className="flex flex-wrap items-center gap-2"><Badge>neutral</Badge><Badge variant="info">ໃໝ່</Badge><Badge variant="success" dot>ສຳເລັດ</Badge><Badge variant="warning">ລໍຖ້າ</Badge><Badge variant="danger" live>ສົດ</Badge><Badge variant="gold">VIP</Badge><CloseButton /></div>
         </Sec>
 

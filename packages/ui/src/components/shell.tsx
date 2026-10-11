@@ -4,6 +4,7 @@ import { cn } from "../lib/cn"
 import { haptics } from "@vks-kit/core"
 import { useIndicator, Indicator } from "../lib/use-indicator"
 import { Logo, BRAND } from "./logo"
+import { PageBoundary } from "./feedback"
 import { Sheet, SheetContent, SheetTitle, TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "./overlay"
 
 export type NavItem = { id: string; label: string; icon: React.ReactNode; badge?: number }
@@ -37,6 +38,7 @@ function useNavDirection(items: NavItem[], active: string) {
  * One breakpoint, whole system pivots on it: 768 px (rule from vks-kit RESPONSIVE.md).
  * Desktop = sidebar rail (collapsible, remembered). Mobile = bottom nav, max 5 items, the rest under "More".
  * Pages slide in the direction you moved in the nav and a thin gold bar sweeps across the top.
+ * Every page sits in a PageBoundary: a crash or a page file that will not load shows "reload", never a white screen.
  */
 export function AppShell({ items, active, onNavigate, title = "VKS", header, children, fab, user, collapsible = true }: {
   items: NavItem[]; active: string; onNavigate: (id: string) => void; title?: string
@@ -52,7 +54,7 @@ export function AppShell({ items, active, onNavigate, title = "VKS", header, chi
         {header && <header className="vks-glass sticky top-0 z-30 flex items-center gap-3 border-b border-border/60 px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))] shadow-[0_10px_24px_-22px_rgb(20_23_61/.6)] md:px-6">
           <span aria-hidden className="vks-hairline pointer-events-none absolute inset-x-0 top-0 opacity-70" />{header}
           <span key={active} aria-hidden className="vks-route-bar pointer-events-none absolute inset-x-0 -bottom-px h-0.5 bg-gold" /></header>}
-        <main key={active} className={cn("flex-1 p-4 pb-[calc(6.5rem+env(safe-area-inset-bottom))] md:p-6 md:pb-6", dir === "back" ? "vks-page-back" : "vks-page-fwd")}>{children}</main>
+        <main key={active} className={cn("flex-1 p-4 pb-[calc(6.5rem+env(safe-area-inset-bottom))] md:p-6 md:pb-6", dir === "back" ? "vks-page-back" : "vks-page-fwd")}><PageBoundary resetKey={active}>{children}</PageBoundary></main>
       </div>
       {fab}
       <BottomNav items={items} active={active} onNavigate={onNavigate} className="md:hidden" />
