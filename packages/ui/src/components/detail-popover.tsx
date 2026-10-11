@@ -3,7 +3,7 @@ import { HoverCard as HC, Popover as PO } from "radix-ui"
 import { cn } from "../lib/cn"
 import { haptics } from "@vks-kit/core"
 import { useIsMobile } from "../lib/use-media"
-import { Sheet, SheetTrigger, SheetContent, SheetTitle, SheetDescription } from "./overlay"
+import { Sheet, SheetTrigger, SheetContent, SheetTitle, SheetDescription, useInSheet } from "./overlay"
 
 export type DetailField = { label: React.ReactNode; value: React.ReactNode; icon?: React.ReactNode; /** span both columns */ wide?: boolean }
 export type DetailTone = "neutral" | "success" | "warning" | "danger" | "gold"
@@ -78,7 +78,7 @@ const card = "vks-detail z-50 w-80 max-w-[calc(100vw-1.5rem)] rounded-2xl border
  * does not exist there. Rows stagger in. Keep it read-only-ish: 3-8 fields, max 2 actions.
  */
 export function DetailPopover({ children, openOn = "hover", side = "bottom", align = "center", className, open, onOpenChange, ...content }: Props) {
-  const mobile = useIsMobile()
+  const mobile = useIsMobile(), nested = useInSheet()
   const change = (o: boolean) => { if (o) haptics.tap(); onOpenChange?.(o) }
   if (mobile) return (
     <Sheet open={open} onOpenChange={change}>
@@ -87,7 +87,7 @@ export function DetailPopover({ children, openOn = "hover", side = "bottom", ali
     </Sheet>
   )
   if (openOn === "click") return (
-    <PO.Root open={open} onOpenChange={change}>
+    <PO.Root open={open} onOpenChange={change} modal={nested}>
       <PO.Trigger asChild>{children}</PO.Trigger>
       <PO.Portal><PO.Content side={side} align={align} sideOffset={10} collisionPadding={12} className={cn(card, className)}><DetailBody {...content} /></PO.Content></PO.Portal>
     </PO.Root>

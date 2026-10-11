@@ -88,7 +88,7 @@ export function DatePicker({ value, onChange, min, max, placeholder = "ເລື
       </SheetContent></Sheet></>
   )
   return (
-    <Popover.Root open={open} onOpenChange={setOpen}>
+    <Popover.Root open={open} onOpenChange={setOpen} modal={nested}>
       <Popover.Trigger asChild>{trigger}</Popover.Trigger>
       <Popover.Portal><Popover.Content sideOffset={6} align="start" collisionPadding={12} className="vks-panel z-50 max-h-[var(--radix-popover-content-available-height)] overflow-auto rounded-2xl border bg-popover p-3 shadow-[0_24px_60px_-20px_rgb(20_23_61/.45)]">
         <Calendar value={value} min={min} max={max} onChange={(v) => { onChange(v); setOpen(false) }} />

@@ -53,7 +53,7 @@ export function Combobox({ options, value, onChange, multiple = false, placehold
   </InSheetView></>
   if (mobile) return <>{trigger}<Sheet open={open} onOpenChange={setOpen}><SheetContent side="bottom"><SheetTitle>{placeholder}</SheetTitle><div className="mt-3">{list}</div></SheetContent></Sheet></>
   return (
-    <Popover.Root open={open} onOpenChange={setOpen}>
+    <Popover.Root open={open} onOpenChange={setOpen} modal={nested}>
       <Popover.Trigger asChild>{trigger}</Popover.Trigger>
       <Popover.Portal><Popover.Content sideOffset={6} align="start" className="vks-float z-50 w-[var(--radix-popover-trigger-width)] min-w-56 origin-[var(--radix-popover-content-transform-origin)] rounded-xl border bg-card p-2 shadow-[0_18px_40px_-16px_rgb(20_23_61/.35),0_2px_6px_-2px_rgb(20_23_61/.12)]">{list}</Popover.Content></Popover.Portal>
     </Popover.Root>

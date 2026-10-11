@@ -7,6 +7,7 @@ import { usePerf, type PerfMode } from "../lib/perf"
 import { useIndicator, Indicator } from "../lib/use-indicator"
 import { useFlip } from "../lib/use-flip"
 import { useSheetMode, SHEET_CLS, SheetScrim, SheetGrabber, SheetCancel } from "../lib/sheet-mode"
+import { useInSheet } from "./overlay"
 
 /* ---------------- Skeletons: shaped placeholders so the page does not jump when data lands ---------------- */
 const sk = "vks-shimmer rounded-md"
@@ -117,7 +118,14 @@ export function CopyButton({ value, label = "Copy", className }: { value: string
 }
 
 /* ---------------- Menus / popovers ---------------- */
-export const Popover = PO.Root
+/* Inside an open Dialog/Sheet the popover is modal by default: the dialog's scroll lock only lets
+   the newest lock's nodes scroll, so a non-modal popover portalled to <body> could not be scrolled. */
+function PopoverRoot({ modal, ...p }: React.ComponentProps<typeof PO.Root>) {
+  const nested = useInSheet()
+  return <PO.Root modal={modal ?? nested} {...p} />
+}
+/** Use for a small floating panel anchored to a trigger (pair with PopoverTrigger + PopoverContent); inside an open Dialog/Sheet it is modal so long content still scrolls. For a list of actions use Menu instead. */
+export const Popover = PopoverRoot
 /** Use for the element that opens a Popover (use asChild with a Button). For a hover preview use HoverCard instead. */
 export const PopoverTrigger = PO.Trigger
 /** Use for small interactive content anchored to a trigger (a filter form, a quick edit). For a list of actions use Menu/MenuContent instead; for read-only details use DetailPopover instead; for a hint on hover use Tooltip instead. */
