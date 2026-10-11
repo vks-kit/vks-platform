@@ -16,7 +16,7 @@ export const filterOptions = (opts: Option[], q: string) => {
 function List({ options, selected, onPick, multi, searchable, fill }: { options: Option[]; selected: string[]; onPick: (v: string) => void; multi: boolean; searchable: boolean; fill?: boolean }) {
   const [q, setQ] = React.useState(""), shown = filterOptions(options, q)
   return (
-    <div className={cn("flex flex-col", fill ? "min-h-0 flex-1" : "max-h-[60dvh]")}>
+    <div className={cn("flex flex-col", fill ? "min-h-0 flex-1" : "max-h-[60dvh] min-h-0")}>
       {searchable && <div className="relative mb-2"><Search className="absolute left-3 top-3.5 size-4 text-muted-foreground" />
         <input autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder="ຄົ້ນຫາ..." className="h-11 w-full rounded-lg border border-input bg-background pl-9 pr-3 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" /></div>}
       <ul role="listbox" aria-multiselectable={multi} className="vks-rows-in overflow-y-auto overscroll-contain">
@@ -55,7 +55,7 @@ export function Combobox({ options, value, onChange, multiple = false, placehold
   return (
     <Popover.Root open={open} onOpenChange={setOpen} modal={nested}>
       <Popover.Trigger asChild>{trigger}</Popover.Trigger>
-      <Popover.Portal><Popover.Content sideOffset={6} align="start" className="vks-float z-50 w-[var(--radix-popover-trigger-width)] min-w-56 origin-[var(--radix-popover-content-transform-origin)] rounded-xl border bg-card p-2 shadow-[0_18px_40px_-16px_rgb(20_23_61/.35),0_2px_6px_-2px_rgb(20_23_61/.12)]">{list}</Popover.Content></Popover.Portal>
+      <Popover.Portal><Popover.Content sideOffset={6} align="start" collisionPadding={12} className="vks-float z-50 flex max-h-[var(--radix-popover-content-available-height)] flex-col w-[var(--radix-popover-trigger-width)] min-w-56 origin-[var(--radix-popover-content-transform-origin)] rounded-xl border bg-card p-2 shadow-[0_18px_40px_-16px_rgb(20_23_61/.35),0_2px_6px_-2px_rgb(20_23_61/.12)]">{list}</Popover.Content></Popover.Portal>
     </Popover.Root>
   )
 }
