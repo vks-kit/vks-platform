@@ -107,9 +107,18 @@ export const heavyDocs: Doc[] = [
     file: "packages/ui/src/heavy/scan.tsx", importLine: 'import { QrScanner, PhotoCapture } from "@vks-kit/ui/scan"',
     demo: L("Scan"),
     code: `<QrScanner onScan={(text) => submit(text)} onError={showHelp} />
-<PhotoCapture onPhoto={({ blob, bytes }) => upload(blob)} />`,
+<PhotoCapture onPhoto={({ blob, bytes }) => upload(blob)} />
+
+// Full-screen scanner page: camera edge to edge, your own top bar + bottom card on top
+<div className="fixed inset-0">
+  <QrScanner variant="fullscreen" frameTop="34%" hint="ຫັນກ້ອງໃສ່ QR ທີ່ປະຕູເຂົ້າ" onScan={submit} />
+  <TopBar className="absolute inset-x-0 top-0" />
+  <div className="absolute inset-x-0 bottom-0 rounded-t-3xl bg-card p-4">…</div>
+</div>`,
     props: [
       { name: "onScan / onError", type: "(text) => void / (e) => void", desc: "QrScanner. Needs https + camera permission." },
+      { name: "variant", type: '"card" | "fullscreen"', def: '"card"', desc: "fullscreen fills its parent: dimmed mask, gold corner viewfinder, moving scan line, torch (when the phone has one) + switch camera on the right." },
+      { name: "hint / frameTop", type: "ReactNode / CSS length", def: '— / "40%"', desc: "fullscreen only: one line under the viewfinder; where the viewfinder centre sits so your bottom card never covers it." },
       { name: "onPhoto", type: "({ blob, url, bytes }) => void", desc: "PhotoCapture." }, { name: "maxEdge / quality", type: "number", def: "1280 / 0.7", desc: "" },
     ],
   },

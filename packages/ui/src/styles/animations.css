@@ -13,6 +13,9 @@
 .vks-press:active:not(:disabled) { transform: scale(.96); }
 .vks-check-pop { animation: vks-check-pop .4s ease-out both; }
 .vks-check-draw { stroke-dasharray: 40; stroke-dashoffset: 40; animation: vks-check-draw .4s .15s ease-out forwards; }
+@keyframes vks-scan-line { 0%,100%{transform:translateY(-6.5rem);opacity:.4} 50%{transform:translateY(6.5rem);opacity:1} }
+.vks-scan-line { animation: vks-scan-line 2.4s ease-in-out infinite; box-shadow: 0 0 12px var(--gold); }
+@media (prefers-reduced-motion: reduce) { .vks-scan-line { animation: none; } }
 .vks-ripple::after { content:""; position:absolute; inset:-3px; border-radius:inherit; border:3px solid var(--gold); animation: vks-ripple 1.6s infinite; pointer-events:none; }
 .vks-shimmer { background: linear-gradient(90deg, var(--border) 25%, var(--card) 50%, var(--border) 75%); background-size: 200% 100%; animation: vks-shimmer 1.2s linear infinite; }
 .vks-shake { animation: vks-shake .35s; }
