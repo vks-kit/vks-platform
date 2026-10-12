@@ -170,7 +170,8 @@ export const layoutDocs: Doc[] = [
       { name: "user", type: "ReactNode", desc: "Bottom of the sidebar." },
       { name: "collapsible", type: "boolean", def: "true", desc: "Desktop rail can shrink to 72 px icons. State is remembered." },
     ],
-    notes: ["Motion: page = 320 ms slide + fade (transform/opacity only), header bar = 400 ms, bottom nav rises once on load. Lite mode shortens the page swap to 150 ms and snaps the rail."],
+    notes: ["Motion: page = 320 ms slide + fade (transform/opacity only), header bar = 400 ms, bottom nav rises once on load. Lite mode shortens the page swap to 150 ms and snaps the rail.",
+      "Page gutter: main pads every page 16 px on a phone and 24 px from 768 px, plus room for the bottom nav. Pages must NOT add their own outer p-4 - that doubles the margin and makes tabs look misaligned. Root a phone page with mx-auto flex w-full max-w-md flex-col gap-4. See Design thinking → One page gutter."],
   },
   {
     slug: "sidebar", name: "Sidebar", group: "Layout & navigation", badge: "New",

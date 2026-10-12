@@ -151,7 +151,7 @@ export function More() {
   const [range, setRange] = React.useState<Range>({ from: "2026-09-10", to: "2026-09-16" }), [confirm, setConfirm] = React.useState<null | "warning" | "danger" | "hold">(null), [rows2, setRows2] = React.useState(["ສົມຊາຍ", "ນາງບົວ", "ທ້າວດາວ"]), [al, setAl] = React.useState(true)
   const [dSite, setDSite] = React.useState<string[]>([]), [dDate, setDDate] = React.useState(""), [dRange, setDRange] = React.useState<Range>({}), [dKind, setDKind] = React.useState<string[]>(["door"]), [dPush, setDPush] = React.useState(false)
   const [tm, setTm] = React.useState("09:30"), [shift, setShift] = React.useState({ s: "18:00", e: "06:00" }), [dShift, setDShift] = React.useState({ s: "06:00", e: "18:00" })
-  const [lang, setL] = React.useState(getLang()), [scan, setScan] = React.useState(false), [last, setLast] = React.useState("")
+  const [lang, setL] = React.useState(getLang()), [scan, setScan] = React.useState(false), [full, setFull] = React.useState(false), [last, setLast] = React.useState("")
   const [cards, setCards] = React.useState<KanbanCard[]>([{ id: "a", column: "todo", title: "ກວດປະຕູ 3", meta: "ດ່ວນ" }, { id: "b", column: "todo", title: "ສົ່ງລາຍງານ" }, { id: "c", column: "doing", title: "ຝຶກອົບຮົມ" }])
   const sites = [{ value: "a", label: "ປະຕູໜ້າ", hint: "A-01" }, { value: "b", label: "ບ່ອນຈອດລົດ", hint: "A-02" }, { value: "c", label: "ຄັງສິນຄ້າ", hint: "B-01" }, { value: "d", label: "ຫ້ອງຄວບຄຸມ", hint: "B-02" }]
   const chart = ["ຈ", "ອ", "ພ", "ພຫ", "ສ", "ສ.", "ອາ"].map((d, i) => ({ d, ok: [82, 91, 88, 95, 90, 70, 65][i], late: [8, 4, 6, 2, 5, 12, 9][i] }))
@@ -280,7 +280,10 @@ export function More() {
         <Sec id="capture" title="Signature, photo, QR scan, lightbox">
           <div className="grid gap-4 md:grid-cols-2">
             <div><Label>ລາຍເຊັນ</Label><SignaturePad /></div>
-            <div className="space-y-3"><PhotoCapture onPhoto={(p) => setLast(p.bytes + " bytes")} /><Button variant="outline" onClick={() => setScan(!scan)}><MapPin />{scan ? "ປິດກ້ອງ" : "ສະແກນ QR"}</Button>{scan && <QrScanner className="max-w-xs" onScan={setLast} />}{last && <p className="text-sm">{last}</p>}
+            <div className="space-y-3"><PhotoCapture onPhoto={(p) => setLast(p.bytes + " bytes")} /><Button variant="outline" onClick={() => setScan(!scan)}><MapPin />{scan ? "ປິດກ້ອງ" : "ສະແກນ QR"}</Button>{scan && <QrScanner className="max-w-xs" onScan={setLast} />}
+                <Button variant="outline" onClick={() => setFull(true)}>ສະແກນເຕັມຈໍ</Button>
+                {full && <div className="fixed inset-0 z-50"><QrScanner variant="fullscreen" frameTop="38%" hint="ຫັນກ້ອງໃສ່ QR ຂອງຈຸດກວດ" onScan={(t) => { setLast(t); setFull(false) }} />
+                  <Button variant="outline" className="absolute left-3 top-3 min-h-11" onClick={() => setFull(false)}>ປິດ</Button></div>}{last && <p className="text-sm">{last}</p>}
               <div className="flex gap-2">{imgs.map((im, i) => <button key={i} onClick={() => setLb(i)}><img src={im.src} alt="" className="h-16 w-24 rounded-md object-cover" /></button>)}</div></div>
           </div>
         </Sec>

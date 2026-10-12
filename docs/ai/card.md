@@ -31,3 +31,19 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
   <CardFooter><Button size="sm" variant="outline">ລາຍລະອຽດ</Button></CardFooter>
 </Card>
 ```
+
+### Hero card (vks-hero)
+
+The one emphasised card at the top of a page: next shift, round summary, ID card. Light = navy. Dark = navy (accent) with a gold top bar, never a gold slab - gold stays for accents (labels, time pill, progress). Soft status pills inside it in dark: bg-destructive/15 text-destructive + border.
+
+```tsx
+<section className="vks-hero rounded-2xl p-4">
+  <div className="text-sm opacity-80">ກະຕໍ່ໄປ · ມື້ອື່ນ</div>
+  <div className="font-semibold">VKS25-005 · ບໍລິສັດ TNK</div>
+  <div className="text-2xl font-bold">ອີກ 14 ຊມ 47 ນາທີ</div>
+</section>
+```
+
+## Notes
+
+- Hero card: add className "vks-hero" (no bg-primary needed). In dark mode it keeps a navy surface with a gold top bar so text keeps contrast; do not put bg-primary on a hero in dark (the kit's dark primary is gold).

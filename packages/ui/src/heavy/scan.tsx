@@ -1,6 +1,6 @@
 import * as React from "react"
 import jsQR from "jsqr"
-import { Camera, ImagePlus, SwitchCamera } from "lucide-react"
+import { Camera, Flashlight, FlashlightOff, ImagePlus, SwitchCamera } from "lucide-react"
 import { cn } from "../lib/cn"
 import { Button } from "../components/button"
 import { shrinkPhoto } from "@vks-kit/core"
@@ -17,16 +17,37 @@ async function makeDetector(): Promise<(v: HTMLVideoElement, c: HTMLCanvasElemen
   }
 }
 
-/** Live QR scanner. Calls onScan once per code (same code ignored for 2 s). Stops the camera when unmounted. */
-export function QrScanner({ onScan, onError, className }: { onScan: (text: string) => void; onError?: (e: Error) => void; className?: string }) {
-  const video = React.useRef<HTMLVideoElement>(null), canvas = React.useRef<HTMLCanvasElement>(null)
+type TorchTrack = Omit<MediaStreamTrack, "getCapabilities"> & { getCapabilities?: () => { torch?: boolean } }
+
+/**
+ * Use for a live QR scanner; for a photo use PhotoCapture instead. Calls onScan once per code (same code ignored for 2 s), stops the camera when unmounted.
+ * variant="fullscreen" fills its parent edge to edge (dimmed mask, gold corner viewfinder, torch when the phone has one, hint pill under the frame);
+ * put your own top bar and bottom card over it as children-siblings. Default "card" is the square in-page scanner.
+ */
+export function QrScanner({ onScan, onError, className, variant = "card", hint, frameTop = "40%" }: {
+  onScan: (text: string) => void; onError?: (e: Error) => void; className?: string
+  /** "card" (default): square box. "fullscreen": fills the parent (give it a size), viewfinder + torch + switch camera. */
+  variant?: "card" | "fullscreen"
+  /** fullscreen only: one short line shown under the viewfinder. */
+  hint?: React.ReactNode
+  /** fullscreen only: vertical centre of the viewfinder (CSS length), so a bottom card never covers it. Default "40%". */
+  frameTop?: string
+}) {
+  const video = React.useRef<HTMLVideoElement>(null), canvas = React.useRef<HTMLCanvasElement>(null), track = React.useRef<TorchTrack | null>(null)
   const [facing, setFacing] = React.useState<"environment" | "user">("environment"), [err, setErr] = React.useState<string | null>(null)
+  const [torch, setTorch] = React.useState<boolean | null>(null) // null = phone has no torch
+  const toggleTorch = async () => {
+    const t = track.current; if (!t || torch === null) return
+    try { await t.applyConstraints({ advanced: [{ torch: !torch } as MediaTrackConstraintSet] }); setTorch(!torch) } catch { setTorch(null) }
+  }
   React.useEffect(() => {
     let stop = false, stream: MediaStream | null = null, raf = 0, last = "", lastAt = 0
     ;(async () => {
       try {
-        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facing, width: { ideal: 640 } }, audio: false })
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facing, width: { ideal: variant === "fullscreen" ? 1280 : 640 } }, audio: false })
         if (stop) return stream.getTracks().forEach((t) => t.stop())
+        const tr = stream.getVideoTracks()[0] as TorchTrack | undefined; track.current = tr ?? null
+        setTorch(tr?.getCapabilities?.().torch ? false : null)
         const v = video.current!; v.srcObject = stream; await v.play()
         const detect = await makeDetector(); let busy = false, tick = 0
         const loop = async () => {
@@ -41,14 +62,35 @@ export function QrScanner({ onScan, onError, className }: { onScan: (text: strin
         loop()
       } catch (e) { setErr((e as Error).message); onError?.(e as Error) }
     })()
-    return () => { stop = true; cancelAnimationFrame(raf); stream?.getTracks().forEach((t) => t.stop()) }
+    return () => { stop = true; cancelAnimationFrame(raf); track.current = null; stream?.getTracks().forEach((t) => t.stop()) }
   }, [facing])
+  const flip = () => setFacing(facing === "environment" ? "user" : "environment")
+  if (variant === "fullscreen") {
+    const corner = "absolute size-9 border-gold"
+    return (
+      <div className={cn("absolute inset-0 overflow-hidden bg-black", className)}>
+        <video ref={video} playsInline muted className="size-full object-cover" />
+        <canvas ref={canvas} className="hidden" />
+        <div aria-hidden className="pointer-events-none absolute left-1/2 aspect-square w-[min(68vw,18rem)] -translate-x-1/2 -translate-y-1/2 rounded-3xl shadow-[0_0_0_200vmax_rgb(0_0_0/.5)]" style={{ top: frameTop }}>
+          <span className={cn(corner, "-left-0.5 -top-0.5 rounded-tl-3xl border-l-4 border-t-4")} /><span className={cn(corner, "-right-0.5 -top-0.5 rounded-tr-3xl border-r-4 border-t-4")} />
+          <span className={cn(corner, "-bottom-0.5 -left-0.5 rounded-bl-3xl border-b-4 border-l-4")} /><span className={cn(corner, "-bottom-0.5 -right-0.5 rounded-br-3xl border-b-4 border-r-4")} />
+          <span className="vks-scan-line absolute inset-x-4 top-1/2 h-0.5 rounded-full bg-gold" />
+          {hint && <span className="absolute left-1/2 top-[calc(100%+1rem)] max-w-[80vw] -translate-x-1/2 truncate rounded-full bg-black/60 px-4 py-1.5 text-sm font-semibold leading-normal text-white">{hint}</span>}
+        </div>
+        <div className="absolute right-3 top-[calc(4.25rem+env(safe-area-inset-top))] flex flex-col gap-2">
+          {torch !== null && <button type="button" aria-label="torch" aria-pressed={torch} onClick={() => void toggleTorch()} className={cn("flex size-11 items-center justify-center rounded-full text-white", torch ? "bg-gold text-gold-foreground" : "bg-black/50")}>{torch ? <FlashlightOff className="size-5" /> : <Flashlight className="size-5" />}</button>}
+          <button type="button" aria-label="switch camera" onClick={flip} className="flex size-11 items-center justify-center rounded-full bg-black/50 text-white"><SwitchCamera className="size-5" /></button>
+        </div>
+        {err && <div role="alert" className="absolute inset-x-0 top-1/2 bg-destructive p-3 text-sm text-destructive-foreground">{err}</div>}
+      </div>
+    )
+  }
   return (
     <div className={cn("relative overflow-hidden rounded-2xl bg-black", className)}>
       <video ref={video} playsInline muted className="aspect-square w-full object-cover" />
       <canvas ref={canvas} className="hidden" />
       <div className="pointer-events-none absolute inset-8 rounded-2xl border-4 border-gold/90 vks-ripple" />
-      <button type="button" aria-label="switch camera" onClick={() => setFacing(facing === "environment" ? "user" : "environment")} className="absolute right-2 top-2 flex size-11 items-center justify-center rounded-full bg-black/50 text-white"><SwitchCamera className="size-5" /></button>
+      <button type="button" aria-label="switch camera" onClick={flip} className="absolute right-2 top-2 flex size-11 items-center justify-center rounded-full bg-black/50 text-white"><SwitchCamera className="size-5" /></button>
       {err && <div role="alert" className="absolute inset-x-0 bottom-0 bg-destructive p-3 text-sm text-destructive-foreground">{err}</div>}
     </div>
   )
