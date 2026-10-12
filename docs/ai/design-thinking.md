@@ -20,7 +20,8 @@ Before you build a page, write one line: the question this page answers for the 
 7. **Merge, don't stack.** Small related cards become one strip. No more than 3 blocks above the main content. *How:* "Building now" + "Up next" → one ribbon with a divider. Overflow scrolls sideways instead of wrapping into a tall card.
 8. **Help is one quiet line.** Legends, keys and hints are one line of muted xs text next to the thing they explain, never a paragraph or a card. *How:* "Hover a bar to trace its chain · click to open". Long explanations go in a Tooltip or the docs.
 9. **Put counts on the controls.** A filter option shows how many items it would give (Backend 19). This replaces a separate summary block and stops dead ends. *How:* Count with the other filters applied. Disable options that would give 0.
-10. **On a phone, even less.** One column, one primary action, filters in a bottom sheet, cards instead of tables. If it does not fit on 360 px, it was too much on desktop too. *How:* Check at 360 px and 1440 px before you call a screen done.
+10. **One page gutter, set by the shell.** Every page sits on the same side margin: AppShell's main already pads 16 px on a phone (p-4) and 24 px from 768 px (md:p-6), with room for the bottom nav. A page never adds its own outer padding on top of that, so the space from the screen edge is the same on every tab. *How:* Page root = "mx-auto flex w-full max-w-md flex-col gap-4" on phone-first apps (no p-4/p-6). Cards inside keep their own inner padding. Loading, error and empty states use the same root. Full-bleed screens (camera, map) opt out on purpose. Check: tab through every page at 360 px - the card edges line up.
+11. **On a phone, even less.** One column, one primary action, filters in a bottom sheet, cards instead of tables. If it does not fit on 360 px, it was too much on desktop too. *How:* Check at 360 px and 1440 px before you call a screen done.
 
 ## Before → after (VKS Centre, v0.3)
 
@@ -43,5 +44,6 @@ Before you build a page, write one line: the question this page answers for the 
 - [ ] No more than 3 blocks sit above the main content.
 - [ ] Legends and hints are one muted line.
 - [ ] At 360 px it is one column with one primary action.
+- [ ] Every page has the same side margin as the others (the shell's 16 px; no extra p-4 on the page root).
 
 Parts: PageHeader (actions slot), ToggleGroup segmented, Popover + FilterChips, Chip, KpiStrip / KpiHero, Tooltip, Card.
