@@ -17,6 +17,7 @@ export const RULES: Rule[] = [
   { id: "merge", title: "Merge, don't stack", rule: "Small related cards become one strip. No more than 3 blocks above the main content.", how: "\"Building now\" + \"Up next\" → one ribbon with a divider. Overflow scrolls sideways instead of wrapping into a tall card." },
   { id: "quiet-help", title: "Help is one quiet line", rule: "Legends, keys and hints are one line of muted xs text next to the thing they explain, never a paragraph or a card.", how: "\"Hover a bar to trace its chain · click to open\". Long explanations go in a Tooltip or the docs." },
   { id: "counts-on-controls", title: "Put counts on the controls", rule: "A filter option shows how many items it would give (Backend 19). This replaces a separate summary block and stops dead ends.", how: "Count with the other filters applied. Disable options that would give 0." },
+  { id: "gutter", title: "One page gutter, set by the shell", rule: "Every page sits on the same side margin: AppShell's main already pads 16 px on a phone (p-4) and 24 px from 768 px (md:p-6), with room for the bottom nav. A page never adds its own outer padding on top of that, so the space from the screen edge is the same on every tab.", how: "Page root = \"mx-auto flex w-full max-w-md flex-col gap-4\" on phone-first apps (no p-4/p-6). Cards inside keep their own inner padding. Loading, error and empty states use the same root. Full-bleed screens (camera, map) opt out on purpose. Check: tab through every page at 360 px - the card edges line up." },
   { id: "phone", title: "On a phone, even less", rule: "One column, one primary action, filters in a bottom sheet, cards instead of tables. If it does not fit on 360 px, it was too much on desktop too.", how: "Check at 360 px and 1440 px before you call a screen done." },
 ]
 
@@ -30,6 +31,7 @@ export const CHECKLIST: string[] = [
   "No more than 3 blocks sit above the main content.",
   "Legends and hints are one muted line.",
   "At 360 px it is one column with one primary action.",
+  "Every page has the same side margin as the others (the shell's 16 px; no extra p-4 on the page root).",
 ]
 
 export const BEFORE_AFTER: [string, string][] = [
