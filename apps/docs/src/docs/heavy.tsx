@@ -16,6 +16,7 @@ export const heavyDocs: Doc[] = [
 <LineSeries data={week} x="d" y={["ok", "late"]} />
 <AreaSeries data={week} x="d" y={["ok", "late"]} />      // several keys = stacked
 <ComboSeries data={week} x="d" bars={["ok", "late"]} line="rate" lineUnit="%" />
+<BarSeries data={week} x="d" y={["ok", "late"]} onPick={(row, key) => openDetail(row.d, key)} />   // click a bar to drill in
 <Sparkline values={[3, 5, 4, 8, 6, 9, 7]} color="var(--chart-2)" />`,
     examples: [{ id: "motion", title: "Motion", note: "Replay to watch each chart draw in. The switch turns on the same lite mode the Settings screen uses (and prefers-reduced-motion behaves the same): charts then render finished, with no motion. Entry motion is 700 ms on desktop and finishes inside 400 ms in total on a phone (stagger delays are capped, so delay plus draw never goes past 400 ms); only transform and opacity-style effects, no layout work.", demo: L("ChartsMotion"), code: `// Charts animate once on mount. Remount (key) to replay.
 // Off automatically for prefers-reduced-motion and <html data-perf="lite">.
@@ -25,7 +26,8 @@ export const heavyDocs: Doc[] = [
       { name: "labels / unit / legend", type: "Record<key,label> / string / boolean", desc: "Lao names for keys, unit in the tooltip, legend pills (tap to hide a series)." },
       { name: "stacked / horizontal", type: "boolean", desc: "BarSeries only. horizontal is the better choice for long Lao labels on a phone." },
       { name: "ComboSeries", type: "bars: string[]; line: string; lineUnit?", desc: "Stacked bars on the left axis, a line on the right axis." },
-      { name: "ChartTip / ChartLegend", type: "components", desc: "Use them in your own Recharts charts to match." },
+      { name: "onPick", type: "(row, key | null, index) => void", desc: "Bar, Line and Combo: click a bar / point to drill in (open a detail sheet or a filtered list). key = the series of the bar that was hit, null when the click landed on the column but not on a bar. Hovered bars brighten so they read as clickable. Keep a non-chart path to the same detail for keyboard users (e.g. a list below the chart)." },
+      { name: "ChartTip / ChartLegend", type: "components; ChartLegend onPick?", desc: "Use them in your own Recharts charts to match. ChartLegend onPick turns the pills into drill buttons instead of show / hide toggles." },
       { name: "height", type: "number", desc: "240 (Donut 220). Values / width / height for Sparkline." },
     ],
   },
@@ -34,7 +36,7 @@ export const heavyDocs: Doc[] = [
     desc: "Parts of a whole and comparisons: Donut, RadialBars, Scatter / bubble and Radar. Phone: Donut and RadialBars scale as they are; RadarSeries switches by its own width to a bar-per-axis comparison list, because radar labels collide on a 320 px card (industry practice: radar is desktop, bars are the phone equivalent). Pass compact to force either form.",
     file: "packages/ui/src/heavy/charts.tsx", importLine: 'import { Donut, RadialBars, ScatterSeries, RadarSeries } from "@vks-kit/ui/charts"',
     demo: L("ChartsShare"),
-    code: `<Donut data={[{ name: "ສຳເລັດ", value: 82 }, { name: "ຊ້າ", value: 12 }]} centerLabel="ລວມ" />
+    code: `<Donut data={[{ name: "ສຳເລັດ", value: 82 }, { name: "ຊ້າ", value: 12 }]} centerLabel="ລວມ" onPick={(s) => openDetail(s.name)} />
 <RadialBars data={[{ name: "ລາດຕະເວນ", value: 86 }, { name: "ຝຶກອົບຮົມ", value: 64 }]} />
 <ScatterSeries groups={[{ name: "ກະເຊົ້າ", data: rows }]} x="km" y="min" z="n" xLabel="ກມ" />
 <RadarSeries data={skills} axisKey="s" y={["a", "b"]} max={100} />          // phone: bars per axis
@@ -43,7 +45,7 @@ export const heavyDocs: Doc[] = [
 // Off automatically for prefers-reduced-motion and <html data-perf="lite">.
 <BarSeries data={week} x="d" y={["ok", "late"]} />      // nothing to enable` }],
     props: [
-      { name: "Donut", type: "{ name; value }[]; centerLabel?; centerValue?; unit?", desc: "Total (or hovered %) in the hole, legend with percentages." },
+      { name: "Donut", type: "{ name; value }[]; centerLabel?; centerValue?; unit?", desc: "Total (or hovered %) in the hole, legend with percentages. onPick(slice, index): tap a slice or its legend pill to drill in (the pills are buttons, so it also works by keyboard)." },
       { name: "RadialBars", type: "{ name; value }[]; max = 100; unit = %", desc: "Centre shows the average." },
       { name: "ScatterSeries", type: "groups: { name; data }[]; x; y; z?; xLabel?; yLabel?; unit?", desc: "z sizes bubbles; yLabel and unit label the axis and tooltip." },
       { name: "RadarSeries", type: "data; axisKey; y[]; max?; compact?", desc: "Desktop: radar. Narrow box (< 440 px) or compact: one row per axis with a thin bar per series. Legend pills hide series in both forms." },

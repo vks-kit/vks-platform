@@ -20,7 +20,7 @@ import { Donut, RadialBars, ScatterSeries, RadarSeries } from "@vks-kit/ui/chart
 ## Example
 
 ```tsx
-<Donut data={[{ name: "ສຳເລັດ", value: 82 }, { name: "ຊ້າ", value: 12 }]} centerLabel="ລວມ" />
+<Donut data={[{ name: "ສຳເລັດ", value: 82 }, { name: "ຊ້າ", value: 12 }]} centerLabel="ລວມ" onPick={(s) => openDetail(s.name)} />
 <RadialBars data={[{ name: "ລາດຕະເວນ", value: 86 }, { name: "ຝຶກອົບຮົມ", value: 64 }]} />
 <ScatterSeries groups={[{ name: "ກະເຊົ້າ", data: rows }]} x="km" y="min" z="n" xLabel="ກມ" />
 <RadarSeries data={skills} axisKey="s" y={["a", "b"]} max={100} />          // phone: bars per axis
@@ -41,7 +41,7 @@ Replay to see sweeps, pops and the radar-to-bars switch. Lite / reduced motion s
 
 | Prop | Type | Default | Notes |
 | --- | --- | --- | --- |
-| Donut | { name; value }[]; centerLabel?; centerValue?; unit? |  | Total (or hovered %) in the hole, legend with percentages. |
+| Donut | { name; value }[]; centerLabel?; centerValue?; unit? |  | Total (or hovered %) in the hole, legend with percentages. onPick(slice, index): tap a slice or its legend pill to drill in (the pills are buttons, so it also works by keyboard). |
 | RadialBars | { name; value }[]; max = 100; unit = % |  | Centre shows the average. |
 | ScatterSeries | groups: { name; data }[]; x; y; z?; xLabel?; yLabel?; unit? |  | z sizes bubbles; yLabel and unit label the axis and tooltip. |
 | RadarSeries | data; axisKey; y[]; max?; compact? |  | Desktop: radar. Narrow box (< 440 px) or compact: one row per axis with a thin bar per series. Legend pills hide series in both forms. |

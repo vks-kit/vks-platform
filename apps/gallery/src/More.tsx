@@ -260,8 +260,8 @@ export function More() {
           </CardContent></Card>
         </Sec>
         <Sec id="charts" title="Charts (own entry point, only loaded where used)">
-          <div className="grid gap-4 md:grid-cols-3"><Card className="md:col-span-2"><CardHeader><CardTitle>ສະແກນຕໍ່ວັນ</CardTitle></CardHeader><CardContent><BarSeries data={chart} x="d" y={["ok", "late"]} /></CardContent></Card>
-            <Card><CardHeader><CardTitle>ສະຖານະ</CardTitle></CardHeader><CardContent><Donut data={[{ name: "ສຳເລັດ", value: 82 }, { name: "ຊ້າ", value: 12 }, { name: "ພາດ", value: 6 }]} /></CardContent></Card></div>
+          <div className="grid gap-4 md:grid-cols-3"><Card className="md:col-span-2"><CardHeader><CardTitle>ສະແກນຕໍ່ວັນ</CardTitle></CardHeader><CardContent><BarSeries data={chart} x="d" y={["ok", "late"]} onPick={(r, k) => toast(String(r.d) + (k ? " · " + k : ""))} /></CardContent></Card>
+            <Card><CardHeader><CardTitle>ສະຖານະ</CardTitle></CardHeader><CardContent><Donut data={[{ name: "ສຳເລັດ", value: 82 }, { name: "ຊ້າ", value: 12 }, { name: "ພາດ", value: 6 }]} onPick={(s) => toast(s.name + " " + s.value)} /></CardContent></Card></div>
           <Card><CardContent className="pt-5"><LineSeries data={chart} x="d" y={["ok"]} height={180} /></CardContent></Card>
           <Card><CardHeader><CardTitle>ລາດຕະເວນ + % ຕົງເວລາ</CardTitle></CardHeader><CardContent><ComboSeries data={chart.map((c) => ({ ...c, rate: Math.round((c.ok / (c.ok + c.late)) * 100) }))} x="d" bars={["ok", "late"]} line="rate" lineUnit="%" labels={{ ok: "ຕົງເວລາ", late: "ຊ້າ", rate: "% ຕົງເວລາ" }} /></CardContent></Card>
           <div className="grid gap-4 md:grid-cols-3">

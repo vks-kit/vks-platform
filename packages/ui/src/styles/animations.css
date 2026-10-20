@@ -494,6 +494,9 @@ label:has(> .vks-cb:not(:disabled)):active, label:has(> .vks-switch:not(:disable
    Recharts 3 makes every chart focusable (keyboard tooltips), so a mouse click drew the browser's black focus box.
    Mouse focus: no box. Keyboard focus: the theme ring, kept inside the card. */
 .recharts-wrapper:focus, .recharts-wrapper :focus { outline: none; }
+/* onPick charts: the hovered bar / slice brightens so it reads as clickable */
+.vks-chart-pick .recharts-bar-rectangle, .vks-chart-pick .recharts-pie-sector { transition: opacity .15s; }
+.vks-chart-pick .recharts-bar-rectangle:hover, .vks-chart-pick .recharts-pie-sector:hover { opacity: .8; }
 .recharts-wrapper:focus-visible, .recharts-wrapper :focus-visible { outline: 2px solid var(--ring); outline-offset: -2px; border-radius: var(--radius); }
 
 /* ---- desktop kit ---- */

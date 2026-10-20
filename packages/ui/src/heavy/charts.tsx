@@ -58,13 +58,15 @@ export function ChartTip({ active, payload, label, unit, labelKey }: { active?: 
 const tipEl = (unit?: string, labelKey?: string) => (p: object) => <ChartTip {...(p as { active?: boolean; payload?: TipItem[]; label?: unknown })} unit={unit} labelKey={labelKey} />
 
 /** Pill legend. Pass onToggle to let people hide a series by tapping it. */
-export function ChartLegend({ items, hidden, onToggle }: { items: { key: string; label?: string; color: string }[]; hidden?: Set<string>; onToggle?: (k: string) => void }) {
+export function ChartLegend({ items, hidden, onToggle, onPick }: { items: { key: string; label?: string; color: string }[]; hidden?: Set<string>; onToggle?: (k: string) => void;
+  /** Pills become drill buttons (opens detail) instead of show / hide toggles. */ onPick?: (k: string) => void }) {
   return (
     <div className="mt-3 flex flex-wrap justify-center gap-1.5">
       {items.map((it) => {
         const off = hidden?.has(it.key)
         const inner = <><span className="size-2.5 rounded-full transition-transform duration-300" style={{ background: it.color, transform: off ? "scale(.5)" : undefined }} />{it.label ?? it.key}</>
         const cls = "inline-flex min-h-8 items-center gap-1.5 rounded-full border px-3 text-xs font-semibold leading-normal transition-opacity " + (off ? "opacity-45" : "")
+        if (onPick) return <button key={it.key} type="button" aria-haspopup="dialog" onClick={() => onPick(it.key)} className={cls + " vks-press bg-card hover:bg-muted"}>{inner}</button>
         return onToggle
           ? <button key={it.key} type="button" aria-pressed={!off} onClick={() => onToggle(it.key)} className={cls + " vks-press bg-card hover:bg-muted"}>{inner}</button>
           : <span key={it.key} className={cls + " bg-card"}>{inner}</span>
@@ -79,20 +81,33 @@ function useHidden() {
 }
 const labelOf = (labels: Record<string, string> | undefined, k: string) => labels?.[k] ?? k
 type Common = { data: Row[]; x: string; height?: number; labels?: Record<string, string>; unit?: string; legend?: boolean }
+/** Click-to-drill: the row under the pointer and, when a bar itself was hit, its series key (else null = the whole column). */
+export type ChartPick = (row: Row, key: string | null, index: number) => void
+type MouseState = { activeTooltipIndex?: unknown }
+/** A bar's own onClick fires before the chart's (DOM bubbling), so it notes which series was hit; the chart click then reports row + key once. */
+function usePick(data: Row[], onPick?: ChartPick) {
+  const hit = React.useRef<string | null>(null)
+  if (!onPick) return { chart: {}, bar: () => ({}), cls: "" }
+  return {
+    chart: { onClick: (s: MouseState) => { const i = Number(s?.activeTooltipIndex); const k = hit.current; hit.current = null; if (Number.isInteger(i) && data[i]) onPick(data[i], k, i) } },
+    bar: (k: string) => ({ onClick: () => { hit.current = k } }),
+    cls: "vks-chart-pick cursor-pointer",
+  }
+}
 
 /** Bars with a top-lit gradient and rounded caps. stacked = one column per x. Tap a legend pill to hide a series. */
-export function BarSeries({ data, x, y, height = 240, labels, unit, legend = y.length > 1, stacked, horizontal }: Common & { y: string[]; stacked?: boolean; horizontal?: boolean }) {
-  const id = useGid(), on = useMotion(), { hidden, toggle } = useHidden()
+export function BarSeries({ data, x, y, height = 240, labels, unit, legend = y.length > 1, stacked, horizontal, onPick }: Common & { y: string[]; stacked?: boolean; horizontal?: boolean; onPick?: ChartPick }) {
+  const id = useGid(), on = useMotion(), { hidden, toggle } = useHidden(), pick = usePick(data, onPick)
   const shown = y.filter((k) => !hidden.has(k))
-  return <div>
+  return <div className={pick.cls}>
     <ResponsiveContainer width="100%" height={height}>
-      <BarChart data={data} layout={horizontal ? "vertical" : "horizontal"} barCategoryGap="22%" barGap={3}>
+      <BarChart data={data} layout={horizontal ? "vertical" : "horizontal"} barCategoryGap="22%" barGap={3} {...pick.chart}>
         <defs>{y.map((k, i) => <linearGradient key={k} id={id + i} x1="0" y1="0" x2={horizontal ? "1" : "0"} y2={horizontal ? "0" : "1"}>
           <stop offset="0%" stopColor={chartColors[i % 5]} stopOpacity={horizontal ? 0.75 : 1} /><stop offset="100%" stopColor={chartColors[i % 5]} stopOpacity={horizontal ? 1 : 0.7} /></linearGradient>)}</defs>
         {horizontal ? <CartesianGrid stroke="var(--border)" strokeDasharray="3 4" horizontal={false} /> : grid}
         {horizontal ? <><XAxis type="number" {...axis} /><YAxis type="category" dataKey={x} {...axis} width={72} /></> : <><XAxis dataKey={x} {...axis} /><YAxis {...axis} width={36} /></>}
         <Tooltip content={tipEl(unit)} cursor={{ fill: "var(--muted)", opacity: 0.6, radius: 8 } as object} />
-        {y.map((k, i) => !hidden.has(k) && <Bar key={k} dataKey={k} name={labelOf(labels, k)} stackId={stacked ? "s" : undefined} fill={"url(#" + id + i + ")"} maxBarSize={36}
+        {y.map((k, i) => !hidden.has(k) && <Bar key={k} dataKey={k} name={labelOf(labels, k)} stackId={stacked ? "s" : undefined} fill={"url(#" + id + i + ")"} maxBarSize={36} {...pick.bar(k)}
           radius={stacked ? (k === shown[shown.length - 1] ? (horizontal ? [0, 6, 6, 0] : [6, 6, 0, 0]) : 0) : (horizontal ? [0, 6, 6, 0] : [6, 6, 0, 0])} {...anim(on, i * 90)} />)}
       </BarChart>
     </ResponsiveContainer>
@@ -101,11 +116,11 @@ export function BarSeries({ data, x, y, height = 240, labels, unit, legend = y.l
 }
 
 /** Smooth lines with a soft glow under the first series and an active-dot ring. */
-export function LineSeries({ data, x, y, height = 240, labels, unit, legend = y.length > 1 }: Common & { y: string[] }) {
-  const id = useGid(), on = useMotion(), { hidden, toggle } = useHidden()
-  return <div>
+export function LineSeries({ data, x, y, height = 240, labels, unit, legend = y.length > 1, onPick }: Common & { y: string[]; onPick?: ChartPick }) {
+  const id = useGid(), on = useMotion(), { hidden, toggle } = useHidden(), pick = usePick(data, onPick)
+  return <div className={pick.cls}>
     <ResponsiveContainer width="100%" height={height}>
-      <ComposedChart data={data}>
+      <ComposedChart data={data} {...pick.chart}>
         <defs><linearGradient id={id + "f"} x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="var(--chart-1)" stopOpacity={0.18} /><stop offset="100%" stopColor="var(--chart-1)" stopOpacity={0} /></linearGradient></defs>
         {grid}<XAxis dataKey={x} {...axis} /><YAxis {...axis} width={36} />
         <Tooltip content={tipEl(unit)} cursor={{ stroke: "var(--muted-foreground)", strokeDasharray: "4 4", strokeOpacity: 0.5 }} />
@@ -136,15 +151,16 @@ export function AreaSeries({ data, x, y, height = 240, labels, unit, legend }: C
 }
 
 /** Donut with the total (or your own label) in the hole and a legend with percentages. Hover lifts a slice. */
-export function Donut({ data, height = 220, centerLabel, centerValue, unit, legend = true }: { data: { name: string; value: number }[]; height?: number; centerLabel?: string; centerValue?: React.ReactNode; unit?: string; legend?: boolean }) {
+export function Donut({ data, height = 220, centerLabel, centerValue, unit, legend = true, onPick }: { data: { name: string; value: number }[]; height?: number; centerLabel?: string; centerValue?: React.ReactNode; unit?: string; legend?: boolean;
+  /** Tap a slice (or its legend pill — the keyboard / phone path) to drill into it. */ onPick?: (slice: { name: string; value: number }, index: number) => void }) {
   const on = useMotion(), [hot, setHot] = React.useState<number | null>(null)
   const total = data.reduce((s, d) => s + d.value, 0) || 1
   return <div>
-    <div className="relative" style={{ height }}>
+    <div className={"relative" + (onPick ? " vks-chart-pick cursor-pointer" : "")} style={{ height }}>
       <ResponsiveContainer width="100%" height="100%"><PieChart>
         <Tooltip content={tipEl(unit, "name")} />
         <Pie data={data} dataKey="value" nameKey="name" innerRadius="62%" outerRadius="86%" paddingAngle={3} cornerRadius={6} stroke="var(--card)" strokeWidth={2}
-          onMouseEnter={(_, i) => setHot(i)} onMouseLeave={() => setHot(null)} {...anim(on)}>
+          onMouseEnter={(_, i) => setHot(i)} onMouseLeave={() => setHot(null)} onClick={onPick ? (_, i) => data[i] && onPick(data[i], i) : undefined} {...anim(on)}>
           {data.map((_, i) => <Cell key={i} fill={chartColors[i % 5]} style={{ opacity: hot === null || hot === i ? 1 : 0.45, transition: "opacity .2s" }} />)}
         </Pie>
       </PieChart></ResponsiveContainer>
@@ -153,7 +169,8 @@ export function Donut({ data, height = 220, centerLabel, centerValue, unit, lege
         <span className="text-xs text-muted-foreground">{hot !== null ? data[hot].name : centerLabel ?? "ລວມ"}</span>
       </div>
     </div>
-    {legend && <ChartLegend items={data.map((d, i) => ({ key: d.name, label: d.name + " · " + Math.round((d.value / total) * 100) + "%", color: chartColors[i % 5] }))} />}
+    {legend && <ChartLegend items={data.map((d, i) => ({ key: d.name, label: d.name + " · " + Math.round((d.value / total) * 100) + "%", color: chartColors[i % 5] }))}
+      onPick={onPick ? (k) => { const i = data.findIndex((d) => d.name === k); if (i >= 0) onPick(data[i], i) } : undefined} />}
   </div>
 }
 /** Scatter / bubble. Each group is one colour; z (optional) sizes the bubbles. Great for "response time vs distance" style questions. */
@@ -254,15 +271,15 @@ export function RadialBars({ data, height = 240, max = 100, unit = "%", centerLa
 }
 
 /** Bars + a line on a second axis (e.g. patrol count + on-time %). */
-export function ComboSeries({ data, x, bars, line, height = 260, labels, lineUnit }: { data: Row[]; x: string; bars: string[]; line: string; height?: number; labels?: Record<string, string>; lineUnit?: string }) {
-  const id = useGid(), on = useMotion(), { hidden, toggle } = useHidden(), lc = chartColors[(bars.length) % 5]
-  return <div>
+export function ComboSeries({ data, x, bars, line, height = 260, labels, lineUnit, onPick }: { data: Row[]; x: string; bars: string[]; line: string; height?: number; labels?: Record<string, string>; lineUnit?: string; onPick?: ChartPick }) {
+  const id = useGid(), on = useMotion(), { hidden, toggle } = useHidden(), lc = chartColors[(bars.length) % 5], pick = usePick(data, onPick)
+  return <div className={pick.cls}>
     <ResponsiveContainer width="100%" height={height}>
-      <ComposedChart data={data} barCategoryGap="26%">
+      <ComposedChart data={data} barCategoryGap="26%" {...pick.chart}>
         <defs>{bars.map((k, i) => <linearGradient key={k} id={id + i} x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={chartColors[i % 5]} /><stop offset="100%" stopColor={chartColors[i % 5]} stopOpacity={0.65} /></linearGradient>)}</defs>
         {grid}<XAxis dataKey={x} {...axis} /><YAxis yAxisId="l" {...axis} width={36} /><YAxis yAxisId="r" orientation="right" {...axis} width={40} unit={lineUnit} />
         <Tooltip content={tipEl()} cursor={{ fill: "var(--muted)", opacity: 0.6 }} />
-        {bars.map((k, i) => !hidden.has(k) && <Bar key={k} yAxisId="l" dataKey={k} name={labelOf(labels, k)} stackId="s" fill={"url(#" + id + i + ")"} maxBarSize={32} radius={i === bars.length - 1 ? [6, 6, 0, 0] : 0} {...anim(on, i * 90)} />)}
+        {bars.map((k, i) => !hidden.has(k) && <Bar key={k} yAxisId="l" dataKey={k} name={labelOf(labels, k)} stackId="s" fill={"url(#" + id + i + ")"} maxBarSize={32} radius={i === bars.length - 1 ? [6, 6, 0, 0] : 0} {...pick.bar(k)} {...anim(on, i * 90)} />)}
         {!hidden.has(line) && <Line yAxisId="r" dataKey={line} name={labelOf(labels, line)} type="monotone" stroke={lc} strokeWidth={2.5} dot={{ r: 3.5, fill: "var(--card)", stroke: lc, strokeWidth: 2 }} activeDot={{ r: 5, strokeWidth: 3, stroke: "var(--card)", fill: lc }} {...anim(on, 300)} />}
       </ComposedChart>
     </ResponsiveContainer>
