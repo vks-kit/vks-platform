@@ -22,6 +22,7 @@ import { MapView } from "@vks-kit/ui/map"
 import { Kanban, type KanbanCard } from "@vks-kit/ui/kanban"
 import { QrScanner, PhotoCapture, CaptureStamp, stampPhoto, stampTime } from "@vks-kit/ui/scan"
 import { fmtKip, fmtKipShort, t, setLang, getLang } from "@vks-kit/core"
+import { DataDemo } from "../../docs/src/docs/more"
 
 function FieldsGallery() {
   const [txt, setTxt] = React.useState(""); const [phone, setPhone] = React.useState(""); const [money, setMoney] = React.useState<number | null>(1500000)
@@ -296,6 +297,7 @@ export function More() {
           <div className="max-h-[520px] overflow-auto rounded-2xl border p-3"><ProfileView variant="actions" quickActions={[{ icon: <Phone />, label: "ໂທ", onPress: () => toast("Call") }, { icon: <Pencil />, label: "ແກ້ໄຂ", onPress: () => toast("Edit") }]} name="ສົມຊາຍ ວົງສະຫວັນ" role="ເຈົ້າໜ້າທີ່ຮັກສາຄວາມປອດໄພ" code="VKS2207001" status="online" stats={[{ label: "ມື້ມາວຽກ", value: 24 }, { label: "ລາດຕະເວນ", value: 61 }]} sections={[{ title: "ຂໍ້ມູນ", rows: [{ label: "ເບີໂທ", value: "020 5555 1234" }, { label: "ປ່ຽນລະຫັດຜ່ານ", onPress: () => toast("Password") }] }]} onSignOut={() => toast("Signed out")} /></div>
         </div></Sec>
         <IOSKit />
+        <Sec id="instant-data" title="Instant data · cached page data, prefetch, sticky filters"><DataDemo /></Sec>
         <MotionKit />
         <MobileKit />
         <DesktopKit />

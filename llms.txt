@@ -10,6 +10,7 @@ Before designing a page, read docs/ai/design-thinking.md: one job per page, cont
 
 - [Logo](docs/ai/logo.md): The official VKS badge, redrawn as a vector from the brand file used in the QC dashboard. Same colours in both themes, because the badge carries its own field. Exports: Logo, LogoTile, BRAND
 - [Performance tiers](docs/ai/performance.md): High-end vs low-end phone mode. Lite drops blur, looping motion and heavy shadows. Exports: PerfProvider, initPerf, PerfToggle, usePerf
+- [Instant data](docs/ai/instant-data.md): Pages open instantly on a second visit: cached data paints at once, refreshes in the background; Back keeps filters and scroll. Exports: useData, prefetchData, invalidateData, mutateData, peekData, useScrollRestore, useStickyState
 - [Hover effects](docs/ai/hover-effects.md): Premium mouse effects for desktop: spotlight, edge trace and 3D tilt on cards, mouse parallax, a sliding row highlight, icon nudge and a cursor ring for landing pages. Phones, lite mode and reduced motion get none of it. Exports: HoverFx, Parallax, ParallaxLayer, SlideHighlight, CursorRing, usePointerVars
 
 ## Actions

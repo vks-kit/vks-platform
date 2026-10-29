@@ -4,7 +4,7 @@ import {
   IOSAlert, ActionSheet, Banner, ListGroup, ListRow, Switch, Button, SkeletonText, SkeletonList, SkeletonCard, SkeletonTable, SkeletonAvatar,
   NumberTicker, PasswordInput, FloatingInput, Chip, Kbd, CopyButton, Separator, Popover, PopoverTrigger, PopoverContent,
   Menu, MenuTrigger, MenuContent, MenuItem, MenuSeparator, MenuLabel, PerfToggle, usePerf, StepProgress, toast,
-  DetailPopover, Avatar, Progress, type DetailField,
+  DetailPopover, Avatar, Progress, type DetailField, Spinner, useData, prefetchData, useStickyState,
 } from "@vks-kit/ui"
 import type { Doc } from "./types"
 
@@ -99,6 +99,29 @@ function PerfDemo() {
   const { mode, tier } = usePerf()
   return <div className="space-y-3"><PerfToggle /><p className="text-sm text-muted-foreground">mode = <b>{mode}</b> · tier = <b>{tier}</b> · &lt;html data-perf="{tier}"&gt;</p>
     <div className="vks-glass vks-glow-ring rounded-2xl border p-4 text-sm">Glass + glow card: blurred on high-end, solid & flat on low-end.</div></div>
+}
+/** Instant data demo: open the list, open a row, go back — the second visit paints at once. */
+const FAKE = ["ສົມຊາຍ ວົງສະຫວັນ", "ນາງບົວ ພົມມະຈັນ", "ທ້າວດາວ ສີສຸວັນ", "ນາງແກ້ວ ສຸລິວົງ", "ທ້າວຄຳ ພົມມະລາ"]
+let fakeN = 0
+const fakeApi = () => new Promise<{ at: string; names: string[] }>((r) => setTimeout(() => r({ at: new Date().toLocaleTimeString("en-GB"), names: FAKE.slice(0, 3 + (fakeN++ % 3)) }), 1200))
+function DataList({ onOpen }: { onOpen: (n: string) => void }) {
+  const [q, setQ] = useStickyState("demo-q", "")
+  const { data, loading, refreshing, error, reload } = useData("demo:people", fakeApi)
+  return <div className="space-y-2">
+    <div className="flex items-center gap-2"><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="ຄົ້ນຫາ" className="h-11 min-w-0 flex-1 rounded-lg border bg-background px-3 text-base" />
+      <Button variant="outline" className="size-11 shrink-0 p-0" onClick={reload} aria-label="reload">{refreshing ? <Spinner /> : "↻"}</Button></div>
+    {loading ? <SkeletonList rows={3} /> : error ? <p className="text-sm text-destructive">{error}</p> : <ul className="divide-y rounded-xl border">
+      {data!.names.filter((n) => n.includes(q)).map((n) => <li key={n}><button onClick={() => onOpen(n)} onPointerEnter={() => prefetchData("demo:person:" + n, () => fakeApi())} className="flex min-h-11 w-full items-center px-3 text-left leading-normal hover:bg-accent">{n}</button></li>)}
+    </ul>}
+    <p className="text-xs text-muted-foreground">{data ? "ໂຫຼດລ່າສຸດ " + data.at + (refreshing ? " · ກຳລັງອັບເດດ…" : "") : "ໂຫຼດຄັ້ງທຳອິດ…"}</p>
+  </div>
+}
+export function DataDemo() {
+  const [open, setOpen] = React.useState<string | null>(null)
+  return <div className="w-full max-w-sm">
+    {open ? <div className="space-y-3"><Button variant="outline" onClick={() => setOpen(null)}>← ກັບຄືນ</Button><p className="text-base font-bold leading-normal">{open}</p><p className="text-sm text-muted-foreground">ກັບຄືນ: ລາຍຊື່ຂຶ້ນທັນທີ (ບໍ່ມີ skeleton), ແລ້ວອັບເດດຢູ່ເບື້ອງຫຼັງ.</p></div>
+      : <DataList onOpen={setOpen} />}
+  </div>
 }
 function StepProgDemo() { const [s, setS] = React.useState(1); return <div className="w-full max-w-sm space-y-3"><StepProgress step={s} total={4} label="ລາຍງານເຫດການ" /><div className="flex gap-2"><Button size="sm" variant="outline" onClick={() => setS(Math.max(0, s - 1))}>−</Button><Button size="sm" onClick={() => setS(Math.min(3, s + 1))}>+</Button></div></div> }
 
@@ -229,4 +252,35 @@ root.render(<ThemeProvider><PerfProvider><App /></PerfProvider></ThemeProvider>)
 <PerfToggle />
 const { tier } = usePerf()   // skip JS effects when tier === "lite"`,
     notes: ["Auto = lite when: reduced motion, Save-Data, ≤3 GB RAM, or ≤4 cores with ≤4 GB.", "Choice is stored in localStorage (vks-perf).", "Lite keeps every feature — only the decoration goes."] },
+  { slug: "instant-data", name: "Instant data", group: "Foundations", badge: "New", desc: "Pages open instantly on a second visit: cached data paints at once, refreshes in the background; Back keeps filters and scroll.", file: "packages/ui/src/lib/use-data.ts",
+    importLine: imp("useData, prefetchData, invalidateData, mutateData, peekData, useScrollRestore, useStickyState"), demo: DataDemo,
+    usage: "Use for every page that loads data from the API. Replaces an app's own useLoad/useEffect+fetch. The first visit shows a skeleton; every later visit (Back from a record, switching tabs) paints the cached copy at once and refreshes quietly.",
+    code: `// list page
+const [status, setStatus] = useStickyState("people.status", "active")   // survives opening a record
+const [q, setQ] = useStickyState("people.q", "")
+const { data, loading, refreshing, error, reload } = useData("people:" + status, () => api.people(status))
+useScrollRestore("people", !!data)                                       // Back lands where you were
+
+if (loading) return <SkeletonTable />                                     // first visit only
+// row: start loading the record before the click lands
+<tr onPointerEnter={() => prefetchData("person:" + p.id, () => api.person(p.id))} …>
+
+// record page — same key = instant when prefetched
+const { data: person } = useData("person:" + id, () => api.person(id))
+
+// after a save
+await api.savePerson(id, patch)
+mutateData("person:" + id, (p) => ({ ...p!, ...patch }))                 // show it now
+invalidateData("people:*")                                               // lists refetch`,
+    props: [
+      { name: "useData(key, fn, opts?)", type: "{ data, error, loading, refreshing, reload }", desc: "key names the data and must change with every input of fn (\"people:\" + status). null = don't fetch. loading is true only when there is nothing to show; refreshing = background update over shown data." },
+      { name: "opts.staleMs", type: "number", def: "0", desc: "Skip the background refetch while the cached copy is younger than this." },
+      { name: "opts.refreshOnFocus", type: "boolean", def: "true", desc: "Refresh (if older than 30 s) when the tab or window comes back." },
+      { name: "prefetchData(key, fn, staleMs?)", type: "void", desc: "Warm the cache on hover/touch/idle. Shares the request with any page that asks for the same key." },
+      { name: "invalidateData(key?)", type: "void", desc: "Mark old: exact key, prefix with *, or all. Pages showing it refetch now." },
+      { name: "mutateData(key, next)", type: "void", desc: "Write into the cache (optimistic update). Every page using the key re-renders." },
+      { name: "useScrollRestore(key, ready)", type: "void", desc: "Remember window scroll per key; restore once ready (data on screen)." },
+      { name: "useStickyState(key, initial)", type: "[value, set]", desc: "useState kept in sessionStorage for this tab — filters, search, tabs." },
+    ],
+    notes: ["Same key = one request, however many pages ask.", "A failed refresh keeps the last good data on screen; error is set only when nothing could be shown.", "Cache lives in memory for the tab; a full reload starts empty (use swr() from @vks-kit/core for an across-reload localStorage copy).", "Keep a list page mounted while a record is open (hide it) when the app routes by state — Back is then free; useData makes it fast even when it unmounts."] },
 ]
