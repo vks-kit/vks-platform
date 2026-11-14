@@ -73,6 +73,7 @@ const [busy, setBusy] = React.useState(false)
 
 | Prop | Type | Default | Notes |
 | --- | --- | --- | --- |
+| disabledReason / onBlockedPress | string \| null / (reason) => void |  | Looks disabled but stays tappable: a tap calls onBlockedPress (show why, scroll to the missing field) instead of onClick. Use it for a Save that is not ready yet, so it never does nothing. |
 | variant | "default" \| "action" \| "gold" \| "outline" \| "ghost" \| "destructive" | "default" | action = emerald, the main thing a guard does on the screen. Only one per screen. |
 | size | "default" \| "sm" \| "lg" \| "icon" | "default" | Every size is at least 44 px on a phone. |
 | asChild | boolean | false | Render your own child element with the button styles. |

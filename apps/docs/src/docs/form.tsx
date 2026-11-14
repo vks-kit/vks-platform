@@ -164,7 +164,7 @@ export const formDocs: Doc[] = [
   {
     slug: "form-dialog", name: "Form dialog", group: "Form", badge: "New",
     desc: "The frame for every form in a popup: sticky title and footer, only the body scrolls and never sideways. sm / md / lg widths on desktop, a sheet on a phone. Field = label + control + error or hint; FormSection = a muted group title.",
-    file: "packages/ui/src/components/form-dialog.tsx", importLine: 'import { FormDialogContent, Field, FormSection, type FormDialogSize } from "@vks-kit/ui"',
+    file: "packages/ui/src/components/form-dialog.tsx", importLine: 'import { FormDialogContent, Field, FormSection, FormActions, FoldSection, type FormDialogSize } from "@vks-kit/ui"',
     demo: () => <FormDialogDemo />,
     code: `<Dialog open={open} onOpenChange={setOpen}>
   <FormDialogContent size="md" title="ເພີ່ມສະຖານທີ່"
@@ -185,7 +185,10 @@ export const formDocs: Doc[] = [
       { name: "icon", type: "ReactNode", desc: "Optional icon tile left of the title; desktop only (hidden on phone)." },
       { name: "Field: label / htmlFor / error / hint", type: "ReactNode / string", desc: "error (red) replaces hint (muted) when set." },
     ],
-    notes: ["Put it inside a Dialog, in place of DialogContent.", "Records open read-only first (Facts / FactGrid) with a ແກ້ໄຂ button; the form is the edit step.", "Run cleanText() on free text before saving."],
+    notes: ["Put it inside a Dialog, in place of DialogContent.", "Records open read-only first (Facts / FactGrid) with a ແກ້ໄຂ button; the form is the edit step.", "Run cleanText() on free text before saving.",
+      "Footer: use FormActions (primary, secondary, more). Desktop keeps one row; a phone shows the primary full width and a ⋯ ActionSheet with the rest, so five buttons never wrap into two rows.",
+      "Long forms: wrap the parts not needed every time in FoldSection. On a phone they fold and their header says what is still missing; desktop shows them open.",
+      "Save that cannot run yet: Button disabledReason + onBlockedPress. The button looks off but a tap says why and can scroll to the missing field, instead of doing nothing."],
   },
   {
     slug: "weekday-picker", name: "Weekday picker", group: "Form", badge: "New",

@@ -36,28 +36,40 @@ function useNavDirection(items: NavItem[], active: string) {
 
 /**
  * One breakpoint, whole system pivots on it: 768 px (rule from vks-kit RESPONSIVE.md).
- * Desktop = sidebar rail (collapsible, remembered). Mobile = bottom nav, max 5 items, the rest under "More".
+ * Desktop = sidebar rail (collapsible, remembered). Mobile = bottom nav, max 5 items, the rest under "More"; phoneHeader={false}
+ * drops the top bar on a phone (when it would only repeat the nav); phoneProfile makes the profile page a bottom tab.
  * Pages slide in the direction you moved in the nav and a thin gold bar sweeps across the top.
  * Every page sits in a PageBoundary: a crash or a page file that will not load shows "reload", never a white screen.
  */
-export function AppShell({ items, active, onNavigate, title = "VKS", header, children, fab, user, collapsible = true }: {
+export function AppShell({ items, active, onNavigate, title = "VKS", header, children, fab, user, collapsible = true, phoneHeader = true, phoneProfile }: {
   items: NavItem[]; active: string; onNavigate: (id: string) => void; title?: string
   header?: React.ReactNode; children: React.ReactNode; fab?: React.ReactNode; user?: React.ReactNode
   /** Desktop rail can shrink to icons. Default true. */
   collapsible?: boolean
+  /**
+   * Phone: show the top header bar. Default true (0.5.x behaviour, apps that put a page title or back button there).
+   * New apps: pass false when the bar would only repeat the nav and the date; the bottom nav is the frame on a phone.
+   */
+  phoneHeader?: boolean
+  /**
+   * Phone: the page that the desktop opens from the user chip under the sidebar (profile, theme, sign out) becomes the
+   * last bottom-nav tab, e.g. { id: "profile", label: "ຂ້ອຍ", icon: <UserRound /> }. Without it a phone has no way to it.
+   */
+  phoneProfile?: NavItem
 }) {
   const dir = useNavDirection(items, active)
+  const phoneItems = phoneProfile ? [...items, phoneProfile] : items
   return (
     <div className="flex min-h-dvh overflow-x-clip bg-background">
       <Sidebar items={items} active={active} onNavigate={onNavigate} title={title} user={user} collapsible={collapsible} persist className="hidden md:flex" />
       <div className="relative flex min-w-0 flex-1 flex-col overflow-x-clip">
-        {header && <header className="vks-glass sticky top-0 z-30 flex items-center gap-3 border-b border-border/60 px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))] shadow-[0_10px_24px_-22px_rgb(20_23_61/.6)] md:px-6">
+        {header && <header className={cn(!phoneHeader && "max-md:hidden", "vks-glass sticky top-0 z-30 flex items-center gap-3 border-b border-border/60 px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))] shadow-[0_10px_24px_-22px_rgb(20_23_61/.6)] md:px-6")}>
           <span aria-hidden className="vks-hairline pointer-events-none absolute inset-x-0 top-0 opacity-70" />{header}
           <span key={active} aria-hidden className="vks-route-bar pointer-events-none absolute inset-x-0 -bottom-px h-0.5 bg-gold" /></header>}
         <main key={active} className={cn("flex-1 p-4 pb-[calc(6.5rem+env(safe-area-inset-bottom))] md:p-6 md:pb-6", dir === "back" ? "vks-page-back" : "vks-page-fwd")}><PageBoundary resetKey={active}>{children}</PageBoundary></main>
       </div>
       {fab}
-      <BottomNav items={items} active={active} onNavigate={onNavigate} className="md:hidden" />
+      <BottomNav items={phoneItems} active={active} onNavigate={onNavigate} className="md:hidden" />
     </div>
   )
 }

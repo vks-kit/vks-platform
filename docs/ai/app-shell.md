@@ -12,7 +12,7 @@ import { AppShell, Fab, type NavItem } from "@vks-kit/ui"
 
 ## When to use
 
-- **AppShell**: One breakpoint, whole system pivots on it: 768 px (rule from vks-kit RESPONSIVE.md). Desktop = sidebar rail (collapsible, remembered). Mobile = bottom nav, max 5 items, the rest under "More". Pages slide in the direction you moved in the nav and a thin gold bar sweeps across the top. Every page sits in a PageBoundary: a crash or a page file that will not load shows "reload", never a white screen.
+- **AppShell**: One breakpoint, whole system pivots on it: 768 px (rule from vks-kit RESPONSIVE.md). Desktop = sidebar rail (collapsible, remembered). Mobile = bottom nav, max 5 items, the rest under "More"; phoneHeader={false} drops the top bar on a phone (when it would only repeat the nav); phoneProfile makes the profile page a bottom tab. Pages slide in the direction you moved in the nav and a thin gold bar sweeps across the top. Every page sits in a PageBoundary: a crash or a page file that will not load shows "reload", never a white screen.
 - **Fab**: Create button (navy + gold ring, brand-lit). Desktop: sits in the header (use inline). Mobile: floating. Icon must say what it creates. extended = pill with label.
 
 ## Example
@@ -49,6 +49,8 @@ const nav: NavItem[] = [
 | fab | ReactNode |  | Phone only. |
 | user | ReactNode |  | Bottom of the sidebar. |
 | collapsible | boolean | true | Desktop rail can shrink to 72 px icons. State is remembered. |
+| phoneHeader | boolean | true | false = no top bar on a phone (the bottom nav is the frame). Use it when the bar would only repeat the app name, the date or the nav. |
+| phoneProfile | NavItem |  | Phone only: adds the profile page as the last bottom-nav tab (desktop opens it from the user chip). e.g. { id: "profile", label: "ຂ້ອຍ", icon: <UserRound /> }. |
 
 ## Notes
 

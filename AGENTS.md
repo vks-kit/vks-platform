@@ -21,6 +21,17 @@ Full guide: `docs/ai/design-thinking.md` (docs site: #/docs/design-thinking).
 - **Help is one muted line**, not a card. **Counts on the controls** (Backend 19), not in a summary block.
 - Check at 360 px and 1440×900 before calling a screen done.
 
+## Phone rules (every screen — from the Call Center bugs of 11/2026)
+Full text: `docs/ai/design-thinking.md` (rules "Phone lists" … "Check it like a phone").
+- **Lists**: 2 lines per row, ~8 rows per 360×780 screen — `DataTable mode="rows"` (columns marked `row: "title" | "sub" | "action"`), never a tall label/value card per row. Second action = `SwipeRow`.
+- **Popups**: one big main action; rare ones (edit, delete, block) behind ⋯ — `FormActions`. The ✕ closes; no extra Close button.
+- **Long forms**: parts not needed every time fold on a phone and say what is missing — `FoldSection`. A save that cannot run yet says why — `Button disabledReason`.
+- **Sheets**: never a sheet on a sheet (pickers slide in inside it); buttons never scroll away — `SheetContent footer={…}`.
+- **Frame**: on a phone the bottom nav is the frame — `AppShell phoneHeader={false}` when the bar would only repeat the nav, `phoneProfile` for the profile page.
+- **Tap opens**: a card or row tap opens the thing; moving/marking happens inside — `Kanban phoneTap="open"`.
+- **Grids and lists** use `grid-cols-[minmax(0,1fr)]` / `min-w-0`: a long line truncates, a row never gets wider than the screen.
+- **Before "done"**: `npx vks-check <url> --login <email:pass> --open "<button>"` must pass (360×640, 390×844, 1440×900: nothing too wide, sheet buttons on screen, 44 px taps, no console errors). `vks-guard` checks the code; `vks-check` checks what a phone actually shows.
+
 ## Before you build any UI: search the catalogue
 1. Open `llms.txt` (repo root). It lists every part by group with a one-line "what it is" and its exports.
 2. Open the matching `docs/ai/<slug>.md`: import line, "when to use" (from the source doc comment), code, examples, props, notes.

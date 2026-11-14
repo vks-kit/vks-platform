@@ -32,6 +32,7 @@ import { PullToRefresh, SwipeRow } from "@vks-kit/ui"
 | Prop | Type | Default | Notes |
 | --- | --- | --- | --- |
 | onRefresh | () => Promise<unknown> |  | PullToRefresh: spinner until it resolves. |
+| SwipeRow width | — |  | Always the width of its list (min-w-0, max-w-full): a long second line truncates instead of pushing the row and its action past the screen. |
 | onAction | () => void |  | SwipeRow. |
 | actionLabel | string | "ລຶບ" |  |
 | icon | ReactNode | <Trash2 /> |  |

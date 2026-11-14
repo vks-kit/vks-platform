@@ -2,6 +2,10 @@ import * as React from "react"
 import { cn } from "../lib/cn"
 import { DialogContent, DialogDescription, DialogHeader, DialogTitle } from "./overlay"
 import { Label } from "./input"
+import { ChevronDown, MoreHorizontal } from "lucide-react"
+import { Button } from "./button"
+import { ActionSheet, type SheetAction } from "./ios"
+import { useIsMobile } from "../lib/use-media"
 
 /* Width AND left are overridden together at md+: the kit DialogContent is a 28rem card that is
    positioned by left, so a wider form must move its left edge too (never centre .vks-modal with translate). */
@@ -52,6 +56,64 @@ export function Field({ label, htmlFor, error, hint, className, children }: {
       {children}
       {error ? <p className="text-sm leading-normal text-destructive">{error}</p> : hint ? <p className="text-xs leading-normal text-muted-foreground">{hint}</p> : null}
     </div>
+  )
+}
+
+/**
+ * Use for the buttons of a FormDialogContent footer: one main action, up to two secondary ones, and any rarer ones
+ * (edit, delete, block). Desktop: everything in one row. Phone: the main action full width + a "⋯" button that opens
+ * an ActionSheet with the rest, so a footer never wraps into two rows of five buttons. For a yes/no use ConfirmDialog.
+ */
+export function FormActions({ primary, secondary = [], more = [], info, moreLabel = "ເພີ່ມເຕີມ" }: {
+  /** The one thing this popup is for (Save, Call, Came). */
+  primary: React.ReactNode
+  /** Shown beside the primary on desktop (Cancel, No-show); on a phone they also move into the ⋯ sheet when there are more than one. */
+  secondary?: React.ReactNode[]
+  /** Rare actions: desktop shows them as ghost buttons on the left, a phone lists them in the ⋯ sheet. */
+  more?: (SheetAction & { button?: React.ReactNode })[]
+  /** One muted line at the left on desktop ("Added by … · date"); the ⋯ sheet shows it on a phone. */
+  info?: React.ReactNode; moreLabel?: string
+}) {
+  const mobile = useIsMobile(), [open, setOpen] = React.useState(false)
+  if (!mobile) return (
+    <div className="flex w-full flex-wrap items-center justify-end gap-2 md:flex-nowrap [&>button]:shrink-0">
+      {info && <span className="mr-auto min-w-0 truncate text-xs leading-normal text-muted-foreground">{info}</span>}
+      {more.map((a, i) => a.button ?? <Button key={i} variant="ghost" disabled={a.disabled} onClick={a.onPress} className={a.destructive ? "text-destructive" : undefined}>{a.icon}{a.label}</Button>)}
+      {secondary}{primary}
+    </div>
+  )
+  const sheetOnly = more.length > 0
+  return (
+    <div className="flex w-full gap-2 [&>*]:h-12">
+      {sheetOnly && <Button variant="outline" size="icon" className="size-12 shrink-0" aria-label={moreLabel} onClick={() => setOpen(true)}><MoreHorizontal /></Button>}
+      {secondary.length === 1 && <div className="flex-1 [&>button]:h-12 [&>button]:w-full">{secondary[0]}</div>}
+      <div className="flex-[2] [&>button]:h-12 [&>button]:w-full [&>button]:text-base">{primary}</div>
+      {sheetOnly && <ActionSheet open={open} onOpenChange={setOpen} message={typeof info === "string" ? info : undefined} actions={more} />}
+    </div>
+  )
+}
+
+/**
+ * Use for a part of a long form that can fold on a phone (details that are not needed every time). The header shows
+ * what is still missing, so nobody has to open it to know; desktop shows the section open with a plain title.
+ * For a fixed section title use FormSection instead.
+ */
+export function FoldSection({ title, hint, done, open, onOpenChange, children, className }: {
+  title: React.ReactNode; /** e.g. "ຍັງຂາດ ເພດ, ວັນເກີດ" */ hint?: React.ReactNode; /** hint turns green when everything is filled */ done?: boolean
+  open?: boolean; onOpenChange?: (o: boolean) => void; children: React.ReactNode; className?: string
+}) {
+  const mobile = useIsMobile(), [own, setOwn] = React.useState(false), isOpen = open ?? own
+  const set = (o: boolean) => { if (open === undefined) setOwn(o); onOpenChange?.(o) }
+  if (!mobile) return <><FormSection className={cn("col-span-full", className)}>{title}</FormSection>{children}</>
+  return (
+    <>
+      <button type="button" aria-expanded={isOpen} onClick={() => set(!isOpen)}
+        className={cn("vks-press col-span-full flex min-h-12 items-center gap-2 rounded-xl border bg-muted/40 px-3 text-left leading-normal", className)}>
+        <span className="min-w-0 flex-1"><span className="block text-sm font-semibold">{title}</span>{hint && <span className={cn("block truncate text-xs", done ? "text-success" : "text-muted-foreground")}>{hint}</span>}</span>
+        <ChevronDown aria-hidden className={cn("size-4 shrink-0 transition-transform", isOpen && "rotate-180")} />
+      </button>
+      {isOpen && children}
+    </>
   )
 }
 

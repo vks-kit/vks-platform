@@ -78,7 +78,8 @@ export function ProfileView({ name, role, code, src, status, stats, sections, on
   const qa = variant === "actions"
   flush = flush || qa
   return (
-    <div className={cn("mx-auto grid w-full max-w-5xl gap-4 md:grid-cols-[19rem_minmax(0,1fr)] md:gap-6", className)}>
+    // one minmax(0,1fr) column on a phone: a wide row (a segmented control, a long value) never pushes it past the screen
+    <div className={cn("mx-auto grid w-full max-w-5xl grid-cols-[minmax(0,1fr)] gap-4 md:grid-cols-[19rem_minmax(0,1fr)] md:gap-6 [&>*]:min-w-0", className)}>
       <section className={cn("h-fit overflow-hidden bg-card md:sticky md:top-4 md:rounded-3xl md:border md:shadow-sm", qa ? "max-md:bg-gradient-to-b max-md:from-primary/10 max-md:to-transparent max-md:!bg-card/0" : flush ? "max-md:border-b" : "rounded-3xl border shadow-sm")}>
         <div className={cn("relative bg-bar md:h-28", qa ? "max-md:hidden" : flush ? "h-28" : "h-24")} style={{ backgroundImage: "radial-gradient(70% 60% at 85% 0%, color-mix(in oklab, var(--gold) 30%, transparent), transparent 65%), radial-gradient(60% 50% at 0% 100%, color-mix(in oklab, var(--gold) 12%, transparent), transparent 70%)" }}><div className="vks-hairline absolute inset-x-0 bottom-0" /></div>
         <div className={cn("-mt-12 space-y-3 pb-5 text-center", qa && "max-md:mt-0 max-md:pt-5", flush ? "px-4 md:px-5" : "px-5")}>

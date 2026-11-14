@@ -20,6 +20,16 @@ Full guide: `node_modules/@vks-kit/ui/docs/ai/design-thinking.md` (docs site: #/
 - **Help is one muted line**, not a card. **Counts on the controls** (Backend 19), not in a summary block.
 - Check at 360 px and 1440×900 before calling a screen done.
 
+## Phone rules (every screen)
+Full text: `node_modules/@vks-kit/ui/docs/ai/design-thinking.md` (rules "Phone lists" … "Check it like a phone").
+- **Lists**: 2 lines per row, ~8 rows per 360×780 screen: `DataTable mode="rows"` (columns with `row: "title" | "sub" | "action"`). Second action: `SwipeRow`.
+- **Popups**: one big main action, the rest behind ⋯: `FormActions`. The ✕ closes; no extra Close button.
+- **Long forms**: fold what is not needed every time and say what is missing: `FoldSection`. A save that cannot run yet says why: `Button disabledReason`.
+- **Sheets**: never a sheet on a sheet; buttons never scroll away: `SheetContent footer={…}`.
+- **Frame**: `AppShell phoneHeader={false}` when the bar only repeats the nav; `phoneProfile` puts the profile page in the bottom nav.
+- **Tap opens** the card or row; moving/marking is inside it (`Kanban phoneTap="open"`).
+- Lists and grids: `grid-cols-[minmax(0,1fr)]` / `min-w-0`, so a row is never wider than the screen.
+
 ## Find a part before building one
 1. Read `node_modules/@vks-kit/ui/docs/llms.txt` (every part, one line each).
 2. Open `node_modules/@vks-kit/ui/docs/ai/<slug>.md` (import line, when to use, code, props).
@@ -27,6 +37,7 @@ Full guide: `node_modules/@vks-kit/ui/docs/ai/design-thinking.md` (docs site: #/
 
 ## Checks
 - `npm run guard` (runs `vks-guard src`) must pass before every commit.
+- `npx vks-check <dev url> --login <email:pass> --open "<filter button>"` must pass before a screen is called done: it opens the app at 360×640, 390×844 and 1440×900 and fails on anything wider than the screen, sheet buttons below the screen, phone taps under 44 px and console errors (needs `npm i -D playwright`).
 - `npm run build` and `npm run typecheck` must pass.
 
 ## tsconfig

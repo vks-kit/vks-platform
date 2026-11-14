@@ -13,7 +13,7 @@ import {
   CommandPalette, useCommandK, Breadcrumb, HoverCard, ContextMenu, TreeView, StatCard, ButtonGroup, Dropzone, fmtBytes, FileIcon, TagInput, SplitPane, NotificationList, ScrollArea, type Notice,
   HoverFx, Parallax, ParallaxLayer, SlideHighlight, CursorRing, Logo, Roadmap, DependencyMap,
   ApprovalCard, SyncStatus, diffFields, type ApprovalStatus, TextInput, PhoneInput, MoneyInput, TimeInput, NumberInput, isPhoneLa, phoneLaE164,
-  FormDialogContent, Field, FormSection, SelectHeader, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Facts, FactGrid, WeekdayPicker, workDaysText,
+  FormDialogContent, Field, FormSection, FormActions, FoldSection, SheetContent, Sheet, SheetTitle, SelectHeader, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Facts, FactGrid, WeekdayPicker, workDaysText,
   SettingsPage, defineSettings,
 } from "@vks-kit/ui"
 import { Share2, Pencil, Phone, Trash2, Heart, Shield, AlertTriangle, CheckCircle2, Clock, Folder, User, Copy as CopyIcon, Search as SearchIcon, ArrowRight } from "@vks-kit/ui/icons"
@@ -300,6 +300,7 @@ export function More() {
         <Sec id="instant-data" title="Instant data · cached page data, prefetch, sticky filters"><DataDemo /></Sec>
         <MotionKit />
         <MobileKit />
+      <PhoneRulesKit />
         <DesktopKit />
       </div>
       <Toaster />
@@ -433,6 +434,40 @@ function MobileKit() {
     <SnapSheet open={snap} onOpenChange={setSnap} title="ລາຍລະອຽດຈຸດ">
       <div className="space-y-3 p-4"><p className="leading-normal text-muted-foreground">ລາກຂຶ້ນເພື່ອຂະຫຍາຍ, ລາກລົງເພື່ອປິດ.</p>{rows.map((r) => <div key={r.id} className="flex items-center gap-3 rounded-xl bg-muted/50 p-3"><Avatar name={r.guard} size={36} /><div className="flex-1"><b>{r.site}</b><div className="text-sm text-muted-foreground">{r.guard} · {r.time}</div></div></div>)}</div>
     </SnapSheet>
+  </Sec>
+}
+/** Phone rules kit (0.5.8): compact rows, popup actions with ⋯, folding sections, pinned sheet footer, save that says why. */
+const phoneRows = [{ id: "1", tel: "020 5938 8274", st: "ໃໝ່", src: "Facebook" }, { id: "2", tel: "020 9944 5662", st: "ໂທຄືນ", src: "WhatsApp · ໂທ 12/11" }, { id: "3", tel: "020 9155 0224", st: "ບໍ່ຮັບສາຍ", src: "TikTok · ສາຍເຂົ້າ" }]
+function PhoneRulesKit() {
+  const [form, setForm] = React.useState(false), [filter, setFilter] = React.useState(false), [res, setRes] = React.useState<string | null>(null), [fold, setFold] = React.useState(false)
+  const cols: Column<(typeof phoneRows)[number]>[] = [
+    { key: "tel", header: "ເບີໂທ", row: "title", cell: (r) => <span className="font-mono">{r.tel}</span> },
+    { key: "st", header: "ສະຖານະ", row: "title", cell: (r) => <Badge>{r.st}</Badge> },
+    { key: "src", header: "ແຫຼ່ງທີ່ມາ", row: "sub", cell: (r) => r.src },
+    { key: "call", header: "", row: "action", cell: () => <Button size="icon" className="rounded-full" aria-label="ໂທ" onClick={() => setForm(true)}><Phone /></Button> },
+  ]
+  return <Sec id="phone-rules" title="Phone rules · compact rows, ⋯ actions, folding sections, pinned sheet footer, save that says why">
+    <div className="grid gap-4 md:grid-cols-2 [&>*]:min-w-0">
+      <div className="space-y-2"><DataTable mode="rows" columns={cols} rows={phoneRows} rowKey={(r) => r.id} onRowClick={() => setForm(true)} /><p className="text-xs leading-normal text-muted-foreground">mode="rows" is a phone layout: open this page at 360 px. Desktop shows the table.</p></div>
+      <div className="flex flex-wrap content-start gap-2"><Button variant="outline" onClick={() => setForm(true)}>Form with FormActions</Button><Button variant="outline" onClick={() => setFilter(true)}>Sheet with footer</Button></div>
+    </div>
+    <Dialog open={form} onOpenChange={setForm}>
+      <FormDialogContent title="ໂທຫາ 020 5938 8274" footer={<FormActions info="ເພີ່ມໂດຍ ໂສດາ · 02/11"
+        primary={<Button variant="action" disabledReason={res ? null : "ເລືອກ ຮັບສາຍ ຫຼື ບໍ່ຮັບສາຍ"} onBlockedPress={(w) => toast.warning(w)} onClick={() => { toast.success("ບັນທຶກແລ້ວ"); setForm(false) }}>ບັນທຶກການໂທ</Button>}
+        secondary={[<Button key="c" variant="outline" onClick={() => setForm(false)}>ຍົກເລີກ</Button>]}
+        more={[{ label: "ແກ້ໄຂ", icon: <Pencil />, onPress: () => toast("ແກ້ໄຂ") }, { label: "ລຶບ", icon: <Trash2 />, destructive: true, onPress: () => toast("ລຶບ") }]} />}>
+        <div className="grid gap-3">
+          <Field label="ການຕອບຮັບ"><div className="flex gap-2">{["ຮັບສາຍ", "ບໍ່ຮັບສາຍ"].map((o) => <Button key={o} variant={res === o ? "default" : "outline"} className="flex-1" onClick={() => setRes(o)}>{o}</Button>)}</div></Field>
+          <FoldSection title="ຂໍ້ມູນສ່ວນຕົວ" hint="ຍັງຂາດ ເພດ, ວັນເກີດ" open={fold} onOpenChange={setFold}><Field label="ຊື່"><Input /></Field><Field label="ນາມສະກຸນ"><Input /></Field></FoldSection>
+        </div>
+      </FormDialogContent>
+    </Dialog>
+    <Sheet open={filter} onOpenChange={setFilter}>
+      <SheetContent side="bottom" footer={<Button className="w-full" onClick={() => setFilter(false)}>ສະແດງ 12 ຄົນ</Button>}>
+        <SheetTitle>ກັ່ນຕອງ</SheetTitle>
+        <div className="mt-3 grid gap-2">{Array.from({ length: 14 }, (_, i) => <div key={i} className="rounded-xl border p-3 text-sm">ຕົວເລືອກ {i + 1}</div>)}</div>
+      </SheetContent>
+    </Sheet>
   </Sec>
 }
 const notices0: Notice[] = [

@@ -92,9 +92,9 @@ export function Chip({ children, selected, onClick, onRemove, icon, className }:
   }
   return (
     <span ref={el} data-leaving={leaving || undefined} onAnimationEnd={(e) => { if (leaving && e.animationName === "vks-chip-out") finish() }}
-      className={cn("vks-chip vks-pop inline-flex h-9 items-center gap-1.5 rounded-full border text-sm font-semibold transition-colors duration-[400ms] ease-in-out [&_svg]:size-4", selected ? "border-primary bg-primary text-primary-foreground" : "bg-card text-foreground", onRemove ? "pl-3 pr-1" : "px-3", className)}>
+      className={cn("vks-chip vks-pop inline-flex h-11 items-center md:h-9 gap-1.5 rounded-full border text-sm font-semibold transition-colors duration-[400ms] ease-in-out [&_svg]:size-4", selected ? "border-primary bg-primary text-primary-foreground" : "bg-card text-foreground", onRemove ? "pl-3 pr-1" : "px-3", className)}>
       {onClick ? <button type="button" onClick={onClick} className="vks-press -my-2 inline-flex items-center gap-1.5 py-2"><span aria-hidden data-on={selected || undefined} className="vks-chip-check"><span><Check /></span></span>{icon}{children}</button> : <>{icon}{children}</>}
-      {onRemove && <button type="button" aria-label="remove" disabled={leaving} onClick={() => { haptics.tap(); remove() }} className="vks-chip-x flex size-7 items-center justify-center rounded-full hover:bg-foreground/10"><X /></button>}
+      {onRemove && <button type="button" aria-label="remove" disabled={leaving} onClick={() => { haptics.tap(); remove() }} className="vks-chip-x relative flex size-7 items-center justify-center rounded-full after:absolute after:-inset-2 after:content-[''] hover:bg-foreground/10"><X /></button>}
     </span>
   )
 }

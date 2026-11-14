@@ -240,7 +240,8 @@ const retry = async () => {
     <SheetDescription>ຈຸດ 12 / 20</SheetDescription>
   </SheetContent>
 </Sheet>`,
-    props: [{ name: "side", type: '"bottom" | "right" | "fullscreen"', def: '"bottom"', desc: "Bottom respects the phone's home-bar safe area." }],
+    props: [{ name: "side", type: '"bottom" | "right" | "fullscreen"', def: '"bottom"', desc: "Bottom respects the phone's home-bar safe area." },
+      { name: "footer (SheetContent)", type: "ReactNode", desc: "Buttons pinned to the bottom: only the body above scrolls, so Apply / Show 12 never leave the screen on a short phone." }],
   },
   {
     slug: "drawer", name: "Drawer", group: "Overlays", badge: "Mobile",

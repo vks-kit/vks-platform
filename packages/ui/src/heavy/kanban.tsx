@@ -108,6 +108,12 @@ type KanbanProps = {
   onAdd?: (column: string) => void; onOpen?: (card: KanbanCard) => void; emptyLabel?: string; addLabel?: string; className?: string
   /** Phone only: heading of the move list in the card sheet. */
   moveLabel?: string; /** Phone only: text of the button that calls onOpen from the card sheet. */ openLabel?: string
+  /**
+   * Phone only. "move" (default, 0.5.x behaviour): a tap shows the "move to" sheet, with onOpen as its last button.
+   * "open" (recommended when the card has its own actions): a tap opens the card (onOpen), the way every other list
+   * works, and moving is done inside the record.
+   */
+  phoneTap?: "open" | "move"
 }
 function KanbanDesktop({ columns, cards, onChange, onAdd, onOpen, emptyLabel = "ລາກບັດມາວາງບ່ອນນີ້", addLabel = "ເພີ່ມບັດ", className }: KanbanProps) {
   const sensors = useSensors(
@@ -155,7 +161,7 @@ function KanbanDesktop({ columns, cards, onChange, onAdd, onOpen, emptyLabel = "
 
   return (
     <DndContext sensors={sensors} collisionDetection={collide} onDragStart={start} onDragOver={over} onDragEnd={end} onDragCancel={() => setActive(null)}>
-      <div className={cn("-mx-1 flex snap-x snap-mandatory items-start gap-3 overflow-x-auto scroll-px-1 px-1 pb-3 md:mx-0 md:grid md:snap-none md:overflow-visible md:px-0 md:grid-cols-[repeat(auto-fit,minmax(14rem,1fr))]", className)}>
+      <div className={cn("-mx-1 flex snap-x snap-mandatory items-start gap-3 overflow-x-auto scroll-px-1 px-1 pb-3 md:mx-0 md:grid md:snap-none md:px-0 md:grid-flow-col md:auto-cols-[minmax(8.5rem,1fr)] md:gap-2 md:overflow-x-auto", className)}>
         {columns.map((c) => <Column key={c.id} col={c} cards={view.filter((k) => k.column === c.id)} onAdd={onAdd} onOpen={onOpen} emptyLabel={emptyLabel} addLabel={addLabel} />)}
       </div>
       {/* Portal: a transformed ancestor (page enter animation) would otherwise offset the fixed overlay. */}
@@ -165,8 +171,9 @@ function KanbanDesktop({ columns, cards, onChange, onAdd, onOpen, emptyLabel = "
   )
 }
 
-/* Phone board: one column per screen (tabs + swipe), tap a card to move it from a sheet. No drag, so it never fights page scrolling. */
-function KanbanPhone({ columns, cards, onChange, onAdd, onOpen, addLabel = "ເພີ່ມບັດ", moveLabel = "ຍ້າຍໄປ", openLabel = "ເບິ່ງລາຍລະອຽດ", className }: KanbanProps) {
+/* Phone board: one column per screen (tabs + swipe). A tap opens the "move to" sheet, or the card (phoneTap="open"). No drag, so it never fights page scrolling. */
+function KanbanPhone({ columns, cards, onChange, onAdd, onOpen, addLabel = "ເພີ່ມບັດ", moveLabel = "ຍ້າຍໄປ", openLabel = "ເບິ່ງລາຍລະອຽດ", className, phoneTap }: KanbanProps) {
+  const tapOpens = phoneTap === "open" && !!onOpen
   const [idx, setIdx] = React.useState(0), [picked, setPicked] = React.useState<string | null>(null)
   const track = React.useRef<HTMLDivElement>(null), tabs = React.useRef<(HTMLButtonElement | null)[]>([])
   const card = cards.find((c) => c.id === picked)
@@ -193,7 +200,7 @@ function KanbanPhone({ columns, cards, onChange, onAdd, onOpen, addLabel = "ເ�
       <div ref={track} onScroll={onScroll} className="-mx-1 flex snap-x snap-mandatory items-start overflow-x-auto px-1 [scrollbar-width:none]">
         {columns.map((c) => { const list = cards.filter((k) => k.column === c.id)
           return <section key={c.id} aria-label={c.title} className="w-full shrink-0 snap-center space-y-2 px-0.5 pb-2">
-            {list.map((k) => <button key={k.id} type="button" onClick={() => setPicked(k.id)} aria-haspopup="dialog"
+            {list.map((k) => <button key={k.id} type="button" onClick={() => (tapOpens ? onOpen!(k) : setPicked(k.id))} aria-haspopup="dialog"
               className="vks-press block w-full rounded-xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><CardBody card={k} phone /></button>)}
             {list.length === 0 && <div className="grid min-h-32 place-items-center rounded-xl border-2 border-dashed px-3 text-center text-sm leading-normal text-muted-foreground">ບໍ່ມີບັດໃນຄໍລຳນີ້</div>}
             {onAdd && <button type="button" onClick={() => onAdd(c.id)} className="vks-press flex min-h-12 w-full items-center justify-center gap-1.5 rounded-xl border border-dashed text-sm font-medium text-muted-foreground"><Plus className="size-4" />{addLabel}</button>}
@@ -222,7 +229,8 @@ function KanbanPhone({ columns, cards, onChange, onAdd, onOpen, addLabel = "ເ�
 
 /**
  * Task board. Desktop: drag cards between columns (mouse drags after 4 px; keyboard: Space + arrows; cards move live while dragging).
- * Phone: no dragging — one column per screen with a tab strip (name + count) and swipe between columns; tap a card to open a bottom sheet with a "move to" list.
+ * Desktop columns stay on one row and share the width (min 8.5rem); more than fit scroll sideways, never wrap to a second row.
+ * Phone: no dragging — one column per screen with a tab strip (name + count) and swipe between columns; a tap opens the "move to" sheet, or with phoneTap="open" the card itself (onOpen).
  * Use for status boards (todo / doing / done); for a plain list use ListGroup instead. Import from "@vks-kit/ui/kanban".
  */
 export function Kanban(props: KanbanProps) {

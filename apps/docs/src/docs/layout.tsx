@@ -169,6 +169,8 @@ export const layoutDocs: Doc[] = [
       { name: "header", type: "ReactNode", desc: "Sticky top bar, respects the notch." }, { name: "fab", type: "ReactNode", desc: "Phone only." },
       { name: "user", type: "ReactNode", desc: "Bottom of the sidebar." },
       { name: "collapsible", type: "boolean", def: "true", desc: "Desktop rail can shrink to 72 px icons. State is remembered." },
+      { name: "phoneHeader", type: "boolean", def: "true", desc: "false = no top bar on a phone (the bottom nav is the frame). Use it when the bar would only repeat the app name, the date or the nav." },
+      { name: "phoneProfile", type: "NavItem", desc: "Phone only: adds the profile page as the last bottom-nav tab (desktop opens it from the user chip). e.g. { id: \"profile\", label: \"ຂ້ອຍ\", icon: <UserRound /> }." },
     ],
     notes: ["Motion: page = 320 ms slide + fade (transform/opacity only), header bar = 400 ms, bottom nav rises once on load. Lite mode shortens the page swap to 150 ms and snaps the rail.",
       "Page gutter: main pads every page 16 px on a phone and 24 px from 768 px, plus room for the bottom nav. Pages must NOT add their own outer p-4 - that doubles the margin and makes tabs look misaligned. Root a phone page with mx-auto flex w-full max-w-md flex-col gap-4. See Design thinking → One page gutter."],
@@ -298,6 +300,7 @@ export const layoutDocs: Doc[] = [
 </PullToRefresh>`,
     props: [
       { name: "onRefresh", type: "() => Promise<unknown>", desc: "PullToRefresh: spinner until it resolves." },
+      { name: "SwipeRow width", type: "—", desc: "Always the width of its list (min-w-0, max-w-full): a long second line truncates instead of pushing the row and its action past the screen." },
       { name: "onAction", type: "() => void", desc: "SwipeRow." }, { name: "actionLabel", type: "string", def: '"ລຶບ"', desc: "" }, { name: "icon", type: "ReactNode", def: "<Trash2 />", desc: "" },
     ],
   },

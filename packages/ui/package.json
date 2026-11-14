@@ -47,7 +47,8 @@
     "templates"
   ],
   "bin": {
-    "vks-guard": "bin/vks-guard.mjs"
+    "vks-guard": "bin/vks-guard.mjs",
+    "vks-check": "bin/vks-check.mjs"
   },
   "scripts": {
     "prepack": "node ../../scripts/copy-kit-docs.mjs"

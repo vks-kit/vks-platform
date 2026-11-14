@@ -36,6 +36,7 @@ export function Save() {
       { id: "disabled", title: "Disabled", demo: () => <><Button disabled>ບັນທຶກ</Button><Button variant="action" disabled>ສະແກນ</Button></>, code: `<Button disabled>ບັນທຶກ</Button>` },
     ],
     props: [
+      { name: "disabledReason / onBlockedPress", type: "string | null / (reason) => void", desc: "Looks disabled but stays tappable: a tap calls onBlockedPress (show why, scroll to the missing field) instead of onClick. Use it for a Save that is not ready yet, so it never does nothing." },
       { name: "variant", type: '"default" | "action" | "gold" | "outline" | "ghost" | "destructive"', def: '"default"', desc: "action = emerald, the main thing a guard does on the screen. Only one per screen." },
       { name: "size", type: '"default" | "sm" | "lg" | "icon"', def: '"default"', desc: "Every size is at least 44 px on a phone." },
       { name: "asChild", type: "boolean", def: "false", desc: "Render your own child element with the button styles." },

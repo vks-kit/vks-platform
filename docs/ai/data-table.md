@@ -12,7 +12,7 @@ import { DataTable, type Column } from "@vks-kit/ui"
 
 ## When to use
 
-- **DataTable**: Rule from the old kit: a table with more than 4 columns becomes a card list on phones. Primary columns show at the top of the card, the rest as label / value rows. States: loading = skeleton rows, empty = Empty, error = inline retry. Always ship all three.
+- **DataTable**: Rule from the old kit: a table with more than 4 columns becomes a card list on phones. Primary columns show at the top of the card, the rest as label / value rows. For a long list a person works through on a phone (calls, tasks), prefer mode="rows": 2-line rows, ~8 per screen, instead of ~2 tall cards. States: loading = skeleton rows, empty = Empty, error = inline retry. Always ship all three.
 
 ## Example
 
@@ -70,6 +70,12 @@ mode="table" keeps the table on a phone. Only for ≤ 4 short columns; wide tabl
 | loading | boolean |  | Shimmer rows. |
 | error / onRetry | string / () => void |  |  |
 | emptyTitle | string | "ຍັງບໍ່ມີຂໍ້ມູນ" |  |
-| mode | "auto" \| "table" \| "cards" | "auto" | auto = table on desktop, cards on a phone when there are more than 4 columns. table / cards force one layout. |
+| mode | "auto" \| "table" \| "cards" \| "rows" | "auto" | auto = table on desktop, cards on a phone when there are more than 4 columns. table / cards force one layout. |
 | sortValue (column) | (row: T) => string \| number \| Date |  | Give it to a column to make its header sortable. |
 | forceCards | boolean |  | Deprecated: use mode="cards". Still works. |
+| row (column) | "title" \| "sub" \| "action" |  | With mode="rows": title = line 1, sub = line 2 (joined with ·), action = the button on the right. Other columns are not shown on a phone. |
+
+## Notes
+
+- A long list a person works through on a phone (calls, tasks): mode="rows". Two lines per row, ~8 rows per 360×780 screen, instead of ~2 label/value cards. Desktop still shows the table.
+- Rows sit in a minmax(0,1fr) grid: a long line truncates, a row never gets wider than the screen (also inside SwipeRow).

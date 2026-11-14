@@ -382,7 +382,8 @@ label:has(> .vks-cb:not(:disabled)):active, label:has(> .vks-switch:not(:disable
 @keyframes vks-month-prev { from { opacity: 0; transform: translate3d(-24px,0,0) } }
 .vks-month-next { animation: vks-month-next .32s var(--ease-out-quint) both; }
 .vks-month-prev { animation: vks-month-prev .32s var(--ease-out-quint) both; }
-@keyframes vks-day-pick { 0% { transform: scale(.6) } 60% { transform: scale(1.12) } 100% { transform: scale(1) } }
+/* grow-only: a pop that started small shrank the day away from the pointer, the preview lost its hover and flickered */
+@keyframes vks-day-pick { 0% { transform: scale(1) } 55% { transform: scale(1.1) } 100% { transform: scale(1) } }
 .vks-day-pick { animation: vks-day-pick .36s var(--ease-spring); }
 
 /* ---- stars ---- */

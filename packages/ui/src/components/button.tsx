@@ -32,13 +32,22 @@ export interface ButtonProps extends React.ComponentProps<"button">, VariantProp
   asChild?: boolean
   /** Shows a spinner, keeps the width, blocks clicks. */
   loading?: boolean
+  /**
+   * Why the button cannot be used yet ("ເລືອກ ຮັບສາຍ ຫຼື ບໍ່ຮັບສາຍ"). The button then looks disabled but stays tappable:
+   * a tap calls onBlockedPress (scroll to / open the missing part) instead of onClick, so it never "does nothing".
+   */
+  disabledReason?: string | null
+  onBlockedPress?: (reason: string) => void
 }
 /** Use for any clickable action (44 px tall, loading spinner built in). variant="action" for scan/save/done, "destructive" for delete. For a button that stays pressed use Toggle instead; for an icon-only row action use size="icon"; for a floating main action on phones use Fab instead. */
-export function Button({ className, variant, size, asChild, loading, disabled, children, ...props }: ButtonProps) {
+export function Button({ className, variant, size, asChild, loading, disabled, disabledReason, onBlockedPress, children, onClick, ...props }: ButtonProps) {
   const Comp = asChild ? Slot.Root : "button"
-  if (asChild) return <Comp className={cn(buttonVariants({ variant, size }), className)} {...props}>{children}</Comp>
+  if (asChild) return <Comp className={cn(buttonVariants({ variant, size }), className)} onClick={onClick} {...props}>{children}</Comp>
+  const blocked = !!disabledReason && !disabled && !loading
   return (
-    <Comp className={cn(buttonVariants({ variant, size }), className)} disabled={disabled || loading} aria-busy={loading || undefined} {...props}>
+    <Comp className={cn(buttonVariants({ variant, size }), blocked && "opacity-55", className)} disabled={disabled || loading} aria-busy={loading || undefined}
+      aria-disabled={blocked || undefined} title={blocked ? disabledReason! : props.title}
+      onClick={(e: React.MouseEvent<HTMLButtonElement>) => { if (blocked) { e.preventDefault(); onBlockedPress?.(disabledReason!); return } onClick?.(e) }} {...props}>
       {loading && <Loader2 className="vks-spin" aria-hidden />}
       {children}
     </Comp>

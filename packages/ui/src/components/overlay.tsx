@@ -80,16 +80,25 @@ export const SheetTrigger = D.Trigger
 export const SheetTitle = DialogTitle
 /** Use for one muted line under SheetTitle (same as DialogDescription). */
 export const SheetDescription = DialogDescription
-/** Use for the sliding panel of a Sheet; side = bottom / right / left / fullscreen. For a centred modal panel use DialogContent instead. */
-export function SheetContent({ className, side, children, onEscapeKeyDown, onInteractOutside, ...p }: React.ComponentProps<typeof D.Content> & VariantProps<typeof sheetVariants>) {
+/**
+ * Use for the sliding panel of a Sheet; side = bottom / right / left / fullscreen. Pass footer for the sheet's buttons:
+ * the body then scrolls on its own and the footer never leaves the screen. For a centred modal panel use DialogContent instead.
+ */
+export function SheetContent({ className, side, children, footer, onEscapeKeyDown, onInteractOutside, ...p }: React.ComponentProps<typeof D.Content> & VariantProps<typeof sheetVariants> & {
+  /** Buttons pinned to the bottom of the sheet (Apply / Cancel, "Show 12"). Only the body above them scrolls. */
+  footer?: React.ReactNode
+}) {
   const { nest, onEsc, pushed, hostEl } = useNest(onEscapeKeyDown)
   return (
     <D.Portal>
       <Overlay />
-      <D.Content data-pushed={pushed || undefined} onEscapeKeyDown={onEsc} onInteractOutside={keepOpenForToast(onInteractOutside as (e: Event) => void)} className={cn(sheetVariants({ side }), "data-[pushed]:overflow-hidden", side !== "fullscreen" && side !== "right" && side !== "left" && "data-[pushed]:min-h-[min(34rem,85dvh)]", className)} {...p}>
+      <D.Content data-pushed={pushed || undefined} onEscapeKeyDown={onEsc} onInteractOutside={keepOpenForToast(onInteractOutside as (e: Event) => void)} className={cn(sheetVariants({ side }), "data-[pushed]:overflow-hidden", side !== "fullscreen" && side !== "right" && side !== "left" && "data-[pushed]:min-h-[min(34rem,85dvh)]", footer && "flex flex-col gap-0 overflow-hidden pb-0", className)} {...p}>
         <NestCtx.Provider value={nest}>
           {side === "bottom" && <div aria-hidden className="vks-grabber" />}
-          {children}
+          {footer ? <>
+            <div className="-mx-5 min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pb-3">{children}</div>
+            <div className="-mx-5 shrink-0 border-t bg-popover px-5 pt-3 pb-[max(0.25rem,env(safe-area-inset-bottom))]">{footer}</div>
+          </> : children}
           <D.Close aria-label="ປິດ" className={cn(PANEL_CLOSE, "vks-close hover:text-foreground")}><X className="size-4" /></D.Close>
           {hostEl}
         </NestCtx.Provider>

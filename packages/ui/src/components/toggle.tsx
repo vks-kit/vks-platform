@@ -63,6 +63,7 @@ export function ToggleGroup({ className, variant = "default", size = "default", 
 export function ToggleGroupItem({ className, ...p }: React.ComponentProps<typeof TGG.Item>) {
   const { variant, size } = React.useContext(Ctx)
   if (variant === "segmented")
-    return <TGG.Item className={cn("vks-press relative z-10 inline-flex h-10 min-w-11 flex-1 items-center justify-center gap-1.5 rounded-[0.7rem] px-3 text-sm font-semibold text-muted-foreground transition-colors duration-200 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 data-[state=on]:text-foreground [&_svg]:size-4", className)} {...p} />
+    // 44 px on a phone (touch rule); 40 px from md
+    return <TGG.Item className={cn("vks-press relative z-10 inline-flex h-11 min-w-11 flex-1 md:h-10 items-center justify-center gap-1.5 rounded-[0.7rem] px-3 text-sm font-semibold text-muted-foreground transition-colors duration-200 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 data-[state=on]:text-foreground [&_svg]:size-4", className)} {...p} />
   return <TGG.Item className={cn(toggleVariants({ variant, size }), className)} {...p} />
 }

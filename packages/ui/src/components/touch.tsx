@@ -23,9 +23,10 @@ export function PullToRefresh({ onRefresh, children, className }: { onRefresh: (
 export function SwipeRow({ children, actionLabel = "ລຶບ", onAction, icon = <Trash2 className="size-5" />, className }: { children: React.ReactNode; actionLabel?: string; onAction: () => void; icon?: React.ReactNode; className?: string }) {
   const W = 88, [x, setX] = React.useState(0), [drag, setDrag] = React.useState(false), s = React.useRef<{ x: number; base: number } | null>(null)
   return (
-    <div className={cn("relative overflow-hidden rounded-xl", className)}>
+    // min-w-0 + w-full: never wider than its list (in a grid or flex list it otherwise grew to its content, past the screen)
+    <div className={cn("relative w-full min-w-0 max-w-full overflow-hidden rounded-xl", className)}>
       <button type="button" onClick={() => { setX(0); onAction() }} tabIndex={x === 0 ? -1 : 0} aria-label={actionLabel} className="absolute inset-y-0 right-0 flex flex-col items-center justify-center gap-1 bg-destructive text-xs font-semibold text-destructive-foreground" style={{ width: W }}>{icon}{actionLabel}</button>
-      <div className="relative bg-card" style={{ transform: "translateX(" + x + "px)", transition: drag ? "none" : "transform .2s ease-out", touchAction: "pan-y" }}
+      <div className="relative min-w-0 bg-card" style={{ transform: "translateX(" + x + "px)", transition: drag ? "none" : "transform .2s ease-out", touchAction: "pan-y" }}
         onTouchStart={(e) => { s.current = { x: e.touches[0].clientX, base: x }; setDrag(true) }}
         onTouchMove={(e) => { if (!s.current) return; setX(Math.max(-W, Math.min(0, s.current.base + e.touches[0].clientX - s.current.x))) }}
         onTouchEnd={() => { setDrag(false); setX(x < -W * 0.4 ? -W : 0); s.current = null }}>{children}</div>

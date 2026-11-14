@@ -20,7 +20,8 @@ export function RangeCalendar({ value, onChange, min, max, months = 1 }: { value
     <div className={cn("w-full min-w-[17rem]", slide === "next" && "vks-month-next", slide === "prev" && "vks-month-prev")} key={v.y + "-" + v.m}>
       <div className="mb-1 text-center font-bold">{LAO_MONTHS[v.m]} {v.y}</div>
       <div className="grid grid-cols-7 text-center text-xs font-semibold text-muted-foreground">{LAO_WEEKDAYS.map((d) => <div key={d} className="py-1">{d}</div>)}</div>
-      <div className="grid grid-cols-7" role="grid">
+      {/* container: each day's hover area fills its whole cell (100cqw / 7), so the gaps between days never drop the preview */}
+      <div className="grid grid-cols-7 [container-type:inline-size]" role="grid">
         {monthCells(v.y, v.m).map((d, i) => {
           if (!d) return <div key={i} />
           const iso = toISO(v.y, v.m, d), ok = inRange(iso, min, max)
@@ -29,7 +30,7 @@ export function RangeCalendar({ value, onChange, min, max, months = 1 }: { value
           return (
             <div key={i} className={cn("relative flex justify-center", mid && "bg-accent", startCap && "rounded-l-full bg-accent", endCap && "rounded-r-full bg-accent")}>
               <button disabled={!ok} aria-label={iso} aria-pressed={edge} onClick={() => onChange(pickRange(value, iso))} onMouseEnter={() => setHover(iso)} onMouseLeave={() => setHover(null)}
-                className={cn("flex size-11 items-center justify-center rounded-full text-sm tabular-nums transition-colors disabled:opacity-30", edge ? "vks-day-pick bg-primary font-bold text-primary-foreground shadow-[0_6px_14px_-6px_rgb(20_23_61/.6)]" : "hover:bg-muted", iso === today && !edge && "ring-1 ring-gold")}>{d}</button>
+                className={cn("relative flex size-11 items-center justify-center rounded-full text-sm tabular-nums transition-colors disabled:opacity-30 after:absolute after:inset-y-0 after:content-[''] after:inset-x-[min(0px,calc((2.75rem-100cqw/7)/2))]", edge ? "vks-day-pick bg-primary font-bold text-primary-foreground shadow-[0_6px_14px_-6px_rgb(20_23_61/.6)]" : "hover:bg-muted", iso === today && !edge && "ring-1 ring-gold")}>{d}</button>
             </div>
           )
         })}
@@ -56,24 +57,28 @@ export function DateRangePicker({ value, onChange, min, max, placeholder = "ເ�
   const mobile = useIsMobile(), nested = useInSheet(), [open, setOpen] = React.useState(false), [draft, setDraft] = React.useState<Range>(value)
   React.useEffect(() => { if (open) setDraft(value) }, [open])
   const apply = () => { if (draft.from) onChange({ from: draft.from, to: draft.to ?? draft.from }); setOpen(false) }
-  const body = (
+  const picker = (
     <div className="space-y-3">
       <div className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] md:flex-wrap">
         {PRESETS.map((p) => <button key={p.id} type="button" onClick={() => setDraft(p.range(todayISO()))} className="vks-press h-11 shrink-0 rounded-full border border-input bg-card px-4 text-sm font-semibold hover:bg-muted md:h-9">{lang === "lo" ? p.lo : p.en}</button>)}
       </div>
       <RangeCalendar value={draft} onChange={setDraft} min={min} max={max} months={mobile ? 1 : 2} />
-      <div className="flex items-center justify-between gap-2 border-t pt-3">
-        <span className="text-sm font-semibold">{formatRange(draft) || "—"}</span>
-        <div className="flex gap-2"><Button variant="ghost" onClick={() => setOpen(false)}>{lang === "lo" ? "ຍົກເລີກ" : "Cancel"}</Button><Button disabled={!draft.from} onClick={apply}>{lang === "lo" ? "ຕົກລົງ" : "Apply"}</Button></div>
-      </div>
     </div>
   )
+  // the buttons are never inside the scrolling part: on a short phone they stayed below the screen
+  const actions = (
+    <div className="flex shrink-0 items-center justify-between gap-2 border-t bg-popover pt-3">
+      <span className="min-w-0 truncate text-sm font-semibold">{formatRange(draft) || "—"}</span>
+      <div className="flex shrink-0 gap-2"><Button variant="ghost" onClick={() => setOpen(false)}>{lang === "lo" ? "ຍົກເລີກ" : "Cancel"}</Button><Button disabled={!draft.from} onClick={apply}>{lang === "lo" ? "ຕົກລົງ" : "Apply"}</Button></div>
+    </div>
+  )
+  const body = <div className="space-y-3">{picker}{actions}</div>
   const trigger = (
     <button type="button" onClick={mobile ? () => setOpen(true) : undefined} className={cn("vks-field flex h-11 w-full items-center justify-between gap-2 rounded-lg border border-input bg-card px-3 text-left text-sm focus-visible:outline-none focus-visible:border-ring data-[state=open]:border-ring", !value.from && "text-muted-foreground", className)}>
       <span className="truncate">{formatRange(value) || placeholder}</span><CalendarRange className="size-4 shrink-0 text-muted-foreground" /></button>
   )
-  if (mobile && nested) return <>{trigger}<InSheetView open={open} onBack={() => setOpen(false)} title={placeholder}><div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">{body}</div></InSheetView></>
-  if (mobile) return <>{trigger}<Sheet open={open} onOpenChange={setOpen}><SheetContent side="bottom"><SheetTitle>{placeholder}</SheetTitle><div className="mt-3">{body}</div></SheetContent></Sheet></>
+  if (mobile && nested) return <>{trigger}<InSheetView open={open} onBack={() => setOpen(false)} title={placeholder}><div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">{picker}</div>{actions}</InSheetView></>
+  if (mobile) return <>{trigger}<Sheet open={open} onOpenChange={setOpen}><SheetContent side="bottom" footer={actions}><SheetTitle>{placeholder}</SheetTitle><div className="mt-3">{picker}</div></SheetContent></Sheet></>
   return (
     <Popover.Root open={open} onOpenChange={setOpen} modal={nested}>
       <Popover.Trigger asChild>{trigger}</Popover.Trigger>

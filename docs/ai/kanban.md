@@ -12,7 +12,7 @@ import { Kanban, moveCard, type KanbanCard } from "@vks-kit/ui/kanban"
 
 ## When to use
 
-- **Kanban**: Task board. Desktop: drag cards between columns (mouse drags after 4 px; keyboard: Space + arrows; cards move live while dragging). Phone: no dragging — one column per screen with a tab strip (name + count) and swipe between columns; tap a card to open a bottom sheet with a "move to" list. Use for status boards (todo / doing / done); for a plain list use ListGroup instead. Import from "@vks-kit/ui/kanban".
+- **Kanban**: Task board. Desktop: drag cards between columns (mouse drags after 4 px; keyboard: Space + arrows; cards move live while dragging). Desktop columns stay on one row and share the width (min 8.5rem); more than fit scroll sideways, never wrap to a second row. Phone: no dragging — one column per screen with a tab strip (name + count) and swipe between columns; a tap opens the "move to" sheet, or with phoneTap="open" the card itself (onOpen). Use for status boards (todo / doing / done); for a plain list use ListGroup instead. Import from "@vks-kit/ui/kanban".
 
 ## Example
 
@@ -25,7 +25,8 @@ import { Kanban, moveCard, type KanbanCard } from "@vks-kit/ui/kanban"
 
 | Prop | Type | Default | Notes |
 | --- | --- | --- | --- |
-| columns | { id; title; tone? }[] |  | tone colours the dot: muted \| primary \| warning \| success \| destructive. |
+| phoneTap | "move" \| "open" | "move" | Phone: what a tap on a card does. "open" calls onOpen (recommended when the card has its own actions: tap opens, moving is inside); "move" shows the move-to sheet. |
+| columns | { id; title; tone? }[] |  | tone colours the dot: muted \| primary \| warning \| success \| destructive. Desktop columns stay on one row (min 8.5rem) and scroll sideways when they do not fit. |
 | cards | { id; column; title; meta?; tone? }[] |  | tone colours the left edge. |
 | onChange | (cards, { id, to }) => void |  | Fires once on drop, only when something changed. |
 | onAdd | (column) => void |  | Shows a + button under each column. |
