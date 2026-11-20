@@ -54,7 +54,9 @@ export function measure({ minTap, width, height }) {
     if (!shown(e) || e.closest("[data-vks-check-skip]")) continue
     const text = (e.textContent || "").trim(), label = (e.getAttribute("aria-label") || e.getAttribute("title") || "").trim()
     const by = e.getAttribute("aria-labelledby"), byText = by ? by.split(/\s+/).map((id) => document.getElementById(id)?.textContent?.trim() ?? "").join("") : ""
-    if (!text && !label && !byText) out.unnamed.push(e.tagName.toLowerCase() + " (" + (e.className && typeof e.className === "string" ? e.className.split(" ").find((c) => /size-|h-/.test(c)) ?? "icon" : "icon") + ") at " + Math.round(e.getBoundingClientRect().left) + "," + Math.round(e.getBoundingClientRect().top))
+    // a control inside <label>text</label>, or one a <label for=id> points at, is named by that label (a Switch row)
+    const wrap = e.closest("label")?.textContent?.trim() ?? "", forText = e.id ? (document.querySelector('label[for="' + CSS.escape(e.id) + '"]')?.textContent?.trim() ?? "") : ""
+    if (!text && !label && !byText && !wrap && !forText) out.unnamed.push(e.tagName.toLowerCase() + " (" + (e.className && typeof e.className === "string" ? e.className.split(" ").find((c) => /size-|h-/.test(c)) ?? "icon" : "icon") + ") at " + Math.round(e.getBoundingClientRect().left) + "," + Math.round(e.getBoundingClientRect().top))
   }
   if (vw >= 768) {
     for (const d of document.querySelectorAll("[role=dialog], [role=alertdialog]")) {
