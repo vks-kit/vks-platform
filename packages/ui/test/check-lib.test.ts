@@ -17,6 +17,13 @@ describe("vks-check report", () => {
     expect(l[3]).toContain("[tap-under-44]"); expect(l[4]).toContain("[console-error]")
     expect(l.every((x) => x.startsWith("phone-small 360x640 list"))).toBe(true)
   })
+  it("0.6.2 layout rules: off-centre popup, two-row footer, unnamed icon, repeating top bar", () => {
+    const l = report(desk, "board", { ...clean, docW: 1440, vw: 1440, offCentre: ["ນັດ above the middle by 180 px"], wrapped: ["ນັດ: 6 buttons on 2 rows"], unnamed: ["button (size-11) at 20,30"], topbar: ["«VKS QC · 21/11» 56 px"] })
+    expect(l.map((x) => x.match(/\[[^\]]+\]/)?.[0])).toEqual(["[popup-off-centre]", "[buttons-two-rows]", "[icon-without-name]", "[top-bar-repeats]"])
+  })
+  it("old measurements without the 0.6.2 fields still report cleanly", () => {
+    expect(report(desk, "list", { ...clean, docW: 1440, vw: 1440 })).toEqual([])
+  })
   it("tap size is a phone rule only", () => {
     expect(report(desk, "list", { ...clean, docW: 1440, vw: 1440, small: ["x 28 px"] })).toEqual([])
   })

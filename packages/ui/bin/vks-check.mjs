@@ -3,7 +3,8 @@
  * vks-check <url> [--login email:password] [--pages a,b,c] [--open "button text"]... [--channel chrome|msedge] [--browser path]
  * Opens the app in a real browser at 360x640, 390x844 and 1440x900, walks every nav tab (or --pages hashes) and
  * fails (exit 1) when something is wider than the screen, a dialog's buttons are below the screen, a phone tap
- * target is under 44 px, or the console shows an error. --open clicks a button by its text on each page and checks the
+ * target is under 44 px, or the console shows an error. 0.6.2 also fails on a desktop popup that is not centred, popup
+ * footer buttons on two rows, an icon-only button without a name, and a top bar that only repeats the page. --open clicks a button by its text on each page and checks the
  * dialog it opens too (e.g. --open ກັ່ນຕອງ --open "ເພີ່ມເບີໂທ").
  * Needs Playwright where you run it: npm i -D playwright && npx playwright install chromium (not a kit dependency).
  */
