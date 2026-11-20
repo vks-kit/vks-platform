@@ -13,7 +13,7 @@ import {
   CommandPalette, useCommandK, Breadcrumb, HoverCard, ContextMenu, TreeView, StatCard, ButtonGroup, Dropzone, fmtBytes, FileIcon, TagInput, SplitPane, NotificationList, ScrollArea, type Notice,
   HoverFx, Parallax, ParallaxLayer, SlideHighlight, CursorRing, Logo, Roadmap, DependencyMap,
   ApprovalCard, SyncStatus, diffFields, type ApprovalStatus, TextInput, PhoneInput, MoneyInput, TimeInput, NumberInput, isPhoneLa, phoneLaE164,
-  IconButton, FormDialogContent, Field, FormSection, FormActions, FoldSection, SheetContent, Sheet, SheetTitle, SelectHeader, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Facts, FactGrid, WeekdayPicker, workDaysText,
+  IconButton, ContactActions, SlotPicker, halfHours, RangeInline, DateInput, FormDialogContent, Field, FormSection, FormActions, FoldSection, SheetContent, Sheet, SheetTitle, SelectHeader, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Facts, FactGrid, WeekdayPicker, workDaysText,
   SettingsPage, defineSettings,
 } from "@vks-kit/ui"
 import { Share2, Pencil, Phone, Trash2, Heart, Shield, AlertTriangle, CheckCircle2, Clock, Folder, User, Copy as CopyIcon, Search as SearchIcon, ArrowRight } from "@vks-kit/ui/icons"
@@ -274,6 +274,9 @@ export function More() {
         </Sec>
         <Sec id="kanban" title="Kanban (drag, long-press on phone)">
           <Kanban cardLines={1} columns={[{ id: "todo", title: "ຕ້ອງເຮັດ" }, { id: "doing", title: "ກຳລັງເຮັດ" }, { id: "done", title: "ສຳເລັດ" }]} cards={cards} onChange={(c) => setCards(c)} />
+        </Sec>
+        <Sec id="kit-0-6-1" title="0.6.1: ContactActions, SlotPicker, RangeInline, DateInput (ShareImageDialog: see docs)">
+          <KitSixOneDemo />
         </Sec>
         <Sec id="kit-0-6" title="0.6: centred popup with width, FormActions lead + phone row, IconButton, one-line Kanban cards">
           <KitSixDemo />
@@ -579,6 +582,18 @@ function KitSixDemo() {
       <IconButton label="ສຳເນົາຮູບ" icon={<CopyIcon />} onClick={() => toast("copied")} />
       <IconButton label="ແບ່ງປັນ" icon={<Share2 />} onClick={() => toast("share")} />
       <Button><Download />ດາວໂຫຼດ</Button>
+    </div>
+  )
+}
+
+function KitSixOneDemo() {
+  const [slot, setSlot] = React.useState({ d: "", t: "" }), [r, setR] = React.useState<Range>({}), [dob, setDob] = React.useState<string | null>(null)
+  const today = new Date().toISOString().slice(0, 10)
+  return (
+    <div className="grid gap-4">
+      <div className="flex items-center gap-3"><span className="font-mono text-sm">020 5512 3456</span><ContactActions phone="2055123456" call /></div>
+      <SlotPicker date={slot.d} time={slot.t} onChange={(d, t) => setSlot({ d, t })} times={[...halfHours("08:00", "11:30"), ...halfHours("13:00", "16:30")]} />
+      <div className="grid gap-4 md:grid-cols-2"><RangeInline value={r} onChange={setR} presets={[["ມື້ນີ້", { from: today, to: today }]]} allLabel="ທຸກວັນທີ" /><DateInput value={dob} onChange={setDob} today={today} /></div>
     </div>
   )
 }

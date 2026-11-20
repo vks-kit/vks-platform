@@ -20,6 +20,7 @@ Before designing a page, read docs/ai/design-thinking.md: one job per page, cont
 - [Toggle](ai/toggle.md): A button that stays pressed. ToggleGroup picks one (or many) of a few options; the segmented variant is the iOS control with a pill that springs under your choice. Exports: Toggle, ToggleGroup, ToggleGroupItem
 - [Kbd, copy & separator](ai/kbd-copy.md): Small helpers: keyboard hint, copy-to-clipboard with a tick, divider. Exports: Kbd, CopyButton, Separator
 - [Button group](ai/button-group.md): Joined buttons for a small set of related actions or views. Exports: ButtonGroup
+- [Contact actions](ai/contact-actions.md): Round WhatsApp (real logo, green) and call buttons next to a phone number. WhatsApp only for a Lao mobile (020 / 030), never a landline; nothing for a do-not-call person. A click never opens the row. Exports: ContactActions, WhatsAppIcon, whatsappUrl, telUrl, laMobileDigits
 
 ## Form
 
@@ -49,6 +50,8 @@ Before designing a page, read docs/ai/design-thinking.md: one job per page, cont
 - [Date picker](ai/date-picker.md): Lao month names, Monday first. Bottom sheet with a wheel on a phone, calendar popover on desktop. Exports: DatePicker, Calendar, DateWheel
 - [Date range picker](ai/date-range-picker.md): Report ranges with presets (today, last 7 days, this month…). One month on a phone sheet, two side by side on desktop. Exports: DateRangePicker, RangeCalendar, formatRange, Range
 - [Time picker](ai/time-picker.md): 24 h only. Tap an hour, then :00 / :15 / :30 / :45. TimeRangePicker adds a shift's end, a 24 h bar and length presets (12 / 8 ຊມ / ອື່ນໆ); overnight shows +1 ມື້. Popover on desktop, sheet on phone. Exports: TimePicker, TimeRangePicker, timeToMin, minToTime, spanMin, isHHMM
+- [Slot picker](ai/slot-picker.md): Book a day and a time in one place, shown in the form (never a popup on a popup): calendar with a dot on booked days, time slots with a count. Wide forms show the times in 2 rows of 8. Exports: SlotPicker, halfHours
+- [Date in place](ai/date-inline.md): RangeInline: a date range picked inside an open sheet (quick ranges + one month), so no second sheet opens. DateInput: a birth date typed as dd/mm/yyyy or picked year → month → day. Exports: RangeInline, DateInput, parseDmy, fmtDmy, ageOn, dobError
 
 ## Feedback
 
@@ -79,6 +82,7 @@ Before designing a page, read docs/ai/design-thinking.md: one job per page, cont
 - [Share sheet](ai/share-sheet.md): Native OS share on phones; an iOS-style sheet (WhatsApp, LINE, Telegram, Facebook, copy link) on desktop. Exports: useShareSheet, ShareSheet
 - [Hover card](ai/hover-card.md): Rich preview when you hover a name or ID. Opens after 350 ms so it never flickers. Exports: HoverCard
 - [Context menu](ai/context-menu.md): Desktop-first: right-click menu (long-press works on phones but nobody discovers it, so give phones a visible ⋯ Menu or ActionSheet). Right-click (or long-press) menu with icons, shortcuts, sub-menus and a red destructive item. Exports: ContextMenu
+- [Share image](ai/share-image.md): A picture people send on (receipt, client card, certificate): you draw it on a canvas, the popup shows it sized to the screen with no scrolling and gives Download + copy + share, or Save + Send on WhatsApp on a phone. Exports: ShareImageDialog, fitText, loadFonts, loadImage
 
 ## Data display
 

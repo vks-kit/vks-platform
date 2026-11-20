@@ -30,6 +30,22 @@ export const isPhoneLa = (v: string) => parsePhoneLa(v).length === PHONE_LA_LEN
 /** International form for an SMS / WhatsApp API: "+85620XXXXXXXX". Empty until the number is complete. */
 export const phoneLaE164 = (v: string) => (isPhoneLa(v) ? "+85620" + parsePhoneLa(v) : "")
 
+/* ---------------- Contact links (0.6.1) ---------------- */
+/**
+ * Lao mobile digits for chat apps, from a stored or typed number: 020 + 8 digits or 030 + 7 digits, any format
+ * ("02055123456", "+856 20 5512 3456", the number 2055123456). Landlines (021, 031 …) and broken numbers give "".
+ */
+export function laMobileDigits(raw: string | number): string {
+  let d = digitsOnly(String(raw))
+  if (d.startsWith("856") && d.length > 9) d = d.slice(3)
+  if (d.startsWith("0")) d = d.slice(1)
+  return /^(20\d{8}|30\d{7})$/.test(d) ? d : ""
+}
+/** WhatsApp chat link for a Lao mobile ("https://wa.me/8562055123456"), or null for a landline / broken number. */
+export const whatsappUrl = (raw: string | number) => { const d = laMobileDigits(raw); return d ? "https://wa.me/856" + d : null }
+/** tel: link that dials the number as written ("tel:02055123456"), or null when there are no digits. */
+export const telUrl = (raw: string | number) => { let d = digitsOnly(String(raw)); if (!d) return null; if (d.startsWith("856")) return "tel:+" + d; if (!d.startsWith("0")) d = "0" + d; return "tel:" + d }
+
 /* ---------------- Money ---------------- */
 export type Currency = "LAK" | "THB" | "USD"
 export const CURRENCY_DECIMALS: Record<Currency, number> = { LAK: 0, THB: 2, USD: 2 }
