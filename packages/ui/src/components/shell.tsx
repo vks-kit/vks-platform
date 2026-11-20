@@ -1,11 +1,12 @@
 import * as React from "react"
-import { ChevronLeft, MoreHorizontal, Plus } from "lucide-react"
+import { ChevronLeft, ChevronRight, MoreHorizontal, Plus, UserRound } from "lucide-react"
 import { cn } from "../lib/cn"
 import { haptics } from "@vks-kit/core"
 import { useIndicator, Indicator } from "../lib/use-indicator"
 import { Logo, BRAND } from "./logo"
 import { PageBoundary } from "./feedback"
 import { Sheet, SheetContent, SheetTitle, TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "./overlay"
+import { UserChip } from "./data-display"
 
 export type NavItem = { id: string; label: string; icon: React.ReactNode; badge?: number }
 
@@ -25,6 +26,14 @@ function useRail(collapsed: boolean | undefined, defaultCollapsed: boolean, onCh
   return [value, set] as const
 }
 
+/** The signed-in person: shown under the sidebar as a button that opens the profile page, and as the phone's last tab. */
+export type ShellProfile = {
+  /** Page id of the profile page (theme, sign out); passed to onNavigate. */
+  id: string; name: string; sub?: string; src?: string
+  /** Phone tab label and icon. Default ຂ້ອຍ + a person icon. */
+  label?: string; icon?: React.ReactNode
+}
+
 /** Which way the page moved in the nav list: later item slides in from the right, earlier from the left. */
 function useNavDirection(items: NavItem[], active: string) {
   const prev = React.useRef(active)
@@ -40,8 +49,9 @@ function useNavDirection(items: NavItem[], active: string) {
  * drops the top bar on a phone (when it would only repeat the nav); phoneProfile makes the profile page a bottom tab.
  * Pages slide in the direction you moved in the nav and a thin gold bar sweeps across the top.
  * Every page sits in a PageBoundary: a crash or a page file that will not load shows "reload", never a white screen.
+ * 0.6: desktopHeader={false} drops the top bar on desktop too; profile={{ id, name, sub }} builds the sidebar user button.
  */
-export function AppShell({ items, active, onNavigate, title = "VKS", header, children, fab, user, collapsible = true, phoneHeader = true, phoneProfile }: {
+export function AppShell({ items, active, onNavigate, title = "VKS", header, children, fab, user, collapsible = true, phoneHeader = true, phoneProfile, desktopHeader = true, profile }: {
   items: NavItem[]; active: string; onNavigate: (id: string) => void; title?: string
   header?: React.ReactNode; children: React.ReactNode; fab?: React.ReactNode; user?: React.ReactNode
   /** Desktop rail can shrink to icons. Default true. */
@@ -56,14 +66,28 @@ export function AppShell({ items, active, onNavigate, title = "VKS", header, chi
    * last bottom-nav tab, e.g. { id: "profile", label: "ຂ້ອຍ", icon: <UserRound /> }. Without it a phone has no way to it.
    */
   phoneProfile?: NavItem
+  /**
+   * Desktop: show the top header bar. Default true (0.5.x). Pass false when the sidebar and the page's PageHeader already
+   * say where you are (recommended, rule "No top bar"): the header then only shows on a phone if phoneHeader is true.
+   */
+  desktopHeader?: boolean
+  /**
+   * 0.6: the signed-in person in one prop. Desktop: a button under the sidebar (avatar, name, sub line, chevron) that
+   * opens the profile page and shows as current there. Phone: the profile page becomes the last bottom tab (ຂ້ອຍ).
+   * Replaces building your own user button + phoneProfile; user and phoneProfile still win when given.
+   */
+  profile?: ShellProfile
 }) {
   const dir = useNavDirection(items, active)
-  const phoneItems = phoneProfile ? [...items, phoneProfile] : items
+  const tab = phoneProfile ?? (profile ? { id: profile.id, label: profile.label ?? "ຂ້ອຍ", icon: profile.icon ?? <UserRound /> } : undefined)
+  const phoneItems = tab ? [...items, tab] : items
+  const userSlot = user ?? (profile ? <ProfileButton profile={profile} active={active === profile.id} onOpen={() => onNavigate(profile.id)} /> : undefined)
+  const showHeader = !!header && (phoneHeader || desktopHeader)
   return (
     <div className="flex min-h-dvh overflow-x-clip bg-background">
-      <Sidebar items={items} active={active} onNavigate={onNavigate} title={title} user={user} collapsible={collapsible} persist className="hidden md:flex" />
+      <Sidebar items={items} active={active} onNavigate={onNavigate} title={title} user={userSlot} collapsible={collapsible} persist className="hidden md:flex" />
       <div className="relative flex min-w-0 flex-1 flex-col overflow-x-clip">
-        {header && <header className={cn(!phoneHeader && "max-md:hidden", "vks-glass sticky top-0 z-30 flex items-center gap-3 border-b border-border/60 px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))] shadow-[0_10px_24px_-22px_rgb(20_23_61/.6)] md:px-6")}>
+        {showHeader && <header className={cn(!phoneHeader && "max-md:hidden", !desktopHeader && "md:hidden", "vks-glass sticky top-0 z-30 flex items-center gap-3 border-b border-border/60 px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))] shadow-[0_10px_24px_-22px_rgb(20_23_61/.6)] md:px-6")}>
           <span aria-hidden className="vks-hairline pointer-events-none absolute inset-x-0 top-0 opacity-70" />{header}
           <span key={active} aria-hidden className="vks-route-bar pointer-events-none absolute inset-x-0 -bottom-px h-0.5 bg-gold" /></header>}
         <main key={active} className={cn("flex-1 p-4 pb-[calc(6.5rem+env(safe-area-inset-bottom))] md:p-6 md:pb-6", dir === "back" ? "vks-page-back" : "vks-page-fwd")}><PageBoundary resetKey={active}>{children}</PageBoundary></main>
@@ -71,6 +95,17 @@ export function AppShell({ items, active, onNavigate, title = "VKS", header, chi
       {fab}
       <BottomNav items={phoneItems} active={active} onNavigate={onNavigate} className="md:hidden" />
     </div>
+  )
+}
+
+/** The user button under the sidebar: opens the profile page; collapses with the rail (avatar only). */
+function ProfileButton({ profile, active, onOpen }: { profile: ShellProfile; active: boolean; onOpen: () => void }) {
+  return (
+    <button type="button" onClick={() => { haptics.tap(); onOpen() }} aria-label={profile.name + " · " + (profile.label ?? "ໂປຣໄຟລ໌")} aria-current={active ? "page" : undefined}
+      className={cn("vks-press flex min-h-12 w-full min-w-0 items-center gap-2 rounded-xl px-1 text-left hover:bg-bar-foreground/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold", active && "bg-bar-foreground/10")}>
+      <UserChip className="vks-rail-fade min-w-0 flex-1 [&_.text-muted-foreground]:text-bar-foreground/70" name={profile.name} sub={profile.sub} src={profile.src} />
+      <ChevronRight aria-hidden className="vks-rail-fade size-4 shrink-0 opacity-60" />
+    </button>
   )
 }
 

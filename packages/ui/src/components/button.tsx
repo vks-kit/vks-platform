@@ -3,6 +3,7 @@ import { Slot } from "radix-ui"
 import { cva, type VariantProps } from "class-variance-authority"
 import { Loader2 } from "lucide-react"
 import { cn } from "../lib/cn"
+import { Tooltip, TooltipContent, TooltipTrigger } from "./overlay"
 
 /*
  * Premium, still cheap: solid variants get a light top gradient, a 1px inner highlight,
@@ -52,4 +53,19 @@ export function Button({ className, variant, size, asChild, loading, disabled, d
       {children}
     </Comp>
   )
+}
+
+/**
+ * Use for a button that shows only an icon (copy, share, WhatsApp, close-like actions); the label becomes the tooltip on
+ * desktop and the accessible name everywhere, so it can never be forgotten. 44 px square. For a button with text use Button.
+ */
+export function IconButton({ label, icon, tooltip = true, variant = "outline", className, ...props }: Omit<ButtonProps, "size" | "children"> & {
+  /** What the button does, in words ("ສຳເນົາຮູບ"). Shown as the tooltip and read by screen readers. */
+  label: string; icon: React.ReactNode
+  /** Show the label as a tooltip on hover / focus. Default true. */
+  tooltip?: boolean
+}) {
+  const btn = <Button size="icon" variant={variant} aria-label={label} className={cn("shrink-0", className)} {...props}>{icon}</Button>
+  if (!tooltip) return btn
+  return <Tooltip><TooltipTrigger asChild>{btn}</TooltipTrigger><TooltipContent>{label}</TooltipContent></Tooltip>
 }

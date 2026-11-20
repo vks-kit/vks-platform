@@ -7,12 +7,13 @@
 - Live docs: #/docs/button
 
 ```ts
-import { Button } from "@vks-kit/ui"
+import { Button, IconButton } from "@vks-kit/ui"
 ```
 
 ## When to use
 
 - **Button**: Use for any clickable action (44 px tall, loading spinner built in). variant="action" for scan/save/done, "destructive" for delete. For a button that stays pressed use Toggle instead; for an icon-only row action use size="icon"; for a floating main action on phones use Fab instead.
+- **IconButton**: Use for a button that shows only an icon (copy, share, WhatsApp, close-like actions); the label becomes the tooltip on desktop and the accessible name everywhere, so it can never be forgotten. 44 px square. For a button with text use Button.
 
 ## Usage
 
@@ -42,6 +43,15 @@ sm stays 44 px tall on phones and only shrinks on desktop.
 <Button>Default</Button>
 <Button size="lg">Large</Button>
 <Button size="icon" aria-label="add"><Plus /></Button>
+```
+
+### Icon only (IconButton)
+
+0.6: label is the tooltip on desktop and the screen-reader name, so an icon button always has a name. Use it for actions everyone knows by the icon (copy, share, WhatsApp).
+
+```tsx
+<IconButton label="ສຳເນົາຮູບ" icon={<Copy />} onClick={copy} />
+<IconButton label="ແບ່ງປັນ" icon={<Share2 />} onClick={share} />
 ```
 
 ### As a link

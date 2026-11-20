@@ -25,6 +25,7 @@ import { Kanban, moveCard, type KanbanCard } from "@vks-kit/ui/kanban"
 
 | Prop | Type | Default | Notes |
 | --- | --- | --- | --- |
+| cardLines | 1 |  | 0.6: title and meta stay on one line each (… + full text on hover), so cards in a column have the same height. Use it for boards people scan by row. |
 | phoneTap | "move" \| "open" | "move" | Phone: what a tap on a card does. "open" calls onOpen (recommended when the card has its own actions: tap opens, moving is inside); "move" shows the move-to sheet. |
 | columns | { id; title; tone? }[] |  | tone colours the dot: muted \| primary \| warning \| success \| destructive. Desktop columns stay on one row (min 8.5rem) and scroll sideways when they do not fit. |
 | cards | { id; column; title; meta?; tone? }[] |  | tone colours the left edge. |

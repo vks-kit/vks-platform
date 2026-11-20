@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Home, ClipboardList, Users, BarChart3, Settings, Bell, Plus, Moon, Sun, MapPin, FileText, ScanLine, Wallet } from "@vks-kit/ui/icons"
+import { Home, ClipboardList, Users, BarChart3, Settings, Bell, Plus, Moon, Sun, MapPin, FileText, ScanLine, Wallet, Check, X, Ban, ReceiptText, Download } from "@vks-kit/ui/icons"
 import {
   AppShell, PageHeader, Fab, LoginCard, Button, Card, CardContent, CardHeader, CardTitle, Input, Label, Badge, useTheme,
   IOSAlert, ActionSheet, Banner, ListGroup, ListRow, SkeletonList, SkeletonCard, NumberTicker, FloatingInput, PasswordInput, Chip, CopyButton, Menu, MenuTrigger, MenuContent, MenuItem, PerfToggle,
@@ -13,7 +13,7 @@ import {
   CommandPalette, useCommandK, Breadcrumb, HoverCard, ContextMenu, TreeView, StatCard, ButtonGroup, Dropzone, fmtBytes, FileIcon, TagInput, SplitPane, NotificationList, ScrollArea, type Notice,
   HoverFx, Parallax, ParallaxLayer, SlideHighlight, CursorRing, Logo, Roadmap, DependencyMap,
   ApprovalCard, SyncStatus, diffFields, type ApprovalStatus, TextInput, PhoneInput, MoneyInput, TimeInput, NumberInput, isPhoneLa, phoneLaE164,
-  FormDialogContent, Field, FormSection, FormActions, FoldSection, SheetContent, Sheet, SheetTitle, SelectHeader, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Facts, FactGrid, WeekdayPicker, workDaysText,
+  IconButton, FormDialogContent, Field, FormSection, FormActions, FoldSection, SheetContent, Sheet, SheetTitle, SelectHeader, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Facts, FactGrid, WeekdayPicker, workDaysText,
   SettingsPage, defineSettings,
 } from "@vks-kit/ui"
 import { Share2, Pencil, Phone, Trash2, Heart, Shield, AlertTriangle, CheckCircle2, Clock, Folder, User, Copy as CopyIcon, Search as SearchIcon, ArrowRight } from "@vks-kit/ui/icons"
@@ -273,7 +273,10 @@ export function More() {
           <Card><CardHeader><CardTitle>ເຫດການ: ມື້ × ຊົ່ວໂມງ</CardTitle></CardHeader><CardContent><Heatmap rows={["ຈ", "ອ", "ພ", "ພຫ", "ສ", "ສ.", "ອາ"]} cols={["00", "03", "06", "09", "12", "15", "18", "21"]} values={Array.from({ length: 7 }, (_, d) => Array.from({ length: 8 }, (_, h) => Math.round(Math.abs(Math.sin(d * 1.3 + h * 0.9)) * 9)))} unit="ເຫດ" /></CardContent></Card>
         </Sec>
         <Sec id="kanban" title="Kanban (drag, long-press on phone)">
-          <Kanban columns={[{ id: "todo", title: "ຕ້ອງເຮັດ" }, { id: "doing", title: "ກຳລັງເຮັດ" }, { id: "done", title: "ສຳເລັດ" }]} cards={cards} onChange={(c) => setCards(c)} />
+          <Kanban cardLines={1} columns={[{ id: "todo", title: "ຕ້ອງເຮັດ" }, { id: "doing", title: "ກຳລັງເຮັດ" }, { id: "done", title: "ສຳເລັດ" }]} cards={cards} onChange={(c) => setCards(c)} />
+        </Sec>
+        <Sec id="kit-0-6" title="0.6: centred popup with width, FormActions lead + phone row, IconButton, one-line Kanban cards">
+          <KitSixDemo />
         </Sec>
         <Sec id="map" title="Map (Leaflet + OpenStreetMap)">
           <MapView flush pins={[{ id: "1", lat: 17.9757, lng: 102.6331, label: "ປະຕູໜ້າ", sub: "ສົມພອນ · ເຂົ້າກະແລ້ວ", meta: "08:12", tone: "success" }, { id: "2", lat: 17.9801, lng: 102.6402, label: "ຄັງສິນຄ້າ", sub: "ຊ້າ 12 ນາທີ", meta: "08:40", tone: "warning" }, { id: "3", lat: 17.9702, lng: 102.6255, label: "ພາດ", sub: "ບໍ່ມີການສະແກນ QR", meta: "09:05", tone: "danger" }]} renderCard={() => <div className="flex gap-2"><Button size="sm" variant="outline" className="flex-1">ເບິ່ງປະຫວັດ</Button><Button size="sm" className="flex-1">ໂທຫາ</Button></div>} />
@@ -553,6 +556,29 @@ function StampDemo() {
         <PhotoCapture label="ຖ່າຍ + ຕີຕາ" onPhoto={async (ph) => setImg(URL.createObjectURL(await stampPhoto(ph.blob, { ...data, time: stampTime() })))} />
         {img && <img src={img} alt="" className="w-full rounded-2xl border" />}
       </div>
+    </div>
+  )
+}
+
+/** 0.6 demo: the appointment popup pattern from the Call Center (centred, 46rem, lead + daily answer right, phone row). */
+function KitSixDemo() {
+  const [open, setOpen] = React.useState(false)
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild><Button>ເປີດ ນັດ (width 46rem)</Button></DialogTrigger>
+        <FormDialogContent width="46rem" title="ທ້າວ ບຸນມີ ແກ້ວດາລາ" description="APT-000002 · ນັດຄັ້ງທີ 1"
+          footer={<FormActions phone="row"
+            lead={<Button variant="ghost"><User />ຂໍ້ມູນຜູ້ສະໝັກ</Button>}
+            more={[{ label: "ໃບນັດ", icon: <ReceiptText />, onPress: () => toast("ໃບນັດ") }, { label: "ເລື່ອນ", icon: <ArrowRight />, onPress: () => toast("ເລື່ອນ") }, { label: "ຍົກເລີກນັດ", icon: <Ban />, destructive: true, onPress: () => toast("ຍົກເລີກ") }]}
+            secondary={[<Button key="n" variant="outline" onClick={() => toast("ບໍ່ມາ")}><X />ບໍ່ມາ</Button>]}
+            primary={<Button variant="action" onClick={() => { toast.success("ມາແລ້ວ"); setOpen(false) }}><Check />ມາ</Button>} />}>
+          <p className="text-sm leading-normal text-muted-foreground">ສຸກ 20/11/2026 · 09:00 · ມື້ອື່ນ</p>
+        </FormDialogContent>
+      </Dialog>
+      <IconButton label="ສຳເນົາຮູບ" icon={<CopyIcon />} onClick={() => toast("copied")} />
+      <IconButton label="ແບ່ງປັນ" icon={<Share2 />} onClick={() => toast("share")} />
+      <Button><Download />ດາວໂຫຼດ</Button>
     </div>
   )
 }

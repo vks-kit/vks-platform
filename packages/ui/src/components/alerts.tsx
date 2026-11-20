@@ -63,7 +63,7 @@ export function ConfirmDialog({ open, onOpenChange, title, description, confirmL
     <AD.Root open={open} onOpenChange={onOpenChange}>
       <AD.Portal>
         <AD.Overlay className="vks-scrim fixed inset-0 z-50 bg-[color-mix(in_oklab,var(--foreground)_45%,transparent)]" />
-        <AD.Content className={cn("vks-modal fixed inset-x-0 bottom-0 z-50 grid gap-4", PANEL_SURFACE, PANEL_DESKTOP, "md:left-[calc(50%-min(12rem,50%-1rem))] md:top-[22vh] md:max-w-sm")}>
+        <AD.Content className={cn("vks-modal fixed inset-x-0 bottom-0 z-50 grid gap-4", PANEL_SURFACE, PANEL_DESKTOP, "md:left-[calc(50%-min(12rem,50%-1rem))] md:inset-y-0 md:my-auto md:h-fit md:max-w-sm")}>
           <div aria-hidden className="vks-grabber md:hidden" />
           <div className="flex items-start gap-3">
             <span className={cn("flex size-11 shrink-0 items-center justify-center rounded-full", tone === "danger" ? "bg-destructive/15 text-destructive" : "bg-warning/15 text-warning")}><I className="vks-wiggle size-6" /></span>

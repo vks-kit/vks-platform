@@ -48,6 +48,7 @@ lg is 64rem wide on desktop; use a 2-column grid in the body.
 | title / description | ReactNode |  | Sticky header. Keep the description to one line. |
 | footer | ReactNode |  | Sticky footer, buttons right-aligned; respects the phone safe area. |
 | size | "sm" \| "md" \| "lg" | "md" | Desktop width: 36 / 48 / 64 rem. A phone always gets the full-width sheet. |
+| width | string |  | 0.6: any desktop width as a CSS length ("46rem", "min(38rem, 60dvh)"); the position follows, so no left formula in the app. Wins over size. |
 | bodyClassName | string |  | Extra classes on the scrolling body. |
 | icon | ReactNode |  | Optional icon tile left of the title; desktop only (hidden on phone). |
 | Field: label / htmlFor / error / hint | ReactNode / string |  | error (red) replaces hint (muted) when set. |
@@ -57,6 +58,8 @@ lg is 64rem wide on desktop; use a 2-column grid in the body.
 - Put it inside a Dialog, in place of DialogContent.
 - Records open read-only first (Facts / FactGrid) with a ແກ້ໄຂ button; the form is the edit step.
 - Run cleanText() on free text before saving.
+- 0.6: every form popup is centred top to bottom on desktop (it used to sit at a fixed top).
 - Footer: use FormActions (primary, secondary, more). Desktop keeps one row; a phone shows the primary full width and a ⋯ ActionSheet with the rest, so five buttons never wrap into two rows.
+- FormActions order (0.6): lead (the read action, far left) · more (rare) · secondary · primary (the daily answer, far right). phone="row" shows primary + first secondary as two big buttons and lead + more as one small labelled row, for popups with 3–5 daily actions (appointment: came / no-show / reschedule / cancel / receipt).
 - Long forms: wrap the parts not needed every time in FoldSection. On a phone they fold and their header says what is still missing; desktop shows them open.
 - Save that cannot run yet: Button disabledReason + onBlockedPress. The button looks off but a tap says why and can scroll to the missing field, instead of doing nothing.

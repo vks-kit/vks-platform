@@ -7,12 +7,12 @@
 - Live docs: #/docs/app-shell
 
 ```ts
-import { AppShell, Fab, type NavItem } from "@vks-kit/ui"
+import { AppShell, Fab, type NavItem, type ShellProfile } from "@vks-kit/ui"
 ```
 
 ## When to use
 
-- **AppShell**: One breakpoint, whole system pivots on it: 768 px (rule from vks-kit RESPONSIVE.md). Desktop = sidebar rail (collapsible, remembered). Mobile = bottom nav, max 5 items, the rest under "More"; phoneHeader={false} drops the top bar on a phone (when it would only repeat the nav); phoneProfile makes the profile page a bottom tab. Pages slide in the direction you moved in the nav and a thin gold bar sweeps across the top. Every page sits in a PageBoundary: a crash or a page file that will not load shows "reload", never a white screen.
+- **AppShell**: One breakpoint, whole system pivots on it: 768 px (rule from vks-kit RESPONSIVE.md). Desktop = sidebar rail (collapsible, remembered). Mobile = bottom nav, max 5 items, the rest under "More"; phoneHeader={false} drops the top bar on a phone (when it would only repeat the nav); phoneProfile makes the profile page a bottom tab. Pages slide in the direction you moved in the nav and a thin gold bar sweeps across the top. Every page sits in a PageBoundary: a crash or a page file that will not load shows "reload", never a white screen. 0.6: desktopHeader={false} drops the top bar on desktop too; profile={{ id, name, sub }} builds the sidebar user button.
 - **Fab**: Create button (navy + gold ring, brand-lit). Desktop: sits in the header (use inline). Mobile: floating. Icon must say what it creates. extended = pill with label.
 
 ## Example
@@ -23,8 +23,10 @@ const nav: NavItem[] = [
   { id: "tasks", label: "ວຽກ", icon: <ClipboardList />, badge: 3 },
   …
 ]
+// 0.6 recommended: no top bar anywhere; the person under the sidebar opens the profile page
 <AppShell items={nav} active={page} onNavigate={setPage} title="VKS"
-  header={<b>ໜ້າຫຼັກ</b>}
+  phoneHeader={false} desktopHeader={false}
+  profile={{ id: "profile", name: me.full_name, sub: me.code }}
   fab={<Fab label="ເພີ່ມ" onClick={add} />}>
   {content}
 </AppShell>
@@ -51,6 +53,8 @@ const nav: NavItem[] = [
 | collapsible | boolean | true | Desktop rail can shrink to 72 px icons. State is remembered. |
 | phoneHeader | boolean | true | false = no top bar on a phone (the bottom nav is the frame). Use it when the bar would only repeat the app name, the date or the nav. |
 | phoneProfile | NavItem |  | Phone only: adds the profile page as the last bottom-nav tab (desktop opens it from the user chip). e.g. { id: "profile", label: "ຂ້ອຍ", icon: <UserRound /> }. |
+| desktopHeader | boolean | true | 0.6: false = no top bar on desktop either. The sidebar and each page's PageHeader already say where you are (rule No top bar). |
+| profile | ShellProfile |  | 0.6: { id, name, sub?, src?, label?, icon? }. Desktop: a button under the sidebar that opens the profile page (current while you are on it). Phone: the profile page as the last bottom tab (ຂ້ອຍ). Replaces a hand-made user button + phoneProfile. |
 
 ## Notes
 

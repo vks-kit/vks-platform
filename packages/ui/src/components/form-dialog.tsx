@@ -7,25 +7,34 @@ import { Button } from "./button"
 import { ActionSheet, type SheetAction } from "./ios"
 import { useIsMobile } from "../lib/use-media"
 
-/* Width AND left are overridden together at md+: the kit DialogContent is a 28rem card that is
-   positioned by left, so a wider form must move its left edge too (never centre .vks-modal with translate). */
+/* Width AND left are set together at md+: the kit DialogContent is positioned by left, so a wider form must move its
+   left edge too (never centre .vks-modal with translate: the open/close animation owns transform). 0.6: every size is
+   centred top to bottom (inset-y-0 + my-auto + h-fit) instead of sitting at a fixed top. A custom width uses --fd-w. */
 const FORM_SIZE = {
-  sm: "md:max-w-xl md:left-[calc(50%-min(18rem,50%-1rem))] md:top-[12vh] md:max-h-[76dvh]",
-  md: "md:max-w-3xl md:left-[calc(50%-min(24rem,50%-1rem))] md:top-[8vh] md:max-h-[84dvh]",
-  lg: "md:max-w-5xl md:left-[calc(50%-min(32rem,50%-1rem))] md:top-[5vh] md:max-h-[90dvh]",
+  sm: "md:max-w-xl md:left-[calc(50%-min(18rem,50%-1rem))] md:max-h-[76dvh]",
+  md: "md:max-w-3xl md:left-[calc(50%-min(24rem,50%-1rem))] md:max-h-[84dvh]",
+  lg: "md:max-w-5xl md:left-[calc(50%-min(32rem,50%-1rem))] md:max-h-[90dvh]",
+  custom: "md:max-w-[var(--fd-w)] md:left-[calc(50%-min(var(--fd-w)/2,50%-1rem))] md:max-h-[90dvh]",
 } as const
-export type FormDialogSize = keyof typeof FORM_SIZE
+const CENTRE_Y = "md:inset-y-0 md:my-auto md:h-fit"
+export type FormDialogSize = Exclude<keyof typeof FORM_SIZE, "custom">
 
 /** Use for any form inside a Dialog: sticky header + footer, only the body scrolls (never sideways), sm/md/lg widths on desktop, sheet on phone; for a yes/no question use ConfirmDialog instead. */
-export function FormDialogContent({ title, description, footer, children, size = "md", className, bodyClassName, icon }: {
+export function FormDialogContent({ title, description, footer, children, size = "md", width, className, bodyClassName, icon }: {
   title: React.ReactNode; description?: React.ReactNode; footer?: React.ReactNode; children: React.ReactNode
   /** Optional icon tile left of the title (desktop only; hidden on phone to save height). */
   icon?: React.ReactNode
   /** sm 1–3 fields, md default, lg long forms (use a 2-column grid in the body). */
   size?: FormDialogSize; className?: string; bodyClassName?: string
+  /**
+   * 0.6: any desktop width as a CSS length ("46rem", "min(38rem, 60vh)"); position follows, so no left formula in the app.
+   * Wins over size. A phone always gets the full-width sheet.
+   */
+  width?: string
 }) {
   return (
-    <DialogContent className={cn("flex flex-col gap-0 overflow-hidden p-0 md:p-0 [&>.vks-grabber]:mt-2 [&>.vks-grabber]:shrink-0", FORM_SIZE[size], className)}>
+    <DialogContent style={width ? ({ ["--fd-w" as string]: width } as React.CSSProperties) : undefined}
+      className={cn("flex flex-col gap-0 overflow-hidden p-0 md:p-0 [&>.vks-grabber]:mt-2 [&>.vks-grabber]:shrink-0", FORM_SIZE[width ? "custom" : size], CENTRE_Y, className)}>
       <DialogHeader className={cn("shrink-0 border-b px-5 pt-4 pb-3 pr-14 md:px-6 md:pt-5 md:pb-4", icon && "flex-row items-center gap-3")}>
         {icon && <span className="hidden size-10 shrink-0 place-items-center rounded-xl bg-muted text-foreground md:grid [&>svg]:size-5">{icon}</span>}
         {icon ? (
@@ -64,7 +73,7 @@ export function Field({ label, htmlFor, error, hint, className, children }: {
  * (edit, delete, block). Desktop: everything in one row. Phone: the main action full width + a "⋯" button that opens
  * an ActionSheet with the rest, so a footer never wraps into two rows of five buttons. For a yes/no use ConfirmDialog.
  */
-export function FormActions({ primary, secondary = [], more = [], info, moreLabel = "ເພີ່ມເຕີມ" }: {
+export function FormActions({ primary, secondary = [], more = [], info, moreLabel = "ເພີ່ມເຕີມ", lead, phone = "sheet", phoneSecondary }: {
   /** The one thing this popup is for (Save, Call, Came). */
   primary: React.ReactNode
   /** Shown beside the primary on desktop (Cancel, No-show); on a phone they also move into the ⋯ sheet when there are more than one. */
@@ -73,15 +82,38 @@ export function FormActions({ primary, secondary = [], more = [], info, moreLabe
   more?: (SheetAction & { button?: React.ReactNode })[]
   /** One muted line at the left on desktop ("Added by … · date"); the ⋯ sheet shows it on a phone. */
   info?: React.ReactNode; moreLabel?: string
+  /**
+   * 0.6: the "read" action at the far left on desktop (ຂໍ້ມູນຜູ້ສະໝັກ, Open record), before the rare ones. Order is
+   * always: lead · rare (more) · secondary · primary, the daily answer right-most. Never wraps to a second row on desktop.
+   */
+  lead?: React.ReactNode
+  /**
+   * 0.6, phone layout. "sheet" (default): main action + ⋯ sheet. "row": the primary and the first secondary as two big
+   * buttons, then lead + more as one quiet row of small labelled buttons (no hidden menu), for popups with 3–5 daily actions.
+   */
+  phone?: "sheet" | "row"
+  /** 0.6, phone="row": a shorter label set for the small row (defaults to the more actions' icon + label). */
+  phoneSecondary?: React.ReactNode[]
 }) {
   const mobile = useIsMobile(), [open, setOpen] = React.useState(false)
   if (!mobile) return (
-    <div className="flex w-full flex-wrap items-center justify-end gap-2 md:flex-nowrap [&>button]:shrink-0">
-      {info && <span className="mr-auto min-w-0 truncate text-xs leading-normal text-muted-foreground">{info}</span>}
+    <div className="flex w-full flex-nowrap items-center justify-end gap-2 [&>button]:shrink-0">
+      {lead && <div className="mr-auto flex shrink-0 [&>button]:shrink-0">{lead}</div>}
+      {info && <span className={cn("min-w-0 truncate text-xs leading-normal text-muted-foreground", !lead && "mr-auto")}>{info}</span>}
       {more.map((a, i) => a.button ?? <Button key={i} variant="ghost" disabled={a.disabled} onClick={a.onPress} className={a.destructive ? "text-destructive" : undefined}>{a.icon}{a.label}</Button>)}
       {secondary}{primary}
     </div>
   )
+  if (phone === "row") {
+    const small = phoneSecondary ?? more.map((a, i) => <Button key={i} variant="ghost" disabled={a.disabled} onClick={a.onPress} className={a.destructive ? "text-destructive" : undefined}>{a.icon}{a.label}</Button>)
+    const smallAll = lead ? [lead, ...small] : small
+    return (
+      <div className="grid w-full gap-2">
+        <div className="flex gap-2 [&>*]:flex-1 [&_button]:h-12 [&_button]:w-full">{secondary[0] && <div>{secondary[0]}</div>}<div className="[&>button]:text-base">{primary}</div></div>
+        {smallAll.length > 0 && <div className="grid gap-1 [&_button]:min-h-11 [&_button]:w-full [&_button]:px-1 [&_button]:text-xs" style={{ gridTemplateColumns: "repeat(" + smallAll.length + ", minmax(0,1fr))" }}>{smallAll.map((n, i) => <div key={i} className="min-w-0">{n}</div>)}</div>}
+      </div>
+    )
+  }
   const sheetOnly = more.length > 0
   return (
     <div className="flex w-full gap-2 [&>*]:h-12">

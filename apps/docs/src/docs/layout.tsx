@@ -148,7 +148,7 @@ export const layoutDocs: Doc[] = [
   {
     slug: "app-shell", name: "App shell", group: "Layout & navigation", badge: "Mobile",
     desc: "Whole-app frame. Navy sidebar on desktop, bottom nav + FAB on a phone. One breakpoint: 768 px. Pages slide in the direction you moved and a gold bar sweeps the header.",
-    file: "packages/ui/src/components/shell.tsx", importLine: 'import { AppShell, Fab, type NavItem } from "@vks-kit/ui"',
+    file: "packages/ui/src/components/shell.tsx", importLine: 'import { AppShell, Fab, type NavItem, type ShellProfile } from "@vks-kit/ui"',
     demo: () => <PhoneFrame frame="app-shell" />,
     examples: [
       { id: "desktop", title: "Same shell on a desktop", note: "1180 px viewport scaled to fit. Collapse the rail with the chevron; the choice is remembered (localStorage \"vks.rail\"). Click items: later items slide in from the right, earlier ones from the left.", demo: () => <DesktopFrame frame="app-shell" />, code: `<AppShell items={nav} active={page} onNavigate={setPage} collapsible>…</AppShell>` },
@@ -158,8 +158,10 @@ export const layoutDocs: Doc[] = [
   { id: "tasks", label: "ວຽກ", icon: <ClipboardList />, badge: 3 },
   …
 ]
+// 0.6 recommended: no top bar anywhere; the person under the sidebar opens the profile page
 <AppShell items={nav} active={page} onNavigate={setPage} title="VKS"
-  header={<b>ໜ້າຫຼັກ</b>}
+  phoneHeader={false} desktopHeader={false}
+  profile={{ id: "profile", name: me.full_name, sub: me.code }}
   fab={<Fab label="ເພີ່ມ" onClick={add} />}>
   {content}
 </AppShell>`,
@@ -171,6 +173,8 @@ export const layoutDocs: Doc[] = [
       { name: "collapsible", type: "boolean", def: "true", desc: "Desktop rail can shrink to 72 px icons. State is remembered." },
       { name: "phoneHeader", type: "boolean", def: "true", desc: "false = no top bar on a phone (the bottom nav is the frame). Use it when the bar would only repeat the app name, the date or the nav." },
       { name: "phoneProfile", type: "NavItem", desc: "Phone only: adds the profile page as the last bottom-nav tab (desktop opens it from the user chip). e.g. { id: \"profile\", label: \"ຂ້ອຍ\", icon: <UserRound /> }." },
+      { name: "desktopHeader", type: "boolean", def: "true", desc: "0.6: false = no top bar on desktop either. The sidebar and each page's PageHeader already say where you are (rule No top bar)." },
+      { name: "profile", type: "ShellProfile", desc: "0.6: { id, name, sub?, src?, label?, icon? }. Desktop: a button under the sidebar that opens the profile page (current while you are on it). Phone: the profile page as the last bottom tab (ຂ້ອຍ). Replaces a hand-made user button + phoneProfile." },
     ],
     notes: ["Motion: page = 320 ms slide + fade (transform/opacity only), header bar = 400 ms, bottom nav rises once on load. Lite mode shortens the page swap to 150 ms and snaps the rail.",
       "Page gutter: main pads every page 16 px on a phone and 24 px from 768 px, plus room for the bottom nav. Pages must NOT add their own outer p-4 - that doubles the margin and makes tabs look misaligned. Root a phone page with mx-auto flex w-full max-w-md flex-col gap-4. See Design thinking → One page gutter."],

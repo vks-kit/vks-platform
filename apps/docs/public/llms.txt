@@ -15,7 +15,7 @@ Before designing a page, read docs/ai/design-thinking.md: one job per page, cont
 
 ## Actions
 
-- [Button](ai/button.md): The one button. Layered fill, inner highlight, tinted lift shadow and a sheen on hover. Presses land on an iOS spring. h-11 (44 px) on every size. Exports: Button
+- [Button](ai/button.md): The one button. Layered fill, inner highlight, tinted lift shadow and a sheen on hover. Presses land on an iOS spring. h-11 (44 px) on every size. Exports: Button, IconButton
 - [Badge](ai/badge.md): Small status pill. Tinted background + full-strength text so it passes contrast in both themes. Exports: Badge
 - [Toggle](ai/toggle.md): A button that stays pressed. ToggleGroup picks one (or many) of a few options; the segmented variant is the iOS control with a pill that springs under your choice. Exports: Toggle, ToggleGroup, ToggleGroupItem
 - [Kbd, copy & separator](ai/kbd-copy.md): Small helpers: keyboard hint, copy-to-clipboard with a tick, divider. Exports: Kbd, CopyButton, Separator
@@ -101,7 +101,7 @@ Before designing a page, read docs/ai/design-thinking.md: one job per page, cont
 
 ## Layout & navigation
 
-- [App shell](ai/app-shell.md): Whole-app frame. Navy sidebar on desktop, bottom nav + FAB on a phone. One breakpoint: 768 px. Pages slide in the direction you moved and a gold bar sweeps the header. Exports: AppShell, Fab, NavItem
+- [App shell](ai/app-shell.md): Whole-app frame. Navy sidebar on desktop, bottom nav + FAB on a phone. One breakpoint: 768 px. Pages slide in the direction you moved and a gold bar sweeps the header. Exports: AppShell, Fab, NavItem, ShellProfile
 - [Sidebar](ai/sidebar.md): Navy rail. The active pill springs between items with a gold edge and a glow behind the icon; icons pop when clicked; the logo spins in once. Collapses to a 72 px icon rail with tooltips. Exports: Sidebar, SidebarSheet
 - [Bottom nav & FAB](ai/bottom-nav.md): 56 px tall tabs above the phone's home bar. The FAB sits above it on the right. Exports: BottomNav, Fab
 - [Page header](ai/page-header.md): Title, subtitle and actions. Actions hide on a phone: put the main one in the FAB. Exports: PageHeader, LargeTitleBar

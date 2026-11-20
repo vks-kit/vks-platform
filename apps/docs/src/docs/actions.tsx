@@ -1,13 +1,13 @@
 import * as React from "react"
-import { ScanLine, Trash2, Plus, ArrowRight, Bold, Italic, Underline, Flashlight, List, LayoutGrid, Map as MapIcon, Sun, Moon, Clock } from "@vks-kit/ui/icons"
-import { Button, Badge, Logo, LogoTile, BRAND, Toggle, ToggleGroup, ToggleGroupItem, toast } from "@vks-kit/ui"
+import { ScanLine, Trash2, Plus, ArrowRight, Bold, Italic, Underline, Flashlight, List, LayoutGrid, Map as MapIcon, Sun, Moon, Clock, Copy, Share2 } from "@vks-kit/ui/icons"
+import { Button, IconButton, Badge, Logo, LogoTile, BRAND, Toggle, ToggleGroup, ToggleGroupItem, toast } from "@vks-kit/ui"
 import type { Doc } from "./types"
 
 export const actionDocs: Doc[] = [
   {
     slug: "button", name: "Button", group: "Actions", badge: "Stable",
     desc: "The one button. Layered fill, inner highlight, tinted lift shadow and a sheen on hover. Presses land on an iOS spring. h-11 (44 px) on every size.",
-    file: "packages/ui/src/components/button.tsx", importLine: 'import { Button } from "@vks-kit/ui"',
+    file: "packages/ui/src/components/button.tsx", importLine: 'import { Button, IconButton } from "@vks-kit/ui"',
     demo: () => <><Button>ບັນທຶກ</Button><Button variant="action"><ScanLine />ສະແກນ</Button><Button variant="gold">Gold</Button><Button variant="outline">Outline</Button><Button variant="ghost">Ghost</Button><Button variant="destructive"><Trash2 />ລຶບ</Button></>,
     code: `<Button>ບັນທຶກ</Button>
 <Button variant="action"><ScanLine />ສະແກນ</Button>
@@ -26,6 +26,9 @@ export function Save() {
 <Button>Default</Button>
 <Button size="lg">Large</Button>
 <Button size="icon" aria-label="add"><Plus /></Button>` },
+      { id: "icon-button", title: "Icon only (IconButton)", note: "0.6: label is the tooltip on desktop and the screen-reader name, so an icon button always has a name. Use it for actions everyone knows by the icon (copy, share, WhatsApp).", demo: () => <><IconButton label="ສຳເນົາຮູບ" icon={<Copy />} /><IconButton label="ແບ່ງປັນ" icon={<Share2 />} /><IconButton label="ລຶບ" variant="ghost" icon={<Trash2 />} /></>,
+        code: `<IconButton label="ສຳເນົາຮູບ" icon={<Copy />} onClick={copy} />
+<IconButton label="ແບ່ງປັນ" icon={<Share2 />} onClick={share} />` },
       { id: "as-child", title: "As a link", note: "asChild hands the styles to your own element (Radix Slot).", demo: () => <Button asChild variant="outline"><a href="#/docs/introduction">Read the intro <ArrowRight /></a></Button>,
         code: `<Button asChild variant="outline">
   <a href="/intro">Read the intro <ArrowRight /></a>

@@ -40,7 +40,7 @@ export function DialogContent({ className, children, onEscapeKeyDown, onInteract
       <Overlay />
       <D.Content
         data-pushed={pushed || undefined} onEscapeKeyDown={onEsc} onInteractOutside={keepOpenForToast(onInteractOutside as (e: Event) => void)}
-        className={cn("vks-modal fixed inset-x-0 bottom-0 z-50 grid max-h-[90dvh] w-full gap-4 overflow-auto", PANEL_SURFACE, PANEL_DESKTOP, "md:left-[calc(50%-min(14rem,50%-1rem))] md:top-[18vh] md:max-w-md data-[pushed]:overflow-hidden data-[pushed]:min-h-[min(34rem,85dvh)]", className)}
+        className={cn("vks-modal fixed inset-x-0 bottom-0 z-50 grid max-h-[90dvh] w-full gap-4 overflow-auto", PANEL_SURFACE, PANEL_DESKTOP, "md:left-[calc(50%-min(14rem,50%-1rem))] md:inset-y-0 md:my-auto md:h-fit md:max-w-md data-[pushed]:overflow-hidden data-[pushed]:min-h-[min(34rem,85dvh)]", className)}
         {...p}
       >
         <NestCtx.Provider value={nest}>

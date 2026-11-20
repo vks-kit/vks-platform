@@ -98,7 +98,8 @@ export const heavyDocs: Doc[] = [
     demo: L("Board"),
     code: `<Kanban columns={[{ id: "todo", title: "ຕ້ອງເຮັດ" }, { id: "done", title: "ສຳເລັດ" }]}
   cards={cards} onChange={(next, { id, to }) => { setCards(next); save(id, to) }} />`,
-    props: [{ name: "phoneTap", type: '"move" | "open"', def: '"move"', desc: "Phone: what a tap on a card does. \"open\" calls onOpen (recommended when the card has its own actions: tap opens, moving is inside); \"move\" shows the move-to sheet." },
+    props: [{ name: "cardLines", type: "1", desc: "0.6: title and meta stay on one line each (… + full text on hover), so cards in a column have the same height. Use it for boards people scan by row." },
+      { name: "phoneTap", type: '"move" | "open"', def: '"move"', desc: "Phone: what a tap on a card does. \"open\" calls onOpen (recommended when the card has its own actions: tap opens, moving is inside); \"move\" shows the move-to sheet." },
       { name: "columns", type: "{ id; title; tone? }[]", desc: "tone colours the dot: muted | primary | warning | success | destructive. Desktop columns stay on one row (min 8.5rem) and scroll sideways when they do not fit." }, { name: "cards", type: "{ id; column; title; meta?; tone? }[]", desc: "tone colours the left edge." },
       { name: "onChange", type: "(cards, { id, to }) => void", desc: "Fires once on drop, only when something changed." }, { name: "onAdd", type: "(column) => void", desc: "Shows a + button under each column." },
       { name: "onOpen", type: "(card) => void", desc: "Click / tap a card." }, { name: "emptyLabel / addLabel", type: "string", def: '"ລາກບັດມາວາງບ່ອນນີ້" / "ເພີ່ມບັດ"', desc: "" }],

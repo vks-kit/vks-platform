@@ -47,14 +47,18 @@ export function dropCard(cards: KanbanCard[], id: string, overId: string, column
   return { cards: moveCard(cards, id, to, overCard?.id), to }
 }
 
+/** cardLines from Kanban props, read by every card body (desktop, drag overlay, phone). */
+const LinesCtx = React.createContext<1 | undefined>(undefined)
+
 function CardBody({ card, lifted, phone }: { card: KanbanCard; lifted?: boolean; phone?: boolean }) {
+  const lines = React.useContext(LinesCtx)
   return (
     <div className={cn("relative flex items-start gap-2 overflow-hidden rounded-xl border bg-card p-3 pl-3.5 text-card-foreground",
       "before:absolute before:inset-y-0 before:left-0 before:w-1", EDGE[card.tone ?? "muted"],
       lifted ? "rotate-2 scale-[1.04] shadow-[0_18px_40px_-12px_rgb(0_0_0/.35)] ring-2 ring-primary/30" : "shadow-sm transition-shadow hover:shadow-md")}>
       <div className={cn("min-w-0 flex-1", phone && "py-0.5")}>
-        <div className="font-semibold leading-normal">{card.title}</div>
-        {card.meta && <div className="mt-0.5 text-xs leading-normal text-muted-foreground">{card.meta}</div>}
+        <div className={cn("font-semibold leading-normal", lines === 1 && "truncate")} title={lines === 1 ? card.title : undefined}>{card.title}</div>
+        {card.meta && <div className={cn("mt-0.5 text-xs leading-normal text-muted-foreground", lines === 1 && "truncate")} title={lines === 1 ? card.meta : undefined}>{card.meta}</div>}
       </div>
       {phone ? <ChevronRight aria-hidden className="mt-0.5 size-4 shrink-0 text-muted-foreground/60" /> : <GripVertical aria-hidden className="mt-0.5 size-4 shrink-0 text-muted-foreground/60" />}
     </div>
@@ -106,6 +110,11 @@ function Column({ col, cards, onAdd, onOpen, emptyLabel, addLabel }: { col: Kanb
 type KanbanProps = {
   columns: KanbanColumn[]; cards: KanbanCard[]; onChange: (cards: KanbanCard[], moved: { id: string; to: string }) => void
   onAdd?: (column: string) => void; onOpen?: (card: KanbanCard) => void; emptyLabel?: string; addLabel?: string; className?: string
+  /**
+   * 0.6: 1 = the title and the meta each stay on one line (longer text ends in …, full text on hover), so every card in
+   * a column has the same height. Use it for boards people scan by row (appointments, tasks). Default: text wraps.
+   */
+  cardLines?: 1
   /** Phone only: heading of the move list in the card sheet. */
   moveLabel?: string; /** Phone only: text of the button that calls onOpen from the card sheet. */ openLabel?: string
   /**
@@ -234,5 +243,6 @@ function KanbanPhone({ columns, cards, onChange, onAdd, onOpen, addLabel = "ເ�
  * Use for status boards (todo / doing / done); for a plain list use ListGroup instead. Import from "@vks-kit/ui/kanban".
  */
 export function Kanban(props: KanbanProps) {
-  return useIsMobile() ? <KanbanPhone {...props} /> : <KanbanDesktop {...props} />
+  const mobile = useIsMobile()
+  return <LinesCtx.Provider value={props.cardLines}>{mobile ? <KanbanPhone {...props} /> : <KanbanDesktop {...props} />}</LinesCtx.Provider>
 }
