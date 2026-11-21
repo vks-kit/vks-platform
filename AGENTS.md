@@ -90,6 +90,7 @@ Heavy parts are lazy subpaths: `@vks-kit/ui/charts`, `@vks-kit/ui/map`, `@vks-ki
 | `npm run typecheck` | tsc over packages and apps |
 | `npm run dev` / `npm run build` | gallery (:5199) |
 | `npm run dev:docs` / `npm run build:docs` | docs site (preview :5200) |
+| `npm run kit:publish -- x.y.z` | release: bump types/core/ui together, run every check, publish to GitHub Packages, then **deploy the docs (https://ui.vks-security.com) and the gallery** and check the live docs show x.y.z. `--dry` = checks only; `--no-deploy` = publish without touching the sites. Commit + push afterwards. |
 
 ## Scope
 GAS and Alpine.js apps cannot import `@vks-kit/ui` (React). They may only share the colour tokens from theme.css.
