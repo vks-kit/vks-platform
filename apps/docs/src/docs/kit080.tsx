@@ -1,5 +1,5 @@
 import * as React from "react"
-import { SubmitButton, useOptimisticList, ExpandCard, Field, Input, Badge, Button, toast, applyPatches, docTitleText } from "@vks-kit/ui"
+import { SubmitButton, useOptimisticList, ExpandCard, FadeCrop, insetClip, Field, Input, Badge, Button, toast, applyPatches, docTitleText } from "@vks-kit/ui"
 import { Check, ScanLine } from "@vks-kit/ui/icons"
 import type { Doc } from "./types"
 
@@ -50,23 +50,44 @@ function Scans() {
 }
 
 const SHIFTS = [
-  { t: "06:00–18:00", site: "ທະນາຄານ BCEL", place: "ປະຕູໜ້າ", done: 2, of: 4 },
-  { t: "18:00–06:00", site: "ໂຮງງານເບຍລາວ", place: "ສາງ B", done: 0, of: 6 },
+  { t: "06:00–18:00", site: "ທະນາຄານ BCEL", place: "ປະຕູໜ້າ", done: 2, of: 4, tone: "bg-primary text-primary-foreground" },
+  { t: "18:00–06:00", site: "ໂຮງງານເບຍລາວ", place: "ສາງ B", done: 0, of: 6, tone: "vks-hero text-primary-foreground" },
+  { t: "06:00–14:00", site: "ສູນການຄ້າ ວຽງຈັນ", place: "ບ່ອນຈອດລົດ", done: 3, of: 3, tone: "bg-success text-success-foreground" },
 ]
+const Cover = ({ s }: { s: (typeof SHIFTS)[number] }) => <><div className="text-xl font-bold leading-snug tabular-nums">{s.t}</div><div className="text-sm leading-normal opacity-85">{s.site} · {s.done} / {s.of} ຈຸດກວດ</div></>
+const Detail = ({ s }: { s: (typeof SHIFTS)[number] }) => (
+  <div className="grid gap-4">
+    <dl className="grid grid-cols-3 gap-2 border-b pb-4 text-sm">{[["ຈຸດ", s.place], ["ຈຸດກວດ", s.of + ""], ["ສຳເລັດ", s.done + ""]].map(([k, v]) => <div key={k}><dt className="text-xs text-muted-foreground">{k}</dt><dd className="font-semibold tabular-nums">{v}</dd></div>)}</dl>
+    <Button variant="action" size="lg" className="w-full"><ScanLine />ສະແກນຈຸດກວດຖັດໄປ</Button>
+    <ul className="grid gap-2">{Array.from({ length: s.of }, (_, i) => <li key={i} className="flex min-h-11 items-center justify-between rounded-lg border px-3 text-sm"><span>ຈຸດກວດ {i + 1}</span>{i < s.done ? <Badge variant="success" dot>ສຳເລັດ</Badge> : <Badge>ລໍຖ້າ</Badge>}</li>)}</ul>
+  </div>
+)
 function Expand() {
   return (
-    <div className="grid w-full max-w-md grid-cols-[minmax(0,1fr)] gap-2 sm:grid-cols-2">
-      {SHIFTS.map((s) => (
-        <ExpandCard key={s.t} title={s.t + " · " + s.site} summary={<><b className="text-lg tabular-nums">{s.t}</b><div className="truncate text-sm text-muted-foreground">{s.site}</div><div className="mt-1 text-xs tabular-nums text-muted-foreground">{s.done} / {s.of} ຈຸດກວດ</div></>}>
-          <p className="text-sm text-muted-foreground">{s.place} · {s.of} ຈຸດກວດ</p>
-          <ul className="mt-3 grid gap-2">{Array.from({ length: s.of }, (_, i) => <li key={i} className="flex min-h-11 items-center justify-between rounded-lg border px-3 text-sm"><span>ຈຸດກວດ {i + 1}</span>{i < s.done ? <Badge variant="success" dot>ສຳເລັດ</Badge> : <Badge>ລໍຖ້າ</Badge>}</li>)}</ul>
-        </ExpandCard>
-      ))}
+    <div className="grid w-full max-w-sm grid-cols-[minmax(0,1fr)] gap-3">
+      {SHIFTS.map((s) => <ExpandCard key={s.t} title={s.t + " · " + s.site} cover={<Cover s={s} />} coverClassName={s.tone} coverHeight={210}><Detail s={s} /></ExpandCard>)}
+    </div>
+  )
+}
+function ExpandPlain() {
+  const s = SHIFTS[0]
+  return <div className="w-full max-w-sm"><ExpandCard title={s.t + " · " + s.site} summary={<><b className="tabular-nums">{s.t}</b><div className="text-sm text-muted-foreground">{s.site}</div></>}><Detail s={s} /></ExpandCard></div>
+}
+const ROWS = [["ສົມພອນ", "06:00–18:00", "ມາວຽກ"], ["ບົວໄລ", "18:00–06:00", "ມາວຽກ"], ["ດາວເຮືອງ", "06:00–18:00", "ລາ"], ["ຄຳພັນ", "18:00–06:00", "ມາວຽກ"], ["ນ້ອຍ", "06:00–18:00", "ຂາດ"], ["ສີສະຫວັດ", "06:00–14:00", "ມາວຽກ"], ["ວິໄລ", "14:00–22:00", "ມາວຽກ"]]
+function Fade({ expandable }: { expandable?: boolean }) {
+  return (
+    <div className="w-full max-w-md">
+      <FadeCrop height={230} expandable={expandable}>
+        <div className="overflow-hidden rounded-xl border bg-card">
+          <div className="border-b px-4 py-3 font-semibold">ການມາວຽກ · ມື້ນີ້</div>
+          {ROWS.map(([n, t, st]) => <div key={n} className="flex min-h-12 items-center gap-3 border-b px-4 last:border-0"><span className="min-w-0 flex-1 truncate font-semibold">{n}</span><span className="text-sm tabular-nums text-muted-foreground">{t}</span><Badge variant={st === "ມາວຽກ" ? "success" : st === "ລາ" ? "warning" : "danger"}>{st}</Badge></div>)}
+        </div>
+      </FadeCrop>
     </div>
   )
 }
 
-void applyPatches; void docTitleText
+void applyPatches; void docTitleText; void insetClip
 
 export const kit080Docs: Doc[] = [
   {
@@ -110,19 +131,41 @@ export const kit080Docs: Doc[] = [
   },
   {
     slug: "expand-card", name: "Expand card", group: "Overlays", badge: "New",
-    desc: "A card that grows into its own panel and folds back into the same spot, so the eye keeps track of where it came from. Phone: a near full-screen panel; desktop: a panel over the card. Transform only, 300 ms.",
-    file: "packages/ui/src/components/actions.tsx", importLine: 'import { ExpandCard } from "@vks-kit/ui"',
+    desc: "A card that opens into its own screen as one object (the iOS App Store card) and folds back into the same spot. With cover, the card is the foot of a coloured header that grows to full size while the body is revealed. Phone: full screen; desktop: a centred panel over a dimmed page.",
+    file: "packages/ui/src/components/actions.tsx", importLine: 'import { ExpandCard, insetClip } from "@vks-kit/ui"',
     demo: () => <Expand />,
-    code: `<ExpandCard title={s.time + " · " + s.site} summary={<ShiftSummary s={s} />}>
+    code: `<ExpandCard title={s.time + " · " + s.site} coverClassName="bg-primary text-primary-foreground"
+  cover={<><div className="text-xl font-bold tabular-nums">{s.time}</div><div className="text-sm opacity-85">{s.site}</div></>}>
   <CheckpointList s={s} />
 </ExpandCard>`,
+    examples: [{ id: "plain", title: "Without a cover", note: "A plain card (summary) grows into a panel whose header line is the title.", demo: () => <ExpandPlain />, code: "<ExpandCard title=\"…\" summary={<ShiftSummary s={s} />}>…</ExpandCard>" }],
     props: [
-      { name: "summary", type: "ReactNode", desc: "The closed card. The whole card is the button." },
-      { name: "title", type: "ReactNode", desc: "Header of the open panel (also its accessible name)." },
-      { name: "children", type: "ReactNode", desc: "Panel body; scrolls on its own." },
+      { name: "cover", type: "ReactNode", desc: "Header of the open screen. Its foot is the closed card (no summary needed)." },
+      { name: "coverClassName", type: "string", desc: "Tokens only: \"bg-primary text-primary-foreground\", \"vks-hero\", \"bg-success text-success-foreground\"." },
+      { name: "coverHeight / cardHeight", type: "number", def: "220 / 132", desc: "Open header height and closed card height, px." },
+      { name: "summary", type: "ReactNode", desc: "A plain closed card instead of the cover's foot." },
+      { name: "title", type: "ReactNode", desc: "Accessible name; header line when there is no cover." },
       { name: "open / onOpenChange", type: "boolean / (o) => void", desc: "Optional control from outside." },
     ],
-    notes: ["Esc or ✕ closes and gives focus back to the card.", "Reduced motion: opens and closes without the grow.", "For a record with its own URL or a long form use Drawer."],
+    notes: ["One element from card to screen: a clip-path grows from the card's rectangle while the content slides up, so nothing swaps and nothing jumps.", "Esc, ✕ or the dimmed page close it; focus goes back to the card. Reduced motion: opens and closes at once.", "The page behind does not scroll while it is open. For a record with its own URL or a long form use Drawer."],
+  },
+  {
+    slug: "fade-crop", name: "Fade crop", group: "Layout & navigation", badge: "New",
+    desc: "Show the top of something long and let its foot fade out instead of cutting it at a random line. A mask, so it fades into any background in both themes. expandable adds one ເບິ່ງທັງໝົດ button.",
+    file: "packages/ui/src/components/fade-crop.tsx", importLine: 'import { FadeCrop } from "@vks-kit/ui"',
+    demo: () => <Fade />,
+    code: `<FadeCrop height={230} expandable>
+  <AttendanceList rows={today} />
+</FadeCrop>`,
+    examples: [{ id: "expandable", title: "With ເບິ່ງທັງໝົດ", note: "The button sits on the fade; open, the whole list shows and the button becomes ຫຍໍ້.", demo: () => <Fade expandable />, code: "<FadeCrop height={230} expandable>…</FadeCrop>" }],
+    props: [
+      { name: "height", type: "number | string", def: "280", desc: "Visible part." },
+      { name: "fadeFrom / fadeTo", type: "number (%)", def: "58 / 96", desc: "Where the fade starts and ends." },
+      { name: "expandable", type: "boolean", desc: "Adds ເບິ່ງທັງໝົດ / ຫຍໍ້." },
+      { name: "moreLabel / lessLabel", type: "string", desc: "" },
+      { name: "open / onOpenChange", type: "boolean / (o) => void", desc: "" },
+    ],
+    notes: ["Keep the real rows in the top half; let the fade fall on older rows or filler.", "Only the foot fades; top and sides stay sharp so it still reads as a placed block."],
   },
   {
     slug: "sortable-list", name: "Sortable list", group: "Heavy (lazy)", badge: "Lazy",

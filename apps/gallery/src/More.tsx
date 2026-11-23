@@ -15,7 +15,7 @@ import {
   ApprovalCard, SyncStatus, diffFields, type ApprovalStatus, TextInput, PhoneInput, MoneyInput, TimeInput, NumberInput, isPhoneLa, phoneLaE164,
   IconButton, ContactActions, SlotPicker, halfHours, RangeInline, DateInput, FormDialogContent, Field, FormSection, FormActions, FoldSection, SheetContent, Sheet, SheetTitle, SelectHeader, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Facts, FactGrid, WeekdayPicker, workDaysText,
   SettingsPage, defineSettings,
-  SubmitButton, useOptimisticList, ExpandCard,
+  SubmitButton, useOptimisticList, ExpandCard, FadeCrop,
   PatrolCheckpointRail, ShiftRosterGrid, IncidentEscalationCard, GuardIdBadge, ContractQuoteSummary, type Checkpoint, type Roster, type ShiftCode, type QuoteLine,
 } from "@vks-kit/ui"
 import { Share2, Pencil, Phone, Trash2, Heart, Shield, AlertTriangle, CheckCircle2, Clock, Folder, User, Copy as CopyIcon, Search as SearchIcon, ArrowRight } from "@vks-kit/ui/icons"
@@ -641,7 +641,7 @@ function Kit080() {
   const [off, setOff] = React.useState(false), offRef = React.useRef(off); offRef.current = off
   const opt = useOptimisticList(cps, async (cp, p) => { await wait(800); if (offRef.current) throw new Error("offline"); setCps((l) => l.map((x) => (x.id === cp.id ? { ...x, ...p } : x))) })
   const [order, setOrder] = React.useState(["ປະຕູໜ້າ", "ບ່ອນຈອດລົດ B1", "ຄັງສິນຄ້າ B", "ຫຼັງຄາ"])
-  return <Sec id="kit-0-8" title="0.8: SubmitButton, optimistic scans, SortableList, ExpandCard, PageHeader docTitle">
+  return <Sec id="kit-0-8" title="0.8: SubmitButton, optimistic scans, SortableList, ExpandCard (cover), FadeCrop, PageHeader docTitle">
     <PageHeader title="ກະ" subtitle="ຊື່ແຖບ browser ປ່ຽນເປັນ (3) ກະ · VKS Gallery" docTitle appName="VKS Gallery" badge={3} />
     <div className="grid gap-6 md:grid-cols-2">
       <form action={save} className="grid content-start gap-3"><Field label="ຊື່ສະຖານທີ່" error={err ?? undefined}><Input name="n" invalid={!!err} /></Field><SubmitButton pendingLabel="ກຳລັງບັນທຶກ…">ບັນທຶກ</SubmitButton></form>
@@ -651,7 +651,10 @@ function Kit080() {
       </div>
       <SortableList items={order} getId={(x) => x} onChange={setOrder} render={(x, i) => <b>{i + 1}. {x}</b>} />
       <div className="grid content-start gap-2 sm:grid-cols-2">
-        {["06:00–18:00", "18:00–06:00"].map((t) => <ExpandCard key={t} title={t + " · ທະນາຄານ BCEL"} summary={<><b className="text-lg tabular-nums">{t}</b><div className="text-sm text-muted-foreground">ທະນາຄານ BCEL</div></>}><p className="text-sm text-muted-foreground">4 ຈຸດກວດ · ປະຕູໜ້າ</p></ExpandCard>)}
+        {[["06:00–18:00", "bg-primary text-primary-foreground"], ["18:00–06:00", "vks-hero text-primary-foreground"]].map(([t, tone]) => <ExpandCard key={t} title={t + " · ທະນາຄານ BCEL"} coverClassName={tone} cover={<><div className="text-xl font-bold tabular-nums">{t}</div><div className="text-sm opacity-85">ທະນາຄານ BCEL · 2 / 4 ຈຸດກວດ</div></>}><p className="text-sm text-muted-foreground">4 ຈຸດກວດ · ປະຕູໜ້າ</p></ExpandCard>)}
+      </div>
+      <div className="md:col-span-2">
+        <FadeCrop height={180} expandable><div className="overflow-hidden rounded-xl border bg-card">{["ສົມພອນ", "ບົວໄລ", "ດາວເຮືອງ", "ຄຳພັນ", "ນ້ອຍ", "ສີສະຫວັດ"].map((n) => <div key={n} className="flex min-h-12 items-center justify-between border-b px-4 last:border-0"><b>{n}</b><span className="text-sm tabular-nums text-muted-foreground">06:00–18:00</span></div>)}</div></FadeCrop>
       </div>
     </div>
   </Sec>

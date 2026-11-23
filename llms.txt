@@ -87,7 +87,7 @@ Before designing a page, read docs/ai/design-thinking.md: one job per page, cont
 - [Hover card](docs/ai/hover-card.md): Rich preview when you hover a name or ID. Opens after 350 ms so it never flickers. Exports: HoverCard
 - [Context menu](docs/ai/context-menu.md): Desktop-first: right-click menu (long-press works on phones but nobody discovers it, so give phones a visible ⋯ Menu or ActionSheet). Right-click (or long-press) menu with icons, shortcuts, sub-menus and a red destructive item. Exports: ContextMenu
 - [Share image](docs/ai/share-image.md): A picture people send on (receipt, client card, certificate): you draw it on a canvas, the popup shows it sized to the screen with no scrolling and gives Download + copy + share, or Save + Send on WhatsApp on a phone. Exports: ShareImageDialog, fitText, loadFonts, loadImage
-- [Expand card](docs/ai/expand-card.md): A card that grows into its own panel and folds back into the same spot, so the eye keeps track of where it came from. Phone: a near full-screen panel; desktop: a panel over the card. Transform only, 300 ms. Exports: ExpandCard
+- [Expand card](docs/ai/expand-card.md): A card that opens into its own screen as one object (the iOS App Store card) and folds back into the same spot. With cover, the card is the foot of a coloured header that grows to full size while the body is revealed. Phone: full screen; desktop: a centred panel over a dimmed page. Exports: ExpandCard, insetClip
 
 ## Data display
 
@@ -127,6 +127,7 @@ Before designing a page, read docs/ai/design-thinking.md: one job per page, cont
 - [Breadcrumb](docs/ai/breadcrumb.md): Where am I, one click up. Long paths collapse the middle into … Exports: Breadcrumb
 - [Split pane](docs/ai/split-pane.md): List | detail with a draggable divider. Remembers its size. Exports: SplitPane
 - [Scroll area](docs/ai/scroll-area.md): Thin overlay scrollbar that matches the theme on Windows desktops. Exports: ScrollArea
+- [Fade crop](docs/ai/fade-crop.md): Show the top of something long and let its foot fade out instead of cutting it at a random line. A mask, so it fades into any background in both themes. expandable adds one ເບິ່ງທັງໝົດ button. Exports: FadeCrop
 
 ## Mobile & touch
 

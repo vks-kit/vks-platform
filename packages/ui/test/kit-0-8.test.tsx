@@ -4,7 +4,7 @@ import { act, cleanup, fireEvent, render, waitFor } from "@testing-library/react
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import * as React from "react"
-import { applyPatches, docTitleText, revealDelay, SubmitButton, PageHeader, ExpandCard, SignaturePad, useOptimisticList, type SignaturePadHandle } from "../src"
+import { applyPatches, docTitleText, revealDelay, SubmitButton, PageHeader, ExpandCard, FadeCrop, insetClip, SignaturePad, useOptimisticList, type SignaturePadHandle } from "../src"
 import { moveItem } from "../src/heavy/kanban"
 
 afterEach(cleanup)
@@ -84,8 +84,36 @@ describe("React 19 parts", () => {
     const card = getByRole("button", { name: "ກະ" })
     expect(card.getAttribute("aria-expanded")).toBe("false")
     fireEvent.click(card)
-    expect(getByRole("region", { name: "ກະ 06:00–18:00" })).toBeTruthy()
+    expect(getByRole("dialog", { name: "ກະ 06:00–18:00" })).toBeTruthy()
+    expect(card.getAttribute("aria-expanded")).toBe("true")
     fireEvent.click(getByRole("button", { name: "ປິດ" }))
-    await waitFor(() => expect(queryByRole("region")).toBeNull(), { timeout: 1000 })
+    await waitFor(() => expect(queryByRole("dialog")).toBeNull(), { timeout: 1500 })
+    expect(card.getAttribute("aria-expanded")).toBe("false")
+  })
+  it("ExpandCard with a cover: the closed card shows the cover, Esc closes it", async () => {
+    const { getByRole, queryByRole, getAllByText } = render(<ExpandCard title="ທະນາຄານ BCEL" cover={<b>06:00–18:00</b>} coverClassName="bg-primary"><p>ຈຸດກວດ</p></ExpandCard>)
+    const card = getByRole("button", { name: "06:00–18:00" })
+    expect(card.style.height).toBe("132px")
+    fireEvent.click(card)
+    const dlg = getByRole("dialog", { name: "ທະນາຄານ BCEL" })
+    expect(getAllByText("06:00–18:00").length).toBe(2)
+    fireEvent.keyDown(dlg, { key: "Escape" })
+    await waitFor(() => expect(queryByRole("dialog")).toBeNull(), { timeout: 1500 })
+  })
+  it("insetClip keeps only the card's rectangle of a full-screen layer", () => {
+    expect(insetClip(390, 844, 16, 300, 358, 132, 22)).toBe("inset(300px 16px 412px 16px round 22px)")
+    expect(insetClip(390, 844, 0, 0, 390, 844, 0)).toBe("inset(0px 0px 0px 0px round 0px)")
+    expect(insetClip(100, 100, 120, -5, 10, 10, 4)).toBe("inset(0px 0px 95px 120px round 4px)")
+  })
+  it("FadeCrop fades with a mask (not a colour) and can open in full", () => {
+    const { container, getByRole } = render(<FadeCrop height={200} expandable><p>ແຖວ</p></FadeCrop>)
+    const box = container.firstElementChild!.firstElementChild as HTMLElement
+    expect(box.style.height).toBe("200px")
+    expect(box.style.maskImage || box.style.getPropertyValue("-webkit-mask-image")).toContain("linear-gradient")
+    const more = getByRole("button", { name: /ເບິ່ງທັງໝົດ/ })
+    expect(more.getAttribute("aria-expanded")).toBe("false")
+    fireEvent.click(more)
+    expect(box.style.height).toBe("")
+    expect(getByRole("button", { name: /ຫຍໍ້/ }).getAttribute("aria-expanded")).toBe("true")
   })
 })
