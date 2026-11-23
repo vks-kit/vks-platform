@@ -1,229 +1,217 @@
-import { useEffect, useRef, useState, type KeyboardEvent } from "react"
-import { Clock } from "lucide-react"
+import { useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode, type RefObject } from "react"
+import { Popover as PO } from "radix-ui"
+import { Check, Clock } from "lucide-react"
 import { cn } from "../lib/cn"
 import { useIsMobile } from "../lib/use-media"
-import { DAY_MIN as DAY, hourInSpan, isHHMM, minToTime as toTime, spanMin as span, spanSegments, timeToMin as toMin } from "../lib/time"
-import { Badge } from "./badge"
-import { Button } from "./button"
-import { Label } from "./input"
-import { Popover, PopoverContent, PopoverTrigger } from "./extras"
+import { DAY_MIN, minToTime as toTime, parseTimeText, spanMin as span, timeSteps, timeToMin as toMin } from "../lib/time"
 import { InSheetView, Sheet, SheetContent, SheetTitle, useInSheet } from "./overlay"
-import { ToggleGroup, ToggleGroupItem } from "./toggle"
 
-/* Shift time range, 24 h only (house rule: a shift is named by its time).
- * Two fields ເລີ່ມ → ເລີກ open one panel: 24 h bar, length (8 / 12 / ອື່ນໆ), hour grid, minute row.
- * Desktop: popover. Phone: bottom sheet (inside a Dialog: a pushed view in the same sheet).
- * Values stay "HH:MM" strings. Picking a start keeps the current length and moves on to ເລີກ. */
+/* Time fields in the Google Calendar / Outlook style, 24 h only (house rule: a shift is named by its time).
+ * The field is a real text box: type "6", "1830" or "18:30" and it becomes HH:MM on Enter / leaving the field.
+ * Focus or click opens a short list of times (every step minutes) that opens on the current value, so nobody scrolls.
+ * TimeRangePicker: the end list starts after the start time and says how long each choice is ("12 ຊມ · +1 ມື້").
+ * Desktop: dropdown under the field. Phone: the same list in a bottom sheet (inside a Dialog: a pushed view). */
 
-type Which = "start" | "end"
-const OK = { test: isHHMM }
-const hoursText = (min: number) => { const h = min / 60; return (Number.isInteger(h) ? String(h) : h.toFixed(1)) + " ຊົ່ວໂມງ" }
-const HOURS = Array.from({ length: 24 }, (_, i) => i)
-const MINUTES = [0, 15, 30, 45]
-const CELL = "vks-press flex h-11 items-center justify-center rounded-lg text-base tabular-nums transition-[background-color,color,scale] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-const PICKED = "bg-primary font-bold text-primary-foreground shadow-md"
-const cellOf = (root: HTMLElement | null, h: number) => root?.querySelector<HTMLButtonElement>('[data-h="' + h + '"]') ?? null
+/** 720 → "12 ຊົ່ວໂມງ" / "12 ຊມ", 90 → "1 ຊມ 30 ນາທີ", 30 → "30 ນາທີ". */
+const hoursText = (min: number, short = false) => {
+  const h = Math.floor(min / 60), m = min % 60
+  if (!h) return m + " ນາທີ"
+  return h + (short || m ? " ຊມ" : " ຊົ່ວໂມງ") + (m ? " " + m + (short ? "" : " ນາທີ") : "")
+}
+const FIELD = "vks-field flex h-11 w-full min-w-0 items-center gap-2 rounded-lg border border-input bg-card px-3 text-base text-foreground transition-[border-color,box-shadow] duration-200 focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/25 aria-[invalid=true]:border-destructive"
+const PANEL = "vks-float z-50 w-[var(--radix-popover-trigger-width)] min-w-48 origin-[var(--radix-popover-content-transform-origin)] rounded-xl border bg-popover p-1 text-popover-foreground shadow-[0_18px_40px_-16px_rgb(20_23_61/.35),0_2px_6px_-2px_rgb(20_23_61/.12)]"
 
-/** Use for one clock time picked by tapping (meeting, visit, report time): hour grid + :00/:15/:30/:45, popover on desktop, sheet on phone. For a shift (start → end) use TimeRangePicker; for typing a time use TimeInput. */
-export function TimePicker({ value, onChange, id, invalid, className }: { value: string; onChange: (v: string) => void; id?: string; invalid?: boolean; className?: string }) {
-  const mobile = useIsMobile(), nested = useInSheet()
-  const [open, setOpen] = useState(false)
-  const grid = useRef<HTMLDivElement>(null)
-  const cur = toMin(value)
-  useEffect(() => { if (open) setTimeout(() => cellOf(grid.current, cur === null ? 9 : Math.floor(cur / 60))?.focus({ preventScroll: true }), 0) }, [open])
-  const pick = (h: number, m: number) => onChange(toTime(h * 60 + m))
-  const onGridKey = (ev: KeyboardEvent<HTMLDivElement>) => {
-    const d = ({ ArrowLeft: -1, ArrowRight: 1, ArrowUp: -6, ArrowDown: 6 } as Record<string, number>)[ev.key]
-    if (!d) return
-    ev.preventDefault()
-    cellOf(grid.current, (Number((document.activeElement as HTMLElement | null)?.dataset.h ?? 0) + d + 24) % 24)?.focus()
-  }
-  const panel = (
-    <div className="flex select-none flex-col gap-3 leading-normal">
-      <div ref={grid} role="grid" aria-label="ຊົ່ວໂມງ" onKeyDown={onGridKey} className="grid grid-cols-6 gap-1">
-        {HOURS.map((h) => {
-          const on = cur !== null && Math.floor(cur / 60) === h
-          return <button key={h} type="button" data-h={h} tabIndex={on || (cur === null && h === 9) ? 0 : -1} aria-pressed={on} onClick={() => pick(h, cur === null ? 0 : cur % 60)}
-            className={cn(CELL, on ? PICKED : "hover:bg-muted")}>{String(h).padStart(2, "0")}</button>
-        })}
-      </div>
-      <div className="grid grid-cols-4 gap-1">
-        {MINUTES.map((m) => {
-          const on = cur !== null && cur % 60 === m
-          return <button key={m} type="button" aria-pressed={on} onClick={() => { pick(cur === null ? 9 : Math.floor(cur / 60), m); setOpen(false) }} className={cn(CELL, on ? PICKED : "bg-muted/60 hover:bg-muted")}>:{String(m).padStart(2, "0")}</button>
-        })}
-      </div>
-    </div>
-  )
-  const t = (
-    <button id={id} type="button" aria-invalid={invalid || undefined} onClick={mobile ? () => setOpen(true) : undefined}
-      className={cn("vks-field flex h-11 w-full min-w-0 items-center gap-2 rounded-lg border border-input bg-card px-3 text-left text-base focus-visible:border-ring focus-visible:outline-none data-[state=open]:border-ring", invalid && "border-destructive", open && "border-ring", className)}>
-      <Clock className="size-4 shrink-0 text-muted-foreground" />
-      <span className={cn("flex-1 tabular-nums", !OK.test(value) && "text-muted-foreground")}>{OK.test(value) ? value : "--:--"}</span>
-    </button>
-  )
-  const done = <Button className="mt-3 h-11 w-full" onClick={() => setOpen(false)}>ຕົກລົງ</Button>
-  if (!mobile) return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>{t}</PopoverTrigger>
-      <PopoverContent align="start" sideOffset={6} collisionPadding={12} onOpenAutoFocus={(ev) => ev.preventDefault()} className="w-[22rem] p-3">{panel}</PopoverContent>
-    </Popover>
-  )
+type Opt = { min: number; hint?: string; next?: boolean }
+/** Index of the list item at or just after m, following the list's own order (an end list starts after the start and wraps past midnight). */
+const nearest = (opts: Opt[], m: number) => {
+  if (!opts.length) return 0
+  const first = opts[0].min
+  const d = (x: number) => (x - first + DAY_MIN) % DAY_MIN
+  const i = opts.findIndex((o) => d(o.min) >= d(m))
+  return i < 0 ? opts.length - 1 : i
+}
+
+/** The list of times: opens scrolled to the chosen one, ↑ ↓ moves the highlight, Enter / tap picks. */
+function TimeList({ id, opts, value, active, setActive, onPick, fill }: {
+  id: string; opts: Opt[]; value: number | null; active: number; setActive: (i: number) => void; onPick: (m: number) => void; fill?: boolean
+}) {
+  const ref = useRef<HTMLUListElement>(null)
+  useEffect(() => { ref.current?.querySelector<HTMLElement>('[data-i="' + active + '"]')?.scrollIntoView({ block: "nearest" }) }, [active])
+  useEffect(() => { // first paint: put the chosen time in the middle (after the popover / sheet has its size)
+    const centre = () => {
+      const box = ref.current, el = box?.querySelector<HTMLElement>('[data-i="' + active + '"]')
+      if (el && box) box.scrollTop = el.offsetTop - box.offsetTop - box.clientHeight / 2 + el.clientHeight / 2
+    }
+    centre()
+    const a = requestAnimationFrame(() => requestAnimationFrame(centre)), b = setTimeout(centre, 120)
+    return () => { cancelAnimationFrame(a); clearTimeout(b) }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
   return (
-    <>
-      {t}
-      {nested ? <InSheetView open={open} onBack={() => setOpen(false)} title="ເວລາ"><div className="py-2">{panel}{done}</div></InSheetView>
-        : <Sheet open={open} onOpenChange={setOpen}><SheetContent side="bottom"><SheetTitle>ເວລາ</SheetTitle><div className="mt-3">{panel}{done}</div></SheetContent></Sheet>}
-    </>
+    <ul ref={ref} id={id} role="listbox" aria-label="ເວລາ" className={cn("overflow-y-auto overscroll-contain [scrollbar-width:thin]", fill ? "min-h-0 flex-1" : "max-h-64")}>
+      {opts.map((o, i) => {
+        const on = value === o.min
+        return (
+          <li key={o.min} id={id + "-" + i} data-i={i} role="option" aria-selected={on}
+            onPointerMove={() => active !== i && setActive(i)} onPointerDown={(e) => e.preventDefault()} onClick={() => onPick(o.min)}
+            className={cn("flex min-h-11 cursor-pointer select-none items-center gap-3 rounded-lg px-3 text-base tabular-nums md:min-h-10",
+              i === active && "bg-muted", on && "bg-gold-tint font-semibold")}>
+            <span className="w-12 shrink-0">{toTime(o.min)}</span>
+            {o.hint && <span className="min-w-0 flex-1 truncate text-sm font-normal text-muted-foreground">{o.hint}{o.next && <span className="ml-1.5 rounded-full bg-warning/15 px-1.5 text-xs font-semibold text-warning">+1 ມື້</span>}</span>}
+            {on && <Check className="ml-auto size-4 shrink-0 text-gold" aria-hidden />}
+          </li>
+        )
+      })}
+    </ul>
   )
 }
 
-/** Use for a shift's start and end time (24 h, may cross midnight, "+1 ມື້" on the end field): 24 h bar, length presets (12 / 8 ຊມ / ອື່ນໆ), hour grid, minute row. For one clock time use TimePicker; for a date span use DateRangePicker. */
-export function TimeRangePicker({ starts, ends, onChange, presets = [12, 8], invalid, labels = true, id, className }: {
-  starts: string; ends: string; onChange: (starts: string, ends: string) => void; presets?: number[]; invalid?: boolean; labels?: boolean; id?: string; className?: string
+/** One time field: type or pick. Shared by TimePicker and both ends of TimeRangePicker. */
+function TimeField({ value, onCommit, opts, label, id, invalid, placeholder = "--:--", suffix, sheetTitle, openSignal, onOpenChange, inputRef }: {
+  value: string; onCommit: (m: number) => void; opts: Opt[]; label: string; id?: string; invalid?: boolean; placeholder?: string
+  suffix?: ReactNode; sheetTitle: string
+  /** Bump to focus the field and open its list (TimeRangePicker moves on to ເລີກ after a start is picked). */
+  openSignal?: number; onOpenChange?: (o: boolean) => void; inputRef?: RefObject<HTMLInputElement | null>
 }) {
   const mobile = useIsMobile(), nested = useInSheet()
-  const [open, setOpen] = useState<Which | null>(null)
-  const [active, setActive] = useState<Which>("start")
-  const s = toMin(starts), e = toMin(ends)
-  const same = s !== null && s === e
-  const overnight = s !== null && e !== null && e < s
-  const show = (w: Which) => { setActive(w); setOpen(w) }
+  const listId = useId()
+  const own = useRef<HTMLInputElement>(null), input = inputRef ?? own
+  const [open, setOpenRaw] = useState(false)
+  const [text, setText] = useState(value)
+  const [bad, setBad] = useState(false)
+  const cur = toMin(value)
+  const at = () => cur === null ? nearest(opts, 9 * 60) : nearest(opts, cur)
+  const [active, setActive] = useState(at)
+  const setOpen = (o: boolean) => { if (o) setActive(at()); setOpenRaw(o); onOpenChange?.(o) }
+  useEffect(() => { setText(value); setBad(false) }, [value])
+  useEffect(() => { if (openSignal) { input.current?.focus(); setOpen(true) } }, [openSignal]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const trigger = (w: Which) => {
-    const v = w === "start" ? starts : ends
-    const bad = w === "end" && (same || !!invalid)
-    return (
-      <button id={id ? id + "-" + w : undefined} type="button" aria-label={w === "start" ? "ເລີ່ມ" : "ເລີກ"} aria-invalid={bad || undefined}
-        onClick={mobile ? () => show(w) : undefined}
-        className={cn("vks-field flex h-11 w-full min-w-0 items-center gap-2 rounded-lg border border-input bg-card px-3 text-left text-base focus-visible:border-ring focus-visible:outline-none data-[state=open]:border-ring",
-          bad && "border-destructive", open === w && "border-ring")}>
-        <Clock className="size-4 shrink-0 text-muted-foreground" />
-        <span className={cn("flex-1 tabular-nums", !OK.test(v) && "text-muted-foreground")}>{OK.test(v) ? v : "--:--"}</span>
-        {w === "end" && overnight && <span className="shrink-0 rounded-full bg-warning/15 px-2 text-xs font-semibold leading-relaxed text-warning">+1 ມື້</span>}
-      </button>
-    )
+  const pick = (m: number) => { onCommit(m); setText(toTime(m)); setBad(false); setOpen(false) }
+  const commitText = () => {
+    if (text.trim() === "" || text === value) { setText(value); setBad(false); return true }
+    const m = parseTimeText(text)
+    if (m === null) { setBad(true); return false }
+    pick(m); return true
   }
-  const panel = <TimePanel starts={starts} ends={ends} onChange={onChange} presets={presets} active={active} setActive={setActive} />
-  const field = (w: Which) => {
-    const t = trigger(w)
-    const wrapped = mobile ? t : (
-      <Popover open={open === w} onOpenChange={(o) => (o ? show(w) : setOpen(null))}>
-        <PopoverTrigger asChild>{t}</PopoverTrigger>
-        <PopoverContent align="start" sideOffset={6} collisionPadding={12} onOpenAutoFocus={(ev) => ev.preventDefault()}
-          className="w-[22rem] max-h-[var(--radix-popover-content-available-height)] overflow-auto p-3">{panel}</PopoverContent>
-      </Popover>
-    )
-    return labels
-      ? <div className="flex min-w-0 flex-col gap-1.5"><Label htmlFor={id ? id + "-" + w : undefined}>{w === "start" ? "ເລີ່ມ" : "ເລີກ"}</Label>{wrapped}</div>
-      : <div className="min-w-0">{wrapped}</div>
+  const onKey = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      e.preventDefault()
+      if (!open) { setOpen(true); return }
+      setActive(Math.max(0, Math.min(opts.length - 1, active + (e.key === "ArrowDown" ? 1 : -1))))
+    } else if (e.key === "Enter") {
+      e.preventDefault()
+      if (open && text === value && opts[active]) pick(opts[active].min)
+      else commitText()
+    } else if (e.key === "Escape") { if (open) { e.preventDefault(); setOpen(false) } setText(value); setBad(false) }
+    else if (e.key === "Tab") { commitText(); setOpen(false) }
   }
-  const done = <Button className="mt-3 h-11 w-full" onClick={() => setOpen(null)}>ຕົກລົງ</Button>
-  return (
+  // typing filters the highlight to the nearest time in the list
+  const onType = (t: string) => {
+    setText(t); setBad(false)
+    if (!open && !mobile) setOpen(true)
+    const m = parseTimeText(t)
+    if (m !== null) setActive(nearest(opts, m))
+  }
+
+  const field = (
+    <div className={FIELD} aria-invalid={invalid || bad || undefined} onClick={() => { input.current?.focus(); if (!open) setOpen(true) }}>
+      <Clock className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+      <input ref={input} id={id} value={text} placeholder={placeholder} inputMode={mobile ? "none" : "numeric"} autoComplete="off" spellCheck={false}
+        role="combobox" aria-label={label} aria-expanded={open} aria-controls={listId} aria-autocomplete="list" aria-activedescendant={open ? listId + "-" + active : undefined}
+        aria-invalid={invalid || bad || undefined}
+        readOnly={mobile} onFocus={(e) => { e.currentTarget.select(); if (!mobile) setOpen(true) }} onKeyDown={onKey}
+        onChange={(e) => onType(e.target.value)} onBlur={() => { if (!mobile) { commitText(); setOpen(false) } }}
+        className="h-full min-w-0 flex-1 bg-transparent tabular-nums placeholder:text-muted-foreground focus:outline-none" />
+      {suffix}
+    </div>
+  )
+  const list = (fill?: boolean) => <TimeList id={listId} opts={opts} value={cur} active={active} setActive={setActive} onPick={pick} fill={fill} />
+
+  if (mobile) return (
     <>
-      <div className={cn("grid grid-cols-2 gap-2", className)}>{field("start")}{field("end")}</div>
-      {mobile && nested && <InSheetView open={!!open} onBack={() => setOpen(null)} title="ເວລາກະ"><div className="py-2">{panel}{done}</div></InSheetView>}
-      {mobile && !nested && (
-        <Sheet open={!!open} onOpenChange={(o) => !o && setOpen(null)}>
-          <SheetContent side="bottom"><SheetTitle>ເວລາກະ</SheetTitle><div className="mt-3">{panel}{done}</div></SheetContent>
-        </Sheet>
-      )}
+      {field}
+      {nested ? <InSheetView open={open} onBack={() => setOpen(false)} title={sheetTitle}><div className="flex min-h-0 flex-1 flex-col py-2">{list(true)}</div></InSheetView>
+        : <Sheet open={open} onOpenChange={setOpen}><SheetContent side="bottom"><SheetTitle>{sheetTitle}</SheetTitle><div className="mt-2 flex max-h-[60dvh] flex-col">{list(true)}</div></SheetContent></Sheet>}
     </>
+  )
+  return (
+    <PO.Root open={open} onOpenChange={(o) => !o && setOpen(false)} modal={nested}>
+      <PO.Anchor asChild>{field}</PO.Anchor>
+      <PO.Portal>
+        <PO.Content align="start" sideOffset={6} collisionPadding={12} className={PANEL}
+          onOpenAutoFocus={(e) => e.preventDefault()} onCloseAutoFocus={(e) => e.preventDefault()}
+          onInteractOutside={(e) => { if (e.target instanceof Node && input.current?.parentElement?.contains(e.target)) e.preventDefault() }}>
+          {list()}
+        </PO.Content>
+      </PO.Portal>
+    </PO.Root>
   )
 }
 
-function TimePanel({ starts, ends, onChange, presets, active, setActive }: {
-  starts: string; ends: string; onChange: (s: string, e: string) => void; presets: number[]; active: Which; setActive: (w: Which) => void
+/** Use for one clock time (meeting, visit, report time): a field you can type into ("930", "18:30") with a dropdown of times every 30 minutes that opens on the current value; a bottom sheet list on phone. For a shift (start → end) use TimeRangePicker; for a time inside a dense form row use TimeInput. */
+export function TimePicker({ value, onChange, step = 30, id, invalid, placeholder, className }: {
+  value: string; onChange: (v: string) => void
+  /** Minutes between list items. Typing accepts any minute. Default 30. */
+  step?: number
+  id?: string; invalid?: boolean; placeholder?: string; className?: string
+}) {
+  const opts = timeSteps(step).map((min) => ({ min }))
+  return <div className={cn("min-w-0", className)}><TimeField value={value} onCommit={(m) => onChange(toTime(m))} opts={opts} label="ເວລາ" sheetTitle="ເວລາ" id={id} invalid={invalid} placeholder={placeholder} /></div>
+}
+
+/** Use for a shift's start and end time (24 h, may cross midnight): two fields you can type into or pick from a list; the end list starts after the start and shows each length ("12 ຊມ · +1 ມື້"); the end field shows "+1 ມື້" for an overnight shift and length chips (12 / 8 ຊມ) sit under the fields. For one clock time use TimePicker; for a date span use DateRangePicker. */
+export function TimeRangePicker({ starts, ends, onChange, presets = [12, 8], step = 30, invalid, labels = true, id, className }: {
+  starts: string; ends: string; onChange: (starts: string, ends: string) => void
+  /** Length chips in hours. [] hides them. */
+  presets?: number[]
+  /** Minutes between list items. Default 30. */
+  step?: number
+  invalid?: boolean; labels?: boolean; id?: string; className?: string
 }) {
   const s = toMin(starts), e = toMin(ends), len = span(s, e)
-  const cur = active === "start" ? s : e
-  const grid = useRef<HTMLDivElement>(null)
-  const [mode, setMode] = useState<string>(() => (len === null ? (presets.length ? String(presets[0]) : "other") : presets.includes(len / 60) ? String(len / 60) : "other"))
-  useEffect(() => { if (len !== null) setMode(presets.includes(len / 60) ? String(len / 60) : "other") }, [len]) // eslint-disable-line react-hooks/exhaustive-deps
-  // focus the chosen hour so arrows + Enter work at once
-  useEffect(() => { cellOf(grid.current, cur === null ? 0 : Math.floor(cur / 60))?.focus({ preventScroll: true }) }, [active]) // eslint-disable-line react-hooks/exhaustive-deps
+  const same = s !== null && s === e
+  const overnight = s !== null && e !== null && e < s
+  const endRef = useRef<HTMLInputElement>(null)
+  const [openEnd, setOpenEnd] = useState(0)
 
-  function setStart(m: number) {
-    const keep = len ?? (mode !== "other" ? +mode * 60 : null)
+  const startOpts: Opt[] = timeSteps(step).map((min) => ({ min }))
+  const endOpts: Opt[] = s === null ? timeSteps(step).map((min) => ({ min }))
+    : timeSteps(step, s + step).filter((m) => m !== s).map((min) => { const l = (min - s + DAY_MIN) % DAY_MIN; return { min, hint: hoursText(l, true), next: min < s } })
+
+  const setStart = (m: number) => {
+    const keep = len ?? (presets.length ? presets[0] * 60 : null)
     onChange(toTime(m), keep !== null ? toTime(m + keep) : ends)
+    setOpenEnd((n) => n + 1) // like Google Calendar: picking a start moves on to the end
   }
-  function pickHour(h: number) {
-    const min = cur === null ? 0 : cur % 60
-    if (active === "start") { setStart(h * 60 + min); setActive("end") }
-    else onChange(starts, toTime(h * 60 + min))
+  const setEnd = (m: number) => onChange(starts, toTime(m))
+  const field = (w: "start" | "end") => {
+    const f = w === "start"
+      ? <TimeField value={starts} onCommit={setStart} opts={startOpts} label="ເລີ່ມ" sheetTitle="ເວລາເລີ່ມ" id={id ? id + "-start" : undefined} />
+      : <TimeField value={ends} onCommit={setEnd} opts={endOpts} label="ເລີກ" sheetTitle="ເວລາເລີກ" id={id ? id + "-end" : undefined} invalid={same || invalid} inputRef={endRef} openSignal={openEnd}
+          suffix={overnight ? <span className="shrink-0 rounded-full bg-warning/15 px-2 text-xs font-semibold leading-relaxed text-warning">+1 ມື້</span> : undefined} />
+    return labels
+      ? <div className="flex min-w-0 flex-col gap-1.5"><label htmlFor={id ? id + "-" + w : undefined} className="text-sm font-semibold leading-snug">{w === "start" ? "ເລີ່ມ" : "ເລີກ"}</label>{f}</div>
+      : <div className="min-w-0">{f}</div>
   }
-  function pickMinute(m: number) {
-    const h = cur === null ? 0 : Math.floor(cur / 60)
-    if (active === "start") setStart(h * 60 + m)
-    else onChange(starts, toTime(h * 60 + m))
-  }
-  function pickMode(v: string) {
-    if (!v) return
-    setMode(v)
-    if (v === "other") { setActive("end"); return }
-    const base = s ?? 6 * 60
-    onChange(toTime(base), toTime(base + +v * 60))
-  }
-  function onGridKey(ev: KeyboardEvent<HTMLDivElement>) {
-    const d = ({ ArrowLeft: -1, ArrowRight: 1, ArrowUp: -6, ArrowDown: 6 } as Record<string, number>)[ev.key]
-    if (!d) return
-    ev.preventDefault()
-    const h = Number((document.activeElement as HTMLElement | null)?.dataset.h ?? 0)
-    cellOf(grid.current, (h + d + 24) % 24)?.focus()
-  }
-  const inSpan = (h: number) => hourInSpan(h, s, len)
-  const other = active === "start" ? e : s
-  // 24 h bar: one segment, or two when the shift crosses midnight
-  const segs = spanSegments(s, e)
-
   return (
-    <div className="flex select-none flex-col gap-3 leading-normal">
-      <div className="grid grid-cols-2 gap-1 rounded-xl bg-muted p-[3px]" role="tablist">
-        {(["start", "end"] as Which[]).map((w) => (
-          <button key={w} type="button" role="tab" aria-selected={active === w} onClick={() => setActive(w)}
-            className={cn("vks-press flex h-11 items-center justify-center gap-2 rounded-[0.7rem] text-sm font-semibold text-muted-foreground transition-[background-color,color,scale] duration-200",
-              active === w && "bg-card text-foreground shadow-sm")}>
-            {w === "start" ? "ເລີ່ມ" : "ເລີກ"}<span className="text-base tabular-nums">{(w === "start" ? starts : ends) || "--:--"}</span>
-          </button>
-        ))}
-      </div>
-
-      <div aria-hidden>
-        <div className="relative h-2.5 overflow-hidden rounded-full bg-muted">
-          {segs.map(([a, b], i) => <div key={i} className="absolute inset-y-0 rounded-full bg-primary" style={{ left: (a / DAY) * 100 + "%", width: ((b - a) / DAY) * 100 + "%" }} />)}
+    <div className={cn("grid min-w-0 gap-2", className)}>
+      <div className="grid grid-cols-2 gap-2">{field("start")}{field("end")}</div>
+      {(len !== null || same || presets.length > 0) && (
+        <div className="flex min-h-8 flex-wrap items-center justify-between gap-2 text-sm leading-normal">
+          <span className={cn("tabular-nums", same ? "text-destructive" : "text-muted-foreground")} aria-live="polite">
+            {same ? "ເລີ່ມ ແລະ ເລີກ ຕ້ອງຕ່າງກັນ" : len !== null ? hoursText(len) : ""}
+          </span>
+          {presets.length > 0 && (
+            <div className="flex gap-1.5" role="group" aria-label="ຄວາມຍາວກະ">
+              {presets.map((p) => {
+                const on = len === p * 60
+                return <button key={p} type="button" aria-pressed={on} onClick={() => { const b = s ?? 6 * 60; onChange(toTime(b), toTime(b + p * 60)) }}
+                  className={cn("vks-press h-9 rounded-full border px-3 text-sm font-semibold tabular-nums transition-colors max-md:h-11 max-md:px-4", on ? "border-primary bg-primary text-primary-foreground" : "border-input bg-card hover:bg-muted")}>{p} ຊມ</button>
+              })}
+            </div>
+          )}
         </div>
-        <div className="mt-1 flex justify-between text-[11px] tabular-nums text-muted-foreground">{["00", "06", "12", "18", "24"].map((t) => <span key={t}>{t}</span>)}</div>
-      </div>
-
-      <div className="flex min-h-7 flex-wrap items-center justify-between gap-2">
-        <span className="text-sm font-semibold">{len !== null ? <><span className="tabular-nums">{starts}–{ends}</span> · {hoursText(len)}</> : "—"}</span>
-        {s !== null && e !== null && (s === e ? <Badge variant="danger">ເລີ່ມ ແລະ ເລີກ ຕ້ອງຕ່າງກັນ</Badge> : e < s ? <Badge variant="warning">ຂ້າມທ່ຽງຄືນ</Badge> : <Badge variant="success">ພາຍໃນມື້</Badge>)}
-      </div>
-
-      <ToggleGroup type="single" variant="segmented" value={mode} onValueChange={pickMode} className="w-full">
-        {presets.map((p) => <ToggleGroupItem key={p} value={String(p)}>{p} ຊມ</ToggleGroupItem>)}
-        <ToggleGroupItem value="other">ອື່ນໆ</ToggleGroupItem>
-      </ToggleGroup>
-
-      <div ref={grid} role="grid" aria-label={active === "start" ? "ຊົ່ວໂມງເລີ່ມ" : "ຊົ່ວໂມງເລີກ"} onKeyDown={onGridKey} className="grid grid-cols-6 gap-1">
-        {HOURS.map((h) => {
-          const on = cur !== null && Math.floor(cur / 60) === h
-          const mark = other !== null && Math.floor(other / 60) === h
-          return (
-            <button key={h} type="button" data-h={h} tabIndex={on || (cur === null && h === 0) ? 0 : -1} aria-pressed={on} onClick={() => pickHour(h)}
-              className={cn(CELL, on ? PICKED : inSpan(h) ? "bg-primary/10 hover:bg-primary/20" : "hover:bg-muted", mark && !on && "ring-1 ring-inset ring-gold")}>
-              {String(h).padStart(2, "0")}
-            </button>
-          )
-        })}
-      </div>
-
-      <div className="grid grid-cols-4 gap-1">
-        {MINUTES.map((m) => {
-          const on = cur !== null && cur % 60 === m
-          return <button key={m} type="button" aria-pressed={on} onClick={() => pickMinute(m)} className={cn(CELL, on ? PICKED : "bg-muted/60 hover:bg-muted")}>:{String(m).padStart(2, "0")}</button>
-        })}
-      </div>
+      )}
     </div>
   )
 }
+

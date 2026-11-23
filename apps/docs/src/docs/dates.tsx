@@ -49,22 +49,23 @@ export const dateDocs: Doc[] = [
   },
   {
     slug: "time-picker", name: "Time picker", group: "Dates", badge: "New",
-    desc: "24 h only. Tap an hour, then :00 / :15 / :30 / :45. TimeRangePicker adds a shift's end, a 24 h bar and length presets (12 / 8 ຊມ / ອື່ນໆ); overnight shows +1 ມື້. Popover on desktop, sheet on phone.",
-    file: "packages/ui/src/components/time-picker.tsx", importLine: 'import { TimePicker, TimeRangePicker, timeToMin, minToTime, spanMin, isHHMM } from "@vks-kit/ui"',
+    desc: "24 h, Google Calendar style: type a time (6, 1830, 18:30) or pick from a list every 30 minutes that opens on the current value. TimeRangePicker's end list starts after the start and shows each length (12 ຊມ · +1 ມື້); length chips 12 / 8 ຊມ under the fields. Dropdown on desktop, bottom-sheet list on phone.",
+    file: "packages/ui/src/components/time-picker.tsx", importLine: 'import { TimePicker, TimeRangePicker, timeToMin, minToTime, spanMin, isHHMM, parseTimeText, timeSteps } from "@vks-kit/ui"',
     demo: () => <TRP s0="18:00" e0="06:00" />,
     code: `const [v, setV] = useState({ s: "18:00", e: "06:00" })   // "HH:MM", 24 h
 <TimeRangePicker starts={v.s} ends={v.e} onChange={(s, e) => setV({ s, e })} />`,
     examples: [
-      { id: "single", title: "One time (TimePicker)", note: "A meeting or visit time. Picking a minute closes the panel.", demo: () => <TP />, code: `const [t, setT] = useState("09:30")
+      { id: "single", title: "One time (TimePicker)", note: "A meeting or visit time. Type 930 + Enter, or pick from the list.", demo: () => <TP />, code: `const [t, setT] = useState("09:30")
 <Label htmlFor="mt">ເວລາ</Label>
 <TimePicker id="mt" value={t} onChange={setT} />` },
-      { id: "presets", title: "Other lengths", note: "presets are hours. Picking a start keeps the current length, then moves on to ເລີກ.", demo: () => <TRP presets={[12, 8, 6]} />, code: `<TimeRangePicker starts={s} ends={e} onChange={set} presets={[12, 8, 6]} />` },
+      { id: "presets", title: "Other lengths", note: "presets are hours. Picking a start keeps the current length, then opens ເລີກ.", demo: () => <TRP presets={[12, 8, 6]} />, code: `<TimeRangePicker starts={s} ends={e} onChange={set} presets={[12, 8, 6]} />` },
     ],
     props: [
       { name: "value (TimePicker)", type: "string", desc: '"HH:MM" or "" (shows --:--).' }, { name: "onChange (TimePicker)", type: "(v: string) => void", desc: "" },
       { name: "starts / ends", type: "string", desc: '"HH:MM". ends < starts means the shift crosses midnight.' },
       { name: "onChange (TimeRangePicker)", type: "(starts: string, ends: string) => void", desc: "Both values every time (a length preset moves the end)." },
-      { name: "presets", type: "number[]", def: "[12, 8]", desc: "Shift lengths in hours, plus ອື່ນໆ." },
+      { name: "presets", type: "number[]", def: "[12, 8]", desc: "Length chips in hours; [] hides them." },
+      { name: "step", type: "number", def: "30", desc: "Minutes between list items (15 for finer). Typing accepts any minute." },
       { name: "labels", type: "boolean", def: "true", desc: "Show ເລີ່ມ / ເລີກ labels over the two fields." },
       { name: "id", type: "string", desc: "TimePicker: the field id. TimeRangePicker: fields get id-start / id-end." },
       { name: "invalid", type: "boolean", desc: "Red border (TimeRangePicker: the end field)." },
@@ -72,8 +73,9 @@ export const dateDocs: Doc[] = [
     notes: [
       "Shifts are named by their time only (06:00–18:00); never add a day/night word. Group lengths 12 / 8 / ອື່ນໆ.",
       "Inside a Dialog on a phone the panel is a pushed view in the same sheet (no sheet on a sheet).",
-      "Keyboard: arrows move across the hour grid, Enter picks. To type a time instead, use TimeInput (Input types).",
-      "Helpers: timeToMin, minToTime (wraps past midnight), spanMin (overnight aware), spanSegments, hourInSpan, isHHMM.",
+      "Keyboard: ↑ ↓ move through the list, Enter picks, Esc puts the old value back. Typed text is read by parseTimeText on Enter or when the field loses focus; a wrong time turns the field red and keeps the old value.",
+      "On a phone the field does not raise the keyboard: a tap opens the list in a bottom sheet (44 px rows).",
+      "Helpers: parseTimeText, timeSteps, timeToMin, minToTime (wraps past midnight), spanMin (overnight aware), isHHMM.",
     ],
   },
 ]
