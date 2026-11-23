@@ -10,6 +10,7 @@ import { moreDocs } from "./more"
 import { mobile2Docs } from "./mobile2"
 import { desktopDocs } from "./desktop"
 import { kit061Docs } from "./kit061"
+import { domainDocs } from "./domain"
 import { Introduction, Installation, Theming, Typography, Motion, MobileRules, LayoutRules, DesignThinking, Changelog } from "./guides"
 import { designThinkingMd } from "./design-thinking"
 import { ReportsGuide, FormsGuide } from "./pattern-guides"
@@ -33,7 +34,7 @@ export const guides: Guide[] = [
   { slug: "reports", name: "Reports (PDF & PPTX)", group: "Getting Started", badge: "New", desc: "House layout for PDF and PPTX reports: cover, KPI row, table, footer, and the Lao font settings each format needs.", page: ReportsGuide, md: reportsMd },
   { slug: "changelog", name: "Changelog", group: "Getting Started", desc: "What changed in each version.", page: Changelog },
 ]
-export const docs: Doc[] = [...actionDocs, ...formDocs, ...dateDocs, ...feedbackDocs, ...dataDocs, ...layoutDocs, ...heavyDocs, ...moreDocs, ...mobile2Docs, ...desktopDocs, ...kit061Docs]
+export const docs: Doc[] = [...actionDocs, ...formDocs, ...dateDocs, ...feedbackDocs, ...dataDocs, ...layoutDocs, ...heavyDocs, ...moreDocs, ...mobile2Docs, ...desktopDocs, ...kit061Docs, ...domainDocs]
 
 export type Entry = { slug: string; name: string; group: Group; badge?: Doc["badge"]; desc: string }
 export const entries: Entry[] = [...guides, ...docs]

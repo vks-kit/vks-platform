@@ -1,5 +1,8 @@
 /*
  * VKS design tokens. THE ONLY place colours live.
+ * Derived directly from the official VKS octagonal emblem:
+ *   --logo-navy (#16173a), --logo-gold (#d8bf8c), --logo-steel (#c9cad4),
+ *   --logo-steel-2 (#e2e2e8), --logo-field (#f1f1f4), --logo-letter (#ffffff).
  * Theme A = light (navy + gold, "Status White").  Theme E = dark ("Night Watch").
  * Apps must use tokens (bg-primary, text-muted-foreground ...), never raw hex.
  */
@@ -14,34 +17,39 @@
 
 :root {
   --radius: 0.75rem;
-  --background: #f6f7fb;
-  --foreground: #14173d;
+  /* Theme A: Status White (Light) — anchored to --logo-field, --logo-navy & --logo-steel */
+  --background: #f5f6f9;
+  --foreground: #16173a;
   --card: #ffffff;
-  --card-foreground: #14173d;
+  --card-foreground: #16173a;
   --popover: #ffffff;
-  --popover-foreground: #14173d;
-  --primary: #14173d;
+  --popover-foreground: #16173a;
+  --primary: #16173a;
   --primary-foreground: #ffffff;
-  --secondary: #eef0f6;
-  --secondary-foreground: #14173d;
-  --muted: #eef0f6;
-  --muted-foreground: #5a5f7a;
-  --accent: #e6e9f3;
-  --accent-foreground: #14173d;
+  --secondary: #eceef4;
+  --secondary-foreground: #16173a;
+  --muted: #eceef4;
+  /* Upgraded slate-navy: 7.99:1 AAA on #ffffff card, 7.39:1 AAA on #f5f6f9 background */
+  --muted-foreground: #4b4f6b;
+  --accent: #e4e7f0;
+  --accent-foreground: #16173a;
   --success: #047857;
   --success-foreground: #ffffff;
-  --warning: #b45309;
+  /* Upgraded deep amber: 6.60:1 AA+ on #ffffff card & AA on warning tints */
+  --warning: #9a4307;
   --warning-foreground: #ffffff;
   --destructive: #b91c1c;
   --destructive-foreground: #ffffff;
-  --gold: #b08d4a;
-  --gold-foreground: #14173d;
-  --border: #dfe3ea;
-  --input: #cfd4e0;
-  --ring: #b08d4a;
-  --logo-ring: #14173d;
-  --bar: #14173d;
-  --chart-1: #14173d; --chart-2: #047857; --chart-3: #b08d4a; --chart-4: #b45309; --chart-5: #b91c1c;
+  /* Laurel gold UI tokens: --gold for 1px borders/rings/icons; --gold-tint + --foreground (15.58:1 AAA) for badges */
+  --gold: #b6924b;
+  --gold-tint: #f8f3e8;
+  --gold-foreground: #16173a;
+  --border: #dcdde6;
+  --input: #c9cad4;
+  --ring: #b6924b;
+  --logo-ring: #16173a;
+  --bar: #16173a;
+  --chart-1: #16173a; --chart-2: #047857; --chart-3: #b6924b; --chart-4: #9a4307; --chart-5: #b91c1c;
   --bar-foreground: #ffffff;
   --logo-field: #f1f1f4;
   /* official logo colours: fixed in both themes (the mark is a badge with its own field) */
@@ -51,53 +59,56 @@
   --logo-steel-2: #e2e2e8;
   --logo-letter: #ffffff;
   /* file types (FileIcon): one hue per family, same meaning everywhere */
-  --file-pdf: #c2410c; --file-sheet: #047857; --file-doc: #1d4ed8; --file-slide: #b45309;
-  --file-image: #7c3aed; --file-video: #be185d; --file-audio: #0e7490; --file-archive: #6b5a2e; --file-other: #5a5f7a;
+  --file-pdf: #c2410c; --file-sheet: #047857; --file-doc: #1d4ed8; --file-slide: #9a4307;
+  --file-image: #7c3aed; --file-video: #be185d; --file-audio: #0e7490; --file-archive: #6b5a2e; --file-other: #4b4f6b;
 }
 
 .dark {
-  --background: #0b1020;
-  --foreground: #eef0f8;
-  --card: #151b33;
-  --card-foreground: #eef0f8;
-  --popover: #151b33;
-  --popover-foreground: #eef0f8;
-  --primary: #c9a45c;
-  --primary-foreground: #0b1020;
-  --secondary: #1c2444;
-  --secondary-foreground: #eef0f8;
-  --muted: #1c2444;
-  --muted-foreground: #9aa3c4;
-  --accent: #232c52;
-  --accent-foreground: #eef0f8;
+  /* Theme E: Night Watch (Dark) — deep midnight canvas with exact --logo-navy cards & --logo-gold primary */
+  --background: #0c0d24;
+  --foreground: #f1f1f4;
+  --card: #16173a;
+  --card-foreground: #f1f1f4;
+  --popover: #16173a;
+  --popover-foreground: #f1f1f4;
+  --primary: #d8bf8c;
+  --primary-foreground: #16173a;
+  --secondary: #1f214d;
+  --secondary-foreground: #f1f1f4;
+  --muted: #1f214d;
+  /* Upgraded steel-lavender: 7.71:1 AAA on #16173a card, 8.55:1 AAA on #0c0d24 background */
+  --muted-foreground: #a8acc7;
+  --accent: #272a5e;
+  --accent-foreground: #f1f1f4;
   --success: #34d399;
-  --success-foreground: #0b1020;
+  --success-foreground: #0c0d24;
   --warning: #fbbf24;
-  --warning-foreground: #0b1020;
+  --warning-foreground: #0c0d24;
   --destructive: #f87171;
-  --destructive-foreground: #0b1020;
-  --gold: #c9a45c;
-  --gold-foreground: #0b1020;
-  --border: #262e50;
-  --input: #303a63;
-  --ring: #c9a45c;
-  --logo-ring: #c9a45c;
-  --bar: #0b1020;
-  --chart-1: #c9a45c; --chart-2: #34d399; --chart-3: #60a5fa; --chart-4: #f87171; --chart-5: #a78bfa;
-  --bar-foreground: #eef0f8;
+  --destructive-foreground: #0c0d24;
+  --gold: #d8bf8c;
+  --gold-tint: #26233d;
+  /* text ON solid gold (Button gold, nav counts): stays navy, 9.65:1 on #d8bf8c. Text on --gold-tint uses --foreground. */
+  --gold-foreground: #16173a;
+  --border: #2b2e63;
+  --input: #383c7a;
+  --ring: #d8bf8c;
+  --logo-ring: #d8bf8c;
+  --bar: #0c0d24;
+  --chart-1: #d8bf8c; --chart-2: #34d399; --chart-3: #60a5fa; --chart-4: #f87171; --chart-5: #a78bfa;
+  --bar-foreground: #f1f1f4;
   --logo-field: #f1f1f4;
   --file-pdf: #fb923c; --file-sheet: #34d399; --file-doc: #60a5fa; --file-slide: #fbbf24;
-  --file-image: #a78bfa; --file-video: #f472b6; --file-audio: #22d3ee; --file-archive: #c9a45c; --file-other: #9aa3c4;
+  --file-image: #a78bfa; --file-video: #f472b6; --file-audio: #22d3ee; --file-archive: #d8bf8c; --file-other: #a8acc7;
 }
 
 /* Hero card (.vks-hero): the one emphasised card at the top of a page (next shift, round summary, ID card).
-   Light: navy primary. Dark: the kit flips --primary to gold, which made heroes a loud gold slab with dull text,
-   so in dark a hero stays navy (accent) with a gold top bar; gold is kept for accents inside it.
-   Children using bg-primary / text-primary-foreground follow automatically (tokens are re-scoped). */
+   Light: logo-navy primary. Dark: stepped logo-navy accent with a laurel gold top bar so hero cards
+   stand apart from --card (#16173a) while keeping primary children readable. */
 .vks-hero { position: relative; overflow: hidden; background: var(--primary); color: var(--primary-foreground); }
 .dark .vks-hero {
   --primary: var(--accent); --primary-foreground: var(--foreground);
-  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 80%, var(--muted-foreground)) 55%, var(--accent));
+  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 82%, var(--muted-foreground)) 55%, var(--accent));
   border: 1px solid var(--input); box-shadow: 0 18px 30px -18px color-mix(in srgb, var(--background) 90%, transparent);
 }
 .dark .vks-hero::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 3px; pointer-events: none;
@@ -127,6 +138,7 @@
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-gold: var(--gold);
+  --color-gold-tint: var(--gold-tint);
   --color-bar: var(--bar);
   --color-bar-foreground: var(--bar-foreground);
   --color-gold-foreground: var(--gold-foreground);
@@ -152,6 +164,8 @@
     transition: background-color .2s, color .2s;
   }
 }
+
+.tabular-nums { font-variant-numeric: tabular-nums; }
 
 /* Leaflet controls are 30px by default; make them thumb-sized on touch screens */
 @media (pointer: coarse) {

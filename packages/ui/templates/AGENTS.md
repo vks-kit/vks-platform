@@ -36,9 +36,12 @@ Full text: `node_modules/@vks-kit/ui/docs/ai/design-thinking.md` (rules "Phone l
 3. Reuse, then extend (ask for a prop in the kit), then add. Do not copy kit components into the app.
 
 ## Checks
-- `npm run guard` (runs `vks-guard src`) must pass before every commit.
+- `npx vks-guard src` (or `npm run guard`) must pass before every commit.
 - `npx vks-check <dev url> --login <email:pass> --open "<filter button>"` must pass before a screen is called done: it opens the app at 360×640, 390×844 and 1440×900 and fails on anything wider than the screen, sheet buttons below the screen, phone taps under 44 px and console errors (needs `npm i -D playwright`).
 - `npm run build` and `npm run typecheck` must pass.
+
+## index.html
+Use `<html lang="lo">` and `<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />` so Lao line-breaking works properly and bottom nav / sheets pad above the iPhone home bar.
 
 ## tsconfig
 Use `"lib": ["ES2022", "DOM", "DOM.Iterable"]`, `"moduleResolution": "bundler"`, `"jsx": "react-jsx"`.

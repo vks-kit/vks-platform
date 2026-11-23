@@ -15,6 +15,7 @@ import {
   ApprovalCard, SyncStatus, diffFields, type ApprovalStatus, TextInput, PhoneInput, MoneyInput, TimeInput, NumberInput, isPhoneLa, phoneLaE164,
   IconButton, ContactActions, SlotPicker, halfHours, RangeInline, DateInput, FormDialogContent, Field, FormSection, FormActions, FoldSection, SheetContent, Sheet, SheetTitle, SelectHeader, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Facts, FactGrid, WeekdayPicker, workDaysText,
   SettingsPage, defineSettings,
+  PatrolCheckpointRail, ShiftRosterGrid, IncidentEscalationCard, GuardIdBadge, ContractQuoteSummary, type Checkpoint, type Roster, type ShiftCode, type QuoteLine,
 } from "@vks-kit/ui"
 import { Share2, Pencil, Phone, Trash2, Heart, Shield, AlertTriangle, CheckCircle2, Clock, Folder, User, Copy as CopyIcon, Search as SearchIcon, ArrowRight } from "@vks-kit/ui/icons"
 import { BarSeries, LineSeries, Donut, Sparkline, ScatterSeries, RadarSeries, RadialBars, ComboSeries, Heatmap, DateGrid, LatencyTimeline, AttendanceBoard } from "@vks-kit/ui/charts"
@@ -254,6 +255,7 @@ export function More() {
           </div>
         </Sec>
         <BusinessKit />
+        <DomainKit />
         <Sec id="roadmap" title="Roadmap & dependency map">
           <Card><CardContent className="space-y-6 pt-5">
             <Roadmap start="2026-10-01" end="2027-04-01" today="2026-10-20" rows={[{ id: "p0", label: "P0 · Kit", start: "2026-10-01", end: "2026-11-10", progress: 60, tone: "success" }, { id: "p1", label: "P1 · Foundation", start: "2026-11-01", end: "2027-01-10" }, { id: "p2", label: "P2 · Live duty", start: "2027-01-01", end: "2027-03-20", tone: "gold" }]} milestones={[{ id: "m1", at: "2026-11-10", label: "Kit 0.3" }]} onSelect={(r) => toast(r.label)} onMilestone={(m) => toast(m.label)} />
@@ -596,4 +598,35 @@ function KitSixOneDemo() {
       <div className="grid gap-4 md:grid-cols-2"><RangeInline value={r} onChange={setR} presets={[["ມື້ນີ້", { from: today, to: today }]]} allLabel="ທຸກວັນທີ" /><DateInput value={dob} onChange={setDob} today={today} /></div>
     </div>
   )
+}
+
+/** VKS domain parts: patrol round, shift roster, incident SLA, guard ID, quote (+ Kip / phone fields). */
+function DomainKit() {
+  const [cps, setCps] = React.useState<Checkpoint[]>([
+    { id: "1", name: "ປະຕູໜ້າ", status: "done", time: "21:02", method: "nfc", distanceM: 4 },
+    { id: "2", name: "ບ່ອນຈອດລົດ B1", status: "done", time: "21:18", method: "qr", distanceM: 7 },
+    { id: "3", name: "ຄັງສິນຄ້າ B", status: "next", distanceM: 240 },
+    { id: "4", name: "ຫຼັງຄາ / ຖັງນ້ຳ", status: "pending" },
+  ])
+  const scan = async (cp: Checkpoint) => { await new Promise((r) => setTimeout(r, 600)); setCps((l) => { const i = l.findIndex((c) => c.id === cp.id); return l.map((c, j) => (j === i ? { ...c, status: "done", time: "21:4" + i, method: "nfc", distanceM: 3 } : j === i + 1 ? { ...c, status: "next" } : c)) }) }
+  const [roster, setRoster] = React.useState<Roster>({ a: { mon: "D", tue: "D", wed: "N", thu: "OFF" }, b: { mon: "N", tue: "N", wed: "OFF", thu: "D" }, c: { mon: "D", tue: "OFF", wed: "D", thu: "N" } })
+  const setCell = (s: string, d: string, v: ShiftCode) => setRoster((x) => ({ ...x, [s]: { ...x[s], [d]: v } }))
+  const [lines, setLines] = React.useState<QuoteLine[]>([{ id: "g", label: "ພະນັກງານຍາມ 12 ຊົ່ວໂມງ", qty: 10, unitPrice: 8_000_000, unit: "ນາຍ", min: 1 }, { id: "s", label: "ຫົວໜ້າກະ", qty: 1, unitPrice: 10_500_000, unit: "ນາຍ" }])
+  const [fee, setFee] = React.useState<number | null>(144_000_000), [tel, setTel] = React.useState("")
+  const [opened] = React.useState(() => Date.now() - 10 * 60_000 - 42_000)
+  return <Sec id="domain" title="VKS domain · patrol rail, shift roster, incident SLA, guard ID, quote, Kip & phone">
+    <div className="grid gap-6 lg:grid-cols-2">
+      <PatrolCheckpointRail checkpoints={cps} onScan={scan} />
+      <div className="grid content-start gap-3">
+        <IncidentEscalationCard code="INC-204" priority="P1" title="ສັນຍານເຕືອນປະຕູສາງ B" location="ທ່າບົກ ທ່ານາແລ້ງ" reporter="ຫົວໜ້າກະ ສົມພອນ" reporterPhone="020 5512 8890" openedAt={opened} status="ລໍຖ້າສັ່ງການໜ່ວຍລາດຕະເວນ" dispatchLabel="ສັ່ງການໜ່ວຍ Patrol-02" onDispatch={() => new Promise((r) => setTimeout(r, 700)).then(() => toast.success("ສັ່ງການແລ້ວ"))} />
+        <GuardIdBadge name="ທ້າວ ຄຳພັນ ພົມມະວົງ" staffId="VKS-ID-0412" role="ຫົວໜ້າຊຸດປະຈຳການ" site="ທະນາຄານ BCEL (ສຳນັກງານໃຫຍ່)" validUntil="31/12/2027" />
+      </div>
+      <div className="lg:col-span-2"><ShiftRosterGrid staff={[{ id: "a", name: "ທ້າວ ຄຳພັນ", sub: "ຫົວໜ້າກະ" }, { id: "b", name: "ທ້າວ ສົມພອນ" }, { id: "c", name: "ນາງ ບົວໄລ" }]} days={[{ key: "mon", label: "ຈັນ" }, { key: "tue", label: "ອັງຄານ" }, { key: "wed", label: "ພຸດ" }, { key: "thu", label: "ພະຫັດ" }]} value={roster} onChange={setCell} need={{ D: 1, N: 1 }} /></div>
+      <ContractQuoteSummary title="ໃບສະເໜີລາຄາ" lines={lines} onChange={setLines} />
+      <div className="grid content-start gap-3">
+        <Field label="ຄ່າບໍລິການລາຍເດືອນ (ກີບ)"><MoneyInput value={fee} onChange={setFee} /></Field>
+        <Field label="ເບີໂທຜູ້ປະສານງານ"><PhoneInput value={tel} onChange={setTel} /></Field>
+      </div>
+    </div>
+  </Sec>
 }

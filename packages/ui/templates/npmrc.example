@@ -1,3 +1,6 @@
-# Copy to .npmrc in your app root. Set VKS_NPM_TOKEN to a GitHub token with read:packages.
+# Copy to .npmrc in your app root (safe to commit — contains no secret).
+# Export VKS_NPM_TOKEN in your shell with a GitHub classic token (read:packages):
+#   bash/zsh:   export VKS_NPM_TOKEN=ghp_xxx
+#   PowerShell: $env:VKS_NPM_TOKEN="ghp_xxx"
 @vks-kit:registry=https://npm.pkg.github.com
 //npm.pkg.github.com/:_authToken=${VKS_NPM_TOKEN}

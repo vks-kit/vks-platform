@@ -8,7 +8,7 @@ const badgeVariants = cva("inline-flex items-center gap-1 rounded-full px-2.5 py
     success: "bg-success/15 text-success",
     warning: "bg-warning/15 text-warning",
     danger: "bg-destructive/15 text-destructive",
-    gold: "bg-gold/20 text-foreground",
+    gold: "bg-gold-tint text-foreground ring-1 ring-inset ring-gold/35",
   } },
   defaultVariants: { variant: "neutral" },
 })

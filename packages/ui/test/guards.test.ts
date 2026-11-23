@@ -25,8 +25,8 @@ describe("apps use the design system, not its building blocks", () => {
 
   it("no deep imports into packages/ui internals", () => {
     const bad: string[] = []
-    for (const f of appFiles) read(f).split(/\r?\n/).forEach((l, i) => { if (/from\s+["'](@vks\/ui\/src|[./]+\/packages\/ui)/.test(l)) bad.push(`${rel(f)}:${i + 1}`) })
-    expect(bad, "Use the public entry points: @vks-kit/ui, @vks-kit/ui/icons, /charts, /map, /kanban, /scan").toEqual([])
+    for (const f of appFiles) read(f).split(/\r?\n/).forEach((l, i) => { if (/from\s+["'](@vks(?:-kit)?\/(?:ui|core|types)\/(?:src|bin)|[./]+\/packages\/(?:ui|core|types))/.test(l)) bad.push(`${rel(f)}:${i + 1}`) })
+    expect(bad, "Use the public entry points: @vks-kit/ui, @vks-kit/ui/icons, @vks-kit/ui/theme.css, /charts, /map, /kanban, /scan, @vks-kit/core, @vks-kit/types").toEqual([])
   })
 
   it("no raw colours in apps (hex / rgb / hsl / oklch)", () => {

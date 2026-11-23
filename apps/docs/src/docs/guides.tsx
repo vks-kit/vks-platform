@@ -49,28 +49,44 @@ export function ScanDone() {
 export function Installation() {
   const t = useT()
   return <div className="space-y-6">
-    <Lead>{t("ແອັບໃໝ່ຢູ່ແຍກຈາກ monorepo ນີ້ ແລະ ຕິດຕັ້ງຊຸດ @vks-kit ຈາກ GitHub Packages (private). ບໍ່ຕ້ອງ copy-paste component.", "A new app lives outside this monorepo and installs the @vks-kit packages from GitHub Packages (private). No copy-paste of components.")}</Lead>
+    <Lead>{t("ແອັບໃໝ່ຢູ່ແຍກຈາກ monorepo ນີ້ ແລະ ຕິດຕັ້ງຊຸດ @vks-kit ຈາກ GitHub Packages (private). ບໍ່ຕ້ອງ copy-paste component. (ຖ້າພັດທະນາພາຍໃນ monorepo ນີ້, ເບິ່ງພາກ Monorepo ດ້ານລຸ່ມ.)", "A standalone app lives outside this monorepo and installs @vks-kit packages from GitHub Packages (private). No copy-paste of components. (Contributing inside this monorepo? See the Monorepo section below.)")}</Lead>
     <H2 id="registry">{t("1 · ເຊື່ອມຕໍ່ registry", "1 · Connect to the registry")}</H2>
-    <P>{t("ສ້າງ token (classic) ທີ່ມີສິດ read:packages ແລ້ວຕັ້ງເປັນຕົວແປ VKS_NPM_TOKEN. ຢ່າໃສ່ token ໃນໄຟລ໌.", "Create a classic token with read:packages and export it as VKS_NPM_TOKEN. Never write the token into a file.")}</P>
-    <CodeBlock lang="bash" code={`# .npmrc (commit this, it holds no secret)
+    <P>{t("ສ້າງ token (classic) ທີ່ມີສິດ read:packages ແລ້ວຕັ້ງເປັນຕົວແປ VKS_NPM_TOKEN ໃນ shell ກ່ອນແລ່ນ npm install. ຢ່າໃສ່ token ລົງໃນໄຟລ໌.", "Create a classic token with read:packages and export VKS_NPM_TOKEN in your shell before running npm install. Never hardcode a token into any file.")}</P>
+    <CodeBlock lang="bash" code={`# .npmrc (commit this to your app root — it holds no secret)
 @vks-kit:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=\${VKS_NPM_TOKEN}`} />
-    <H2 id="new-app">{t("2 · ແອັບໃໝ່", "2 · New app")}</H2>
+//npm.pkg.github.com/:_authToken=\${VKS_NPM_TOKEN}
+
+# macOS / Linux (bash/zsh)
+export VKS_NPM_TOKEN=ghp_your_read_packages_token
+
+# Windows PowerShell
+$env:VKS_NPM_TOKEN="ghp_your_read_packages_token"`} />
+    <H2 id="new-app">{t("2 · ສ້າງແອັບໃໝ່ ແລະ ຕິດຕັ້ງ", "2 · Create app & install")}</H2>
     <CodeBlock lang="bash" code={`npm create vite@latest my-app -- --template react-ts
 cd my-app
 npm install @vks-kit/ui @vks-kit/core @vks-kit/types
 npx vks-guard src        # house-rule check, run before every commit`} />
-    <P>{t("ໃນ vite dev ໜ້າ chart ອາດຂາວ; ເພີ່ມ optimizeDeps ໃນ vite.config.ts (ເບິ່ງ AGENTS.md ໃນແພັກເກັດ). build ຈິງບໍ່ມີບັນຫາ.", "In vite dev the chart page can go blank; add optimizeDeps to vite.config.ts (see the AGENTS.md shipped in the package). Production builds are fine.")}</P>
-    <H2 id="vite">2 · Vite + Tailwind</H2>
+    <H2 id="vite">{t("3 · Vite + Tailwind (optimizeDeps)", "3 · Vite + Tailwind (optimizeDeps)")}</H2>
+    <P>{t("ໃນ vite dev ໜ້າ chart ແລະ map ອາດຂາວ ເພາະ Vite pre-bundler ຂ້າມ CommonJS helper; ເພີ່ມ optimizeDeps ໃນ vite.config.ts ດັ່ງລຸ່ມນີ້.", "In vite dev, chart and map pages can render blank because Vite's pre-bundler misses a CommonJS helper; include optimizeDeps in vite.config.ts as shown below.")}</P>
     <CodeBlock code={`// vite.config.ts
 import { defineConfig } from "vite"
 import react from "@vitejs/plugin-react"
 import tailwindcss from "@tailwindcss/vite"
-export default defineConfig({ plugins: [react(), tailwindcss()] })`} />
-    <H2 id="css">{t("3 · CSS ໜຶ່ງແຖວ", "3 · One CSS line")}</H2>
+
+export default defineConfig({
+  plugins: [react(), tailwindcss()],
+  optimizeDeps: {
+    include: [
+      "@vks-kit/ui > recharts",
+      "@vks-kit/ui > leaflet",
+      "use-sync-external-store/shim/with-selector",
+    ],
+  },
+})`} />
+    <H2 id="css">{t("4 · CSS ໜຶ່ງແຖວ", "4 · One CSS line")}</H2>
     <CodeBlock lang="css" code={`/* src/index.css */
-@import "@vks-kit/ui/theme.css";   /* tokens, font, animations, print */`} />
-    <H2 id="root">{t("4 · ຄອບ root", "4 · Wrap the root")}</H2>
+@import "@vks-kit/ui/theme.css";   /* VKS logo tokens, Noto Sans Lao, animations, print */`} />
+    <H2 id="root">{t("5 · ຄອບ root", "5 · Wrap the root")}</H2>
     <CodeBlock code={`import { ThemeProvider, TooltipProvider, Toaster } from "@vks-kit/ui"
 
 createRoot(root).render(
@@ -81,15 +97,33 @@ createRoot(root).render(
     </TooltipProvider>
   </ThemeProvider>,
 )`} />
-    <H2 id="html">5 · index.html</H2>
-    <CodeBlock lang="html" code={`<html lang="lo">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />`} />
-    <P>{t("viewport-fit=cover ເຮັດໃຫ້ bottom nav ແລະ sheet ຢູ່ເໜືອແຖບ home ຂອງ iPhone ດ້ວຍ safe-area padding.", "viewport-fit=cover lets the bottom nav and sheets sit above the iPhone home bar with safe-area padding.")}</P>
+    <H2 id="html">{t("6 · index.html (ພາສາລາວ ແລະ safe-area)", "6 · Complete index.html (Lao + safe-area)")}</H2>
+    <CodeBlock lang="html" code={`<!doctype html>
+<html lang="lo">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#16173a" />
+    <title>VKS App</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>`} />
+    <P>{t("viewport-fit=cover ເຮັດໃຫ້ bottom nav ແລະ sheet ຢູ່ເໜືອແຖບ home ຂອງ iPhone ດ້ວຍ safe-area padding, ແລະ lang=\"lo\" ຊ່ວຍໃຫ້ browser ຕັດຄຳພາສາລາວໄດ້ຖືກຕ້ອງ.", "viewport-fit=cover lets the bottom nav and sheets sit above the iPhone home bar with safe-area padding, and lang=\"lo\" enables proper Lao line-breaking.")}</P>
+    <H2 id="monorepo">{t("ການພັດທະນາໃນ Monorepo (vks-platform)", "Monorepo development (vks-platform)")}</H2>
+    <P>{t("ຖ້າທ່ານເຮັດວຽກຢູ່ໃນ repo vks-platform ໂດຍກົງ (ບໍ່ແມ່ນແອັບພາຍນອກ), npm workspaces ຈະເຊື່ອມ packages/ui, packages/core ແລະ packages/types ໃຫ້ອັດຕະໂນມັດໂດຍບໍ່ຕ້ອງໃຊ້ VKS_NPM_TOKEN.", "When developing directly inside the vks-platform monorepo (rather than a standalone app), npm workspaces link packages/ui, packages/core and packages/types locally without VKS_NPM_TOKEN.")}</P>
+    <CodeBlock lang="bash" code={`npm install              # links workspaces locally
+npm run dev              # gallery at http://localhost:5199
+npm run dev:docs         # docs at http://localhost:5200
+npm run ai:index         # regenerate llms.txt + docs/ai/*.md after docs/UI changes
+npm test                 # runs unit tests + monorepo guardrails`} />
     <H2 id="rules">{t("ກົດ (AGENTS.md)", "Rules (AGENTS.md)")}</H2>
     <FeatureGrid>
       <FeatureCard icon={<Palette />} title={t("ໃຊ້ token ເທົ່ານັ້ນ", "Tokens only")} index={0} compact>{t("ຫ້າມໃຊ້ສີດິບໃນແອັບ. ໃຊ້", "No raw colours in apps. Use")} <Code>bg-primary</Code>, <Code>text-muted-foreground</Code>, <Code>var(--success)</Code>.</FeatureCard>
       <FeatureCard icon={<Package />} title={t("ທາງເຂົ້າດຽວ", "One entry point")} index={1} compact>{t("import Radix, icon ແລະ toast ຜ່ານ", "Import Radix, icons and toasts only through")} <Code>@vks-kit/ui</Code> {t("ແລະ", "and")} <Code>@vks-kit/ui/icons</Code> {t("ເທົ່ານັ້ນ.", "only.")}</FeatureCard>
-      <FeatureCard icon={<Blocks />} title={t("ສ່ວນໃໝ່, ການປ່ຽນດຽວກັນ", "New part, same change")} index={2} compact>{t("ເພີ່ມໃສ່ packages/ui, gallery ແລະ docs ນີ້ພ້ອມກັນ, ແລ້ວແລ່ນ", "Add it to packages/ui, the gallery and these docs together, then")} <Code>npm run ai:index</Code>.</FeatureCard>
+      <FeatureCard icon={<Blocks />} title={t("ສ່ວນໃໝ່, ການປ່ຽນດຽວກັນ", "New part, same change")} index={2} compact>{t("ໃນ monorepo: ເພີ່ມໃສ່ packages/ui, gallery ແລະ docs ນີ້ພ້ອມກັນ, ແລ້ວແລ່ນ", "In the monorepo: add it to packages/ui, the gallery and these docs together, then")} <Code>npm run ai:index</Code>.</FeatureCard>
       <FeatureCard icon={<Eraser />} title={t("ທຳຄວາມສະອາດຂໍ້ຄວາມ", "Clean the text")} index={3} compact>{t("ແລ່ນ", "Run")} <Code>cleanText()</Code> {t("ກັບຂໍ້ຄວາມອິດສະຫຼະ;", "on free text;")} <Code>normalizeLao()</Code> {t("ກ່ອນປຽບທຽບຊື່.", "before comparing names.")}</FeatureCard>
     </FeatureGrid>
     <div className="pt-2"><Next to="theming" label={t("Theming", "Theming")} /></div>
@@ -97,13 +131,13 @@ createRoot(root).render(
 }
 
 /** Documentation only: shown as text in a code block, not used as styles. */
-const LIGHT = [["background", "#f6f7fb"], ["foreground / primary", "#14173d"], ["card", "#ffffff"], ["muted", "#eef0f6"], ["gold", "#b08d4a"], ["success", "#047857"], ["warning", "#b45309"], ["destructive", "#b91c1c"]]
-const TOKENS = ["background", "card", "primary", "muted", "accent", "gold", "success", "warning", "destructive", "border", "bar", "chart-1", "chart-2", "chart-3", "chart-4", "chart-5"]
+const LIGHT = [["background", "#f5f6f9"], ["foreground / primary", "#16173a"], ["card", "#ffffff"], ["muted", "#eceef4"], ["muted-foreground", "#4b4f6b"], ["gold", "#b6924b"], ["gold-tint", "#f8f3e8"], ["success", "#047857"], ["warning", "#9a4307"], ["destructive", "#b91c1c"]]
+const TOKENS = ["background", "card", "primary", "muted", "accent", "gold", "gold-tint", "success", "warning", "destructive", "border", "bar", "chart-1", "chart-2", "chart-3", "chart-4", "chart-5"]
 export function Theming() {
   const { theme, setTheme } = useTheme()
   const t = useT()
   return <div className="space-y-6">
-    <Lead>{t("ສີທັງໝົດຢູ່ໃນໄຟລ໌ດຽວ: ", "All colour lives in one file: ")}<Code>packages/ui/src/styles/theme.css</Code>{t(". ມີສອງ theme ທີ່ໃຊ້ຊື່ token ດຽວກັນ, ທຸກ component ຈຶ່ງປ່ຽນຕາມໂດຍອັດຕະໂນມັດ.", ". Two themes, same token names, so every component flips for free.")}</Lead>
+    <Lead>{t("ສີທັງໝົດຖອດແບບຈາກໂລໂກ້ VKS ແລະ ຢູ່ໃນໄຟລ໌ດຽວ: ", "All colour is derived from the official VKS logo and lives in one file: ")}<Code>packages/ui/src/styles/theme.css</Code>{t(". ມີສອງ theme ທີ່ໃຊ້ຊື່ token ດຽວກັນ, ທຸກ component ຈຶ່ງປ່ຽນຕາມໂດຍອັດຕະໂນມັດ.", ". Two themes, same token names, so every component flips for free.")}</Lead>
     <div className="grid gap-3 sm:grid-cols-2">
       {([["light", "A · Guard Navy + Gold", t("ກະກາງເວັນ, ຫ້ອງການ, ລາຍງານ.", "Day shift, office, reports.")], ["dark", "E · Night Watch", t("ກະກາງຄືນ, ປະຫຍັດແບັດເຕີຣີ, ຫ້ອງມືດ.", "Night shift, battery saver, dark rooms.")]] as const).map(([k, name, d]) => (
         <button key={k} onClick={() => setTheme(k)} className={"vks-press rounded-xl border-2 p-4 text-left " + (theme === k ? "border-gold" : "border-border")}>
@@ -120,17 +154,18 @@ export function Theming() {
 <header className="bg-bar text-bar-foreground" />
 
 // ✗ never in apps/
-<div className="bg-[#14173d]" style={{ color: "#b08d4a" }} />`} />
+<div className="bg-[#16173a]" style={{ color: "#b6924b" }} />`} />
     <H2 id="css-vars">{t("CSS variable", "CSS variables")}</H2>
     <CodeBlock lang="css" code={":root {\n" + LIGHT.map(([k, v]) => "  --" + k.split(" ")[0] + ": " + v + ";").join("\n") + `
   --radius: 0.75rem;
 }
 
 .dark {
-  --background: #0b1020;
-  --card: #151b33;
-  --primary: #c9a45c;       /* gold becomes the primary at night */
-  --foreground: #eef0f8;
+  --background: #0c0d24;
+  --card: #16173a;          /* exact VKS logo navy */
+  --primary: #d8bf8c;       /* exact VKS laurel gold */
+  --foreground: #f1f1f4;    /* exact VKS logo field */
+  --muted-foreground: #a8acc7;
   --success: #34d399;
   --warning: #fbbf24;
   --destructive: #f87171;
@@ -367,6 +402,7 @@ export function DesignThinking() {
 export function Changelog() {
   const tr = useTr()
   const log: [string, string, string[]][] = [
+    ["0.7.0", "VKS domain parts + logo-exact colours", ["New PatrolCheckpointRail (patrol round: done / next / missed, scan time, GPS distance, scan-next button), ShiftRosterGrid (guard x day D / N / OFF plan with short-shift warnings), IncidentEscalationCard (P1-P3, reporter call / WhatsApp, live SLA countdown, dispatch), GuardIdBadge (screen + 85.6 mm print card) and ContractQuoteSummary (lines, discount, VAT, total in Kip). Pure helpers checkpointProgress, fmtDistance, nextShift, rosterCover, slaLeft, quoteTotals are unit tested. Kip and Lao phone fields stay MoneyInput / PhoneInput.", "Theme: colours now come from the VKS logo. Light --muted-foreground #4b4f6b (7.99:1 on card), dark cards are logo navy #16173a with laurel gold #d8bf8c primary and --muted-foreground #a8acc7 (7.71:1). New --gold-tint token; Badge variant=\"gold\" now reads navy on gold tint (15.58:1). Warning is deeper (#9a4307, 6.60:1). Dark --gold-foreground stays navy so gold buttons keep their contrast.", "Docs: Installation has numbered steps, the optimizeDeps snippet, a full index.html and a Monorepo section; vite configs include the optimizeDeps fix. vks-guard deep-import check now also catches @vks-kit/core and @vks-kit/types internals."]],
     ["0.5.6", "Click a chart to drill in", ["BarSeries, LineSeries and ComboSeries take onPick(row, key, index): click a bar or point to open the people / sites behind it. key is the series of the bar that was hit (null = the column). Hovered bars brighten so they read as clickable.", "Donut takes onPick(slice, index): tap a slice, or its legend pill (a real button, so keyboard and phone work too).", "ChartLegend takes onPick: the pills become drill buttons instead of show / hide toggles."]],
     ["0.3.1", "Design thinking guide", ["New Getting Started guide: one job per page, content first, one control row, rare filters behind a popover, at most 5 headline numbers, say it once. Its full text is in the AI catalogue (docs/ai/design-thinking.md) and the AGENTS.md template. No API change.", "Business patterns: new ApprovalCard (approve, or reject with a required reason) and SyncStatus (synced / pending N / failing, last sync, retry; reads the OfflineQueue). Timeline gains optional actor and changes for an audit trail. Pure helpers diffFields, rejectReasonError, syncState, sinceLabel. New Form pattern and Reports (PDF & PPTX) guides. Additive, no breaking change."]],
     ["0.3.0", "Roadmap and dependency map", ["New Roadmap (Gantt bars with progress, milestones and a today line) and DependencyMap (columns of boxes with arrows; hover lights the chain). Both click-to-open. Pure helpers planPct, planMonths and layoutDeps. Additive, no breaking change."]],

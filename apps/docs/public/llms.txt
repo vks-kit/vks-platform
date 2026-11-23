@@ -44,6 +44,7 @@ Before designing a page, read docs/ai/design-thinking.md: one job per page, cont
 - [Chip](ai/chip.md): Selectable filter pills and removable tags. Tap x: the x spins, the chip shrinks away, then the chips after it glide into the gap (including wrapping up to the line above). Exports: Chip
 - [Dropzone](ai/dropzone.md): Drag files in or click to pick. Checks type and size before upload. Exports: Dropzone, fmtBytes
 - [Tag input](ai/tag-input.md): Type and press Enter or comma. Paste a list, backspace to remove, suggestions below. Exports: TagInput, parseTags
+- [Contract quote summary](ai/contract-quote.md): Guard-service price quote: one row per line with a − / + count, then subtotal, discount, VAT 10 % and total in Kip, tabular digits. Read-only without onChange (print, client report). Exports: ContractQuoteSummary, quoteTotals, QuoteLine
 
 ## Dates
 
@@ -66,6 +67,7 @@ Before designing a page, read docs/ai/design-thinking.md: one job per page, cont
 - [Skeletons](ai/skeletons.md): Shaped placeholders (text, avatar, list, card, table) so nothing jumps when data lands. Exports: SkeletonText, SkeletonList, SkeletonCard, SkeletonTable, SkeletonAvatar
 - [Progress HUD](ai/progress-hud.md): Centred dark square: spinner → tick or cross. Blocks taps while a save runs. Exports: useProgressHUD, ProgressHUD
 - [Notification centre](ai/notification-list.md): Grouped notifications with unread dots, mark-all and dismiss. Exports: NotificationList
+- [Incident escalation card](ai/incident-card.md): One open incident in the call center or duty room: P1 / P2 / P3, place, reporter with call + WhatsApp, a live SLA countdown that turns amber then red, and one dispatch button. Exports: IncidentEscalationCard, slaLeft, IncidentPriority
 
 ## Overlays
 
@@ -102,6 +104,9 @@ Before designing a page, read docs/ai/design-thinking.md: one job per page, cont
 - [Tree view](ai/tree-view.md): Nested sites/folders. Arrow keys walk and open/close, rows slide in. Exports: TreeView, flattenTree
 - [Stat card](ai/stat-card.md): Dashboard KPI tile: number, coloured delta and a drawn-in trend line. Exports: StatCard, TrendLine
 - [File icon](ai/file-icon.md): Coloured file-type tile (PDF, Excel, Word, image…) and a file row with size, progress and remove. Exports: FileIcon, FileItem, fileKind, fileBadge
+- [Patrol checkpoint rail](ai/patrol-checkpoint-rail.md): One patrol round: checkpoints in order (done, next, missed), real NFC / QR scan time, GPS distance and one big scan-next button. For patrol, inspector-head and QC. Exports: PatrolCheckpointRail, checkpointProgress, fmtDistance, Checkpoint, CheckpointStatus
+- [Shift roster grid](ai/shift-roster-grid.md): Guard x day shift plan: tap a cell to cycle D (day) → N (night) → OFF, the bottom row counts heads per day and turns red when a shift is short. For duty-control, HRM and stationary-guard. Exports: ShiftRosterGrid, nextShift, rosterCover, Roster, RosterNeed, ShiftCode, RosterStaff, RosterDay
+- [Guard ID badge](ai/guard-id-badge.md): A guard's ID card on screen and in print (85.6 mm wide): VKS logo, photo, name, staff ID, role, posted site, status and a QR slot. Exports: GuardIdBadge, GuardIdStatus
 
 ## Layout & navigation
 
