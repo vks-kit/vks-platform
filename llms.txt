@@ -21,6 +21,7 @@ Before designing a page, read docs/ai/design-thinking.md: one job per page, cont
 - [Kbd, copy & separator](docs/ai/kbd-copy.md): Small helpers: keyboard hint, copy-to-clipboard with a tick, divider. Exports: Kbd, CopyButton, Separator
 - [Button group](docs/ai/button-group.md): Joined buttons for a small set of related actions or views. Exports: ButtonGroup
 - [Contact actions](docs/ai/contact-actions.md): Round WhatsApp (real logo, green) and call buttons next to a phone number. WhatsApp only for a Lao mobile (020 / 030), never a landline; nothing for a do-not-call person. A click never opens the row. Exports: ContactActions, WhatsAppIcon, whatsappUrl, telUrl, laMobileDigits
+- [Submit button (form actions)](docs/ai/submit-button.md): The save button of a React 19 form action: it reads useFormStatus() itself, so it spins, keeps its width and blocks a second tap while <form action> runs. No pending state of your own. Exports: SubmitButton
 
 ## Form
 
@@ -68,6 +69,7 @@ Before designing a page, read docs/ai/design-thinking.md: one job per page, cont
 - [Progress HUD](docs/ai/progress-hud.md): Centred dark square: spinner → tick or cross. Blocks taps while a save runs. Exports: useProgressHUD, ProgressHUD
 - [Notification centre](docs/ai/notification-list.md): Grouped notifications with unread dots, mark-all and dismiss. Exports: NotificationList
 - [Incident escalation card](docs/ai/incident-card.md): One open incident in the call center or duty room: P1 / P2 / P3, place, reporter with call + WhatsApp, a live SLA countdown that turns amber then red, and one dispatch button. Exports: IncidentEscalationCard, slaLeft, IncidentPriority
+- [Optimistic list](docs/ai/optimistic-list.md): React 19 useOptimistic for lists: a scan shows ✓ at once, the save runs behind it, and a failure puts the row back by itself with a toast. For guards on a slow network. Exports: useOptimisticList, applyPatches, ListPatch
 
 ## Overlays
 
@@ -85,11 +87,12 @@ Before designing a page, read docs/ai/design-thinking.md: one job per page, cont
 - [Hover card](docs/ai/hover-card.md): Rich preview when you hover a name or ID. Opens after 350 ms so it never flickers. Exports: HoverCard
 - [Context menu](docs/ai/context-menu.md): Desktop-first: right-click menu (long-press works on phones but nobody discovers it, so give phones a visible ⋯ Menu or ActionSheet). Right-click (or long-press) menu with icons, shortcuts, sub-menus and a red destructive item. Exports: ContextMenu
 - [Share image](docs/ai/share-image.md): A picture people send on (receipt, client card, certificate): you draw it on a canvas, the popup shows it sized to the screen with no scrolling and gives Download + copy + share, or Save + Send on WhatsApp on a phone. Exports: ShareImageDialog, fitText, loadFonts, loadImage
+- [Expand card](docs/ai/expand-card.md): A card that grows into its own panel and folds back into the same spot, so the eye keeps track of where it came from. Phone: a near full-screen panel; desktop: a panel over the card. Transform only, 300 ms. Exports: ExpandCard
 
 ## Data display
 
 - [Card](docs/ai/card.md): The basic box. White on light, navy-ink on dark. Exports: Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter
-- [Data table](docs/ai/data-table.md): A table on desktop that turns into cards on a phone when there are more than 4 columns. Loading, error and empty states built in. Exports: DataTable, Column
+- [Data table](docs/ai/data-table.md): A table on desktop that turns into cards on a phone when there are more than 4 columns. Loading, error and empty states built in. Exports: DataTable, revealDelay, Column
 - [Table](docs/ai/table.md): Plain table parts with a navy header. Every column can sort: pass sortKey + sort + onSort to TH. Exports: Table, THead, TBody, TR, TH, TD
 - [KPI hero card](docs/ai/kpi-hero.md): The phone version of KpiStrip: ONE big number with a trend pill and sparkline, plus up to 3 small figures underneath. Takes about a quarter of the screen instead of the whole first page. Exports: KpiHero
 - [KPI strip](docs/ai/kpi-strip.md): Top-of-dashboard numbers for DESKTOP: 4 tiles in a row. On a phone use KpiHero (one hero card), because 4 tiles eat the first screen. Money uses ກີບ, never ₭. Exports: KpiStrip
@@ -113,7 +116,7 @@ Before designing a page, read docs/ai/design-thinking.md: one job per page, cont
 - [App shell](docs/ai/app-shell.md): Whole-app frame. Navy sidebar on desktop, bottom nav + FAB on a phone. One breakpoint: 768 px. Pages slide in the direction you moved and a gold bar sweeps the header. Exports: AppShell, Fab, NavItem, ShellProfile
 - [Sidebar](docs/ai/sidebar.md): Navy rail. The active pill springs between items with a gold edge and a glow behind the icon; icons pop when clicked; the logo spins in once. Collapses to a 72 px icon rail with tooltips. Exports: Sidebar, SidebarSheet
 - [Bottom nav & FAB](docs/ai/bottom-nav.md): 56 px tall tabs above the phone's home bar. The FAB sits above it on the right. Exports: BottomNav, Fab
-- [Page header](docs/ai/page-header.md): Title, subtitle and actions. Actions hide on a phone: put the main one in the FAB. Exports: PageHeader, LargeTitleBar
+- [Page header](docs/ai/page-header.md): Title, subtitle and actions. Actions hide on a phone: put the main one in the FAB. Exports: PageHeader, LargeTitleBar, docTitleText
 - [Login card](docs/ai/login-card.md): Compact centred sign-in card with the logo shine, for simple apps and phones. For a full-page split-screen login with a brand panel use LoginScreen instead. Exports: LoginCard
 - [Login screen](docs/ai/login-screen.md): Premium full-page sign-in (for the compact centred card use LoginCard instead). Desktop: navy aurora brand panel with feature list beside the form. Phone: logo on top, form centred, safe-area padding. Exports: LoginScreen
 - [Profile view](docs/ai/profile-view.md): Employee / account profile. Desktop: sticky identity card on the left, grouped settings on the right. Phone: an iOS-contact-style header (big avatar, round call / message / edit buttons) edge to edge, then one stacked column. Exports: ProfileView, ProfileSection, ProfileRow, ProfileQuickAction
@@ -143,6 +146,7 @@ Before designing a page, read docs/ai/design-thinking.md: one job per page, cont
 - [QR scan & photo](docs/ai/scan.md): Camera QR scanner (jsQR) and a photo button that shrinks to 1280 px / 70 % JPEG before upload. ~48 KB gzip. Exports: QrScanner, PhotoCapture
 - [Capture stamp (photo & video)](docs/ai/capture-stamp.md): The time / site / GPS card the Patrol app burns into photos and video frames: top-left capture time, bottom-right site + GPS, top-right brand pill. One drawing function, so the live preview and the saved file look identical. Lao text wraps without splitting tone marks. Exports: drawCaptureStamp, stampPhoto, stampTime, CaptureStamp, CaptureStampData
 - [Signature pad](docs/ai/signature-pad.md): Finger signature for hand-overs. Read it back as a PNG. Exports: SignaturePad, SignaturePadHandle
+- [Sortable list](docs/ai/sortable-list.md): Put a short list in order: drag a row by its grip and the others move aside; keyboard = Space + arrows; on a phone each row also has ↑ ↓ buttons. Ships in @vks-kit/ui/kanban (same drag library). Exports: SortableList, moveItem
 
 ## Optional
 

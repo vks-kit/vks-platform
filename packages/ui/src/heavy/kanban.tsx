@@ -2,11 +2,11 @@ import * as React from "react"
 import { createPortal } from "react-dom"
 import {
   DndContext, DragOverlay, KeyboardSensor, MouseSensor, TouchSensor, pointerWithin, rectIntersection, useSensor, useSensors, useDroppable,
-  type CollisionDetection, type DragEndEvent, type DragOverEvent, type DragStartEvent,
+  closestCenter, type CollisionDetection, type DragEndEvent, type DragOverEvent, type DragStartEvent, type Modifier,
 } from "@dnd-kit/core"
 import { SortableContext, useSortable, verticalListSortingStrategy, arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
-import { Check, ChevronRight, GripVertical, Plus } from "lucide-react"
+import { ArrowDown, ArrowUp, Check, ChevronRight, GripVertical, Plus } from "lucide-react"
 import { haptics } from "@vks-kit/core"
 import { cn } from "../lib/cn"
 import { useIsMobile } from "../lib/use-media"
@@ -245,4 +245,83 @@ function KanbanPhone({ columns, cards, onChange, onAdd, onOpen, addLabel = "ເ�
 export function Kanban(props: KanbanProps) {
   const mobile = useIsMobile()
   return <LinesCtx.Provider value={props.cardLines}>{mobile ? <KanbanPhone {...props} /> : <KanbanDesktop {...props} />}</LinesCtx.Provider>
+}
+
+
+/* ---------------- SortableList ---------------- */
+
+/** Move the item at index from to index to. Pure, so it is unit tested. Out-of-range indexes return the same array. */
+export function moveItem<T>(list: T[], from: number, to: number): T[] {
+  if (from === to || from < 0 || to < 0 || from >= list.length || to >= list.length) return list
+  const next = list.slice(), [x] = next.splice(from, 1)
+  next.splice(to, 0, x)
+  return next
+}
+
+/** Keep a dragged row on its own column (vertical only) — like @dnd-kit/modifiers, without the extra package. */
+const verticalOnly: Modifier = ({ transform }) => ({ ...transform, x: 0 })
+
+function SortRow<T>({ id, item, index, count, render, onStep, moveLabel, disabled }: {
+  id: string; item: T; index: number; count: number; render: (item: T, index: number) => React.ReactNode
+  onStep: (from: number, to: number) => void; moveLabel: (index: number) => string; disabled?: boolean
+}) {
+  const s = useSortable({ id, disabled })
+  const btn = "vks-press flex size-11 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted disabled:opacity-30 [&_svg]:size-4"
+  return (
+    <li ref={s.setNodeRef} style={{ transform: CSS.Translate.toString(s.transform), transition: s.transition }}
+      className={cn("relative flex min-h-14 min-w-0 items-center gap-1 rounded-xl border bg-card pr-1 text-card-foreground",
+        s.isDragging && "z-10 border-primary/40 shadow-[0_18px_36px_-16px_rgb(20_23_61/.45)]")}>
+      <button type="button" {...s.attributes} {...s.listeners} aria-label={moveLabel(index)} disabled={disabled}
+        className="flex size-11 shrink-0 cursor-grab touch-none items-center justify-center rounded-lg text-muted-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:cursor-grabbing [&_svg]:size-5">
+        <GripVertical aria-hidden />
+      </button>
+      <div className="min-w-0 flex-1 py-2 leading-normal">{render(item, index)}</div>
+      {/* phones and screen readers: two plain buttons instead of a drag */}
+      <span className="flex shrink-0 md:hidden">
+        <button type="button" aria-label="ຂຶ້ນ" className={btn} disabled={disabled || index === 0} onClick={() => onStep(index, index - 1)}><ArrowUp /></button>
+        <button type="button" aria-label="ລົງ" className={btn} disabled={disabled || index === count - 1} onClick={() => onStep(index, index + 1)}><ArrowDown /></button>
+      </span>
+    </li>
+  )
+}
+
+/**
+ * Use for putting a short list in order (patrol checkpoint order, checklist questions, menu order): drag a row by its grip
+ * and the others move out of the way; keyboard = focus the grip, Space, arrows, Space; on a phone each row also has ↑ ↓
+ * buttons so nobody has to drag. onChange gets the whole list in its new order. For cards moving between columns use
+ * Kanban instead; for a list nobody reorders use DataTable or ListGroup.
+ */
+export function SortableList<T>({ items, getId, onChange, render, moveLabel = (i) => "ລາກເພື່ອຍ້າຍ ລຳດັບທີ " + (i + 1), disabled, className }: {
+  items: T[]
+  getId: (item: T) => string
+  /** The whole list in its new order. */
+  onChange: (items: T[]) => void
+  /** The row's content (beside the grip). */
+  render: (item: T, index: number) => React.ReactNode
+  /** Spoken label of the grip. Default "ລາກເພື່ອຍ້າຍ ລຳດັບທີ N". */
+  moveLabel?: (index: number) => string
+  disabled?: boolean
+  className?: string
+}) {
+  const sensors = useSensors(
+    useSensor(MouseSensor, { activationConstraint: { distance: 4 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 6 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  )
+  const ids = items.map(getId)
+  const step = (from: number, to: number) => { const next = moveItem(items, from, to); if (next !== items) { haptics.tap(); onChange(next) } }
+  const end = (e: DragEndEvent) => {
+    if (!e.over || e.active.id === e.over.id) return
+    step(ids.indexOf(String(e.active.id)), ids.indexOf(String(e.over.id)))
+  }
+  return (
+    <DndContext sensors={sensors} collisionDetection={closestCenter} modifiers={[verticalOnly]} onDragEnd={end}
+      accessibility={{ screenReaderInstructions: { draggable: "ກົດ Space ເພື່ອຍົກ, ລູກສອນເພື່ອຍ້າຍ, Space ອີກຄັ້ງເພື່ອວາງ, Esc ເພື່ອຍົກເລີກ" } }}>
+      <SortableContext items={ids} strategy={verticalListSortingStrategy}>
+        <ol className={cn("grid grid-cols-[minmax(0,1fr)] gap-2", className)}>
+          {items.map((it, i) => <SortRow key={ids[i]} id={ids[i]} item={it} index={i} count={items.length} render={render} onStep={step} moveLabel={moveLabel} disabled={disabled} />)}
+        </ol>
+      </SortableContext>
+    </DndContext>
+  )
 }

@@ -29,4 +29,4 @@ const png = ref.current!.toDataURL()
 | --- | --- | --- | --- |
 | height | number |  |  |
 | onChange | (empty: boolean) => void |  |  |
-| ref | { clear(); isEmpty(); toDataURL() } |  |  |
+| ref | { clear(); isEmpty(); toDataURL() } |  | A plain prop since 0.8 (React 19, no forwardRef); useRef works the same. |

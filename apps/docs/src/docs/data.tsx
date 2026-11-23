@@ -31,6 +31,11 @@ const cols: Column<Row>[] = [
 function DT({ mode }: { mode?: "cards" | "table" | "loading" | "error" | "empty" }) {
   return <div className="w-full"><DataTable columns={cols} rows={mode === "empty" ? [] : rows} rowKey={(r) => r.id} mode={mode === "cards" ? "cards" : mode === "table" ? "table" : "auto"} loading={mode === "loading"} error={mode === "error" ? "ໂຫຼດບໍ່ສຳເລັດ" : undefined} onRetry={() => {}} /></div>
 }
+function RevealDemo() {
+  const [loading, setLoading] = React.useState(true)
+  React.useEffect(() => { if (!loading) return; const t = setTimeout(() => setLoading(false), 900); return () => clearTimeout(t) }, [loading])
+  return <div className="grid w-full gap-2"><div><button type="button" className="min-h-11 rounded-lg border px-4 text-sm font-semibold" onClick={() => setLoading(true)}>ໂຫຼດຄືນ</button></div><DataTable columns={cols} rows={rows} rowKey={(r) => r.id} loading={loading} skeletonRows={3} mode="table" /></div>
+}
 function Stars() { const [v, setV] = React.useState(4); return <StarRating value={v} onChange={setV} /> }
 function Pages() { const [p, setP] = React.useState(3); return <Pagination page={p} pages={9} onPage={setP} /> }
 
@@ -60,7 +65,7 @@ export const dataDocs: Doc[] = [
   {
     slug: "data-table", name: "Data table", group: "Data display", badge: "Mobile",
     desc: "A table on desktop that turns into cards on a phone when there are more than 4 columns. Loading, error and empty states built in.",
-    file: "packages/ui/src/components/data-table.tsx", importLine: 'import { DataTable, type Column } from "@vks-kit/ui"',
+    file: "packages/ui/src/components/data-table.tsx", importLine: 'import { DataTable, revealDelay, type Column } from "@vks-kit/ui"',
     demo: () => <DT />,
     code: `const cols: Column<Row>[] = [
   { key: "s", header: "ຈຸດ", cell: (r) => r.site, primary: true },
@@ -72,6 +77,7 @@ export const dataDocs: Doc[] = [
       { id: "cards", title: "Card layout (what phones see)", note: "mode=\"cards\" forces cards at every width, e.g. inside a narrow side panel on desktop.", demo: () => <DT mode="cards" />, code: `<DataTable mode="cards" columns={cols} rows={rows} rowKey={(r) => r.id} />` },
       { id: "table-only", title: "Always a table", note: "mode=\"table\" keeps the table on a phone. Only for ≤ 4 short columns; wide tables scroll sideways and nobody finds the last column. See the Desktop ↔ Mobile guide.", demo: () => <DT mode="table" />, code: `<DataTable mode="table" columns={cols} rows={rows} rowKey={(r) => r.id} />` },
       { id: "loading", title: "Loading", demo: () => <DT mode="loading" />, code: `<DataTable loading … />` },
+      { id: "reveal", title: "Rows fill in after loading", note: "When loading ends the rows fade in top to bottom, 40 ms apart, only the first 8 wait (whole list under 400 ms). skeletonRows = your page size so nothing jumps. reveal=\"none\" turns it off.", demo: () => <RevealDemo />, code: `<DataTable loading={loading} rows={rows} skeletonRows={8} reveal="stagger" … />` },
       { id: "error", title: "Error with retry", demo: () => <DT mode="error" />, code: `<DataTable error="ໂຫຼດບໍ່ສຳເລັດ" onRetry={refetch} … />` },
       { id: "empty", title: "Empty", demo: () => <DT mode="empty" />, code: `<DataTable rows={[]} emptyTitle="ຍັງບໍ່ມີຂໍ້ມູນ" … />` },
     ],
@@ -79,6 +85,7 @@ export const dataDocs: Doc[] = [
       { name: "columns", type: "{ key; header; cell(row); primary?; className? }[]", desc: "primary columns become the card title on a phone." },
       { name: "rows", type: "T[]", desc: "" }, { name: "rowKey", type: "(row: T) => string", desc: "" },
       { name: "onRowClick", type: "(row: T) => void", desc: "Pair with Drawer." }, { name: "loading", type: "boolean", desc: "Shimmer rows." },
+      { name: "reveal", type: '"stagger" | "none"', def: '"stagger"', desc: "Rows fill in top to bottom when loading ends." }, { name: "skeletonRows", type: "number", def: "4", desc: "Skeleton rows while loading; match the page size." },
       { name: "error / onRetry", type: "string / () => void", desc: "" }, { name: "emptyTitle", type: "string", def: '"ຍັງບໍ່ມີຂໍ້ມູນ"', desc: "" },
       { name: "mode", type: '"auto" | "table" | "cards" | "rows"', def: '"auto"', desc: "auto = table on desktop, cards on a phone when there are more than 4 columns. table / cards force one layout." },
       { name: "sortValue (column)", type: "(row: T) => string | number | Date", desc: "Give it to a column to make its header sortable." },

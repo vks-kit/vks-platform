@@ -5,6 +5,9 @@ import { Skeleton, Empty } from "./feedback"
 import { ArrowUp } from "lucide-react"
 import { TH, sortRows, nextSort, type SortState } from "./table"
 
+/** Delay of row i when rows fill in after a load: 40 ms apart, only the first 8 rows wait, so the whole list is in under 400 ms. */
+export function revealDelay(i: number): number { return Math.min(Math.max(0, i), 7) * 40 }
+
 export type Column<T> = { key: string; header: string; cell: (row: T) => React.ReactNode; /** important columns stay in the top of a mobile card, others drop to the footer */ primary?: boolean; className?: string
   /** phone rows (mode="rows"): "title" = line 1, "sub" = line 2 (joined with ·), "action" = the button on the right; other columns are hidden */
   row?: "title" | "sub" | "action"
@@ -16,13 +19,17 @@ export type Column<T> = { key: string; header: string; cell: (row: T) => React.R
  * phone (calls, tasks), prefer mode="rows": 2-line rows, ~8 per screen, instead of ~2 tall cards.
  * States: loading = skeleton rows, empty = Empty, error = inline retry. Always ship all three.
  */
-export function DataTable<T>({ columns, rows, rowKey, onRowClick, loading, error, onRetry, emptyTitle = "ຍັງບໍ່ມີຂໍ້ມູນ", forceCards, mode = "auto", sort: sortProp, onSortChange, defaultSort = null }: {
+export function DataTable<T>({ columns, rows, rowKey, onRowClick, loading, error, onRetry, emptyTitle = "ຍັງບໍ່ມີຂໍ້ມູນ", forceCards, mode = "auto", sort: sortProp, onSortChange, defaultSort = null, reveal = "stagger", skeletonRows = 4 }: {
   columns: Column<T>[]; rows: T[]; rowKey: (r: T) => string; onRowClick?: (r: T) => void; loading?: boolean
   error?: string | null; onRetry?: () => void; emptyTitle?: string; /** @deprecated use mode="cards" */ forceCards?: boolean
   /** auto = cards on a phone when there are more than 4 columns (default) · table = always a table · cards = always cards
    *  · rows = phone: compact 2-line rows (columns marked row: title / sub / action), ~72 px each instead of a tall label/value card */
   mode?: "auto" | "table" | "cards" | "rows"
   /** controlled sort (e.g. server-side); omit to let the table sort rows itself */ sort?: SortState; onSortChange?: (s: SortState) => void; defaultSort?: SortState
+  /** When rows arrive after the skeleton: "stagger" = they fill in top to bottom (≤ 8 rows staggered, under 400 ms in total), "none" = all at once. */
+  reveal?: "stagger" | "none"
+  /** How many skeleton rows to show while loading (match the page size so nothing jumps). Default 4. */
+  skeletonRows?: number
 }) {
   const mobile = useIsMobile()
   const [own, setOwn] = React.useState<SortState>(defaultSort)
@@ -33,17 +40,22 @@ export function DataTable<T>({ columns, rows, rowKey, onRowClick, loading, error
   // mode="cards" (or legacy forceCards) always cards; "table" never; "auto" = phone + more than 4 columns
   const cards = mode === "cards" || !!forceCards || (mode === "auto" && mobile && columns.length > 4)
   const compact = mode === "rows" && mobile
+  // after a load finishes, the first rows fade in one after another; re-sorting keeps the existing quick fade
+  const wasLoading = React.useRef(!!loading), [arrived, setArrived] = React.useState(0)
+  React.useEffect(() => { if (wasLoading.current && !loading) setArrived((n) => n + 1); wasLoading.current = !!loading }, [loading])
+  const stagger = reveal === "stagger" && arrived > 0
+  const delay = (i: number): React.CSSProperties | undefined => (stagger ? { animationDelay: revealDelay(i) + "ms" } : undefined)
   if (error) return <div role="alert" className="rounded-xl border border-destructive/40 bg-destructive/10 p-4 text-sm"><b className="text-destructive">{error}</b>{onRetry && <button onClick={onRetry} className="-my-3 ml-3 inline-flex min-h-11 items-center px-1 font-semibold underline">ລອງໃໝ່</button>}</div>
-  if (loading) return <div className="space-y-2">{[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-12 w-full" />)}</div>
+  if (loading) return <div className="space-y-2" aria-busy="true">{Array.from({ length: Math.max(1, skeletonRows) }, (_, i) => <Skeleton key={i} className={cn("w-full", compact ? "h-[4.5rem] rounded-xl" : "h-12")} />)}</div>
   if (rows.length === 0) return <Empty title={emptyTitle} />
   if (compact) {
     // 2 short lines + one action: about 8 per phone screen. grid minmax(0,1fr): a row never gets wider than the screen.
     const pick = (k: "title" | "sub" | "action") => columns.filter((c) => c.row === k)
     const title = pick("title").length ? pick("title") : columns.slice(0, 1), sub = pick("sub"), act = pick("action")
     return (
-      <ul className="grid grid-cols-[minmax(0,1fr)] gap-2">
-        {sorted.map((r) => (
-          <li key={rowKey(r)} className="min-w-0">
+      <ul key={"a" + arrived} className="grid grid-cols-[minmax(0,1fr)] gap-2">
+        {sorted.map((r, i) => (
+          <li key={rowKey(r)} className={cn("min-w-0", stagger && "vks-fade-up")} style={delay(i)}>
             <div role={onRowClick ? "button" : undefined} tabIndex={onRowClick ? 0 : undefined} onClick={() => onRowClick?.(r)} onKeyDown={(e) => e.key === "Enter" && onRowClick?.(r)}
               className={cn("flex min-h-[4.5rem] w-full min-w-0 items-center gap-3 rounded-xl border bg-card px-3 py-2", onRowClick && "vks-press cursor-pointer")}>
               <div className="min-w-0 flex-1 leading-normal">
@@ -66,9 +78,9 @@ export function DataTable<T>({ columns, rows, rowKey, onRowClick, loading, error
           <button key={c.key} type="button" onClick={() => setSort(nextSort(sort, c.key))} className={cn("vks-press inline-flex h-11 shrink-0 items-center gap-1.5 rounded-full border px-4 text-sm font-semibold transition-colors", on ? "border-primary bg-primary text-primary-foreground" : "bg-card text-muted-foreground")}>
             {c.header}{on ? <ArrowUp data-dir={sort!.dir} className="vks-sort size-3.5" /> : null}</button>) })}
       </div>}
-      <ul key={sort ? sort.key + sort.dir : "none"} className="space-y-2">
+      <ul key={(sort ? sort.key + sort.dir : "none") + arrived} className="space-y-2">
         {sorted.map((r, i) => (
-          <li key={rowKey(r)} className="vks-fade-up" style={{ animationDelay: Math.min(i, 7) * 40 + "ms" }}>
+          <li key={rowKey(r)} className="vks-fade-up" style={{ animationDelay: (stagger ? revealDelay(i) : Math.min(i, 7) * 40) + "ms" }}>
             <div role={onRowClick ? "button" : undefined} tabIndex={onRowClick ? 0 : undefined} onClick={() => onRowClick?.(r)} onKeyDown={(e) => e.key === "Enter" && onRowClick?.(r)}
               className={cn("rounded-xl border bg-card p-3", onRowClick && "vks-press cursor-pointer")}>
               <div className="space-y-0.5 font-semibold">{top.map((c) => <div key={c.key}>{c.cell(r)}</div>)}</div>
@@ -84,8 +96,8 @@ export function DataTable<T>({ columns, rows, rowKey, onRowClick, loading, error
     <div className="overflow-x-auto rounded-xl border bg-card">
       <table className="w-full text-sm">
         <thead className="bg-bar text-bar-foreground"><tr>{columns.map((c) => <TH key={c.key} className={c.className} sortKey={c.sortValue ? c.key : undefined} sort={sort} onSort={setSort}>{c.header}</TH>)}</tr></thead>
-        <tbody key={sort ? sort.key + sort.dir : "none"} className="vks-rows">{sorted.map((r) => (
-          <tr key={rowKey(r)} onClick={() => onRowClick?.(r)} className={cn("border-t odd:bg-muted/30", onRowClick && "cursor-pointer hover:bg-accent")}>{columns.map((c) => <td key={c.key} className={cn("px-3 py-2.5", c.className)}>{c.cell(r)}</td>)}</tr>))}
+        <tbody key={(sort ? sort.key + sort.dir : "none") + arrived} className="vks-rows">{sorted.map((r, i) => (
+          <tr key={rowKey(r)} onClick={() => onRowClick?.(r)} style={delay(i)} className={cn("border-t odd:bg-muted/30", onRowClick && "cursor-pointer hover:bg-accent")}>{columns.map((c) => <td key={c.key} className={cn("px-3 py-2.5", c.className)}>{c.cell(r)}</td>)}</tr>))}
         </tbody>
       </table>
     </div>

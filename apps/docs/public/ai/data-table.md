@@ -7,7 +7,7 @@
 - Live docs: #/docs/data-table
 
 ```ts
-import { DataTable, type Column } from "@vks-kit/ui"
+import { DataTable, revealDelay, type Column } from "@vks-kit/ui"
 ```
 
 ## When to use
@@ -47,6 +47,14 @@ mode="table" keeps the table on a phone. Only for ≤ 4 short columns; wide tabl
 <DataTable loading … />
 ```
 
+### Rows fill in after loading
+
+When loading ends the rows fade in top to bottom, 40 ms apart, only the first 8 wait (whole list under 400 ms). skeletonRows = your page size so nothing jumps. reveal="none" turns it off.
+
+```tsx
+<DataTable loading={loading} rows={rows} skeletonRows={8} reveal="stagger" … />
+```
+
 ### Error with retry
 
 ```tsx
@@ -68,6 +76,8 @@ mode="table" keeps the table on a phone. Only for ≤ 4 short columns; wide tabl
 | rowKey | (row: T) => string |  |  |
 | onRowClick | (row: T) => void |  | Pair with Drawer. |
 | loading | boolean |  | Shimmer rows. |
+| reveal | "stagger" \| "none" | "stagger" | Rows fill in top to bottom when loading ends. |
+| skeletonRows | number | 4 | Skeleton rows while loading; match the page size. |
 | error / onRetry | string / () => void |  |  |
 | emptyTitle | string | "ຍັງບໍ່ມີຂໍ້ມູນ" |  |
 | mode | "auto" \| "table" \| "cards" \| "rows" | "auto" | auto = table on desktop, cards on a phone when there are more than 4 columns. table / cards force one layout. |

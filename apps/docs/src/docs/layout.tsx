@@ -211,9 +211,15 @@ export const layoutDocs: Doc[] = [
   {
     slug: "page-header", name: "Page header", group: "Layout & navigation", badge: "Stable",
     desc: "Title, subtitle and actions. Actions hide on a phone: put the main one in the FAB.",
-    file: "packages/ui/src/components/shell.tsx", importLine: 'import { PageHeader, LargeTitleBar } from "@vks-kit/ui"',
+    file: "packages/ui/src/components/shell.tsx", importLine: 'import { PageHeader, LargeTitleBar, docTitleText } from "@vks-kit/ui"',
     demo: () => <PageHeaderDemo />,
     code: `<PageHeader title="ພະນັກງານ" subtitle="128 ຄົນ" actions={<Button variant="action"><Plus />ເພີ່ມ</Button>} />`,
+    props: [
+      { name: "title / subtitle / eyebrow", type: "string / string / ReactNode", desc: "" }, { name: "actions", type: "ReactNode", desc: "Hidden on a phone: put the main one in the Fab." },
+      { name: "docTitle", type: "boolean | string", desc: "Also name the browser tab. true = title. React 19 moves the <title> into <head>." },
+      { name: "appName", type: "string", desc: "After the page in the tab: \"ກະ · VKS HR\"." }, { name: "badge", type: "number", desc: "Count in front: \"(3) ກະ · VKS HR\"; 0 hides it." },
+    ],
+    notes: ["Use docTitle on every top-level page so people with 5 VKS tabs open can tell them apart. docTitleText(title, appName, badge) builds the same text if you need it elsewhere."],
     examples: [{ id: "large-title", title: "iOS large title (phone)", note: "Big title that shrinks into the centred bar as the window scrolls. Use on phone-first pages instead of PageHeader.",
       demo: () => <LargeTitleDemo />,
       code: `<LargeTitleBar title="ຕັ້ງຄ່າ" onBack={() => history.back()} backLabel="ກັບ" trailing={<Button size="icon" variant="ghost"><Plus /></Button>} />` }],

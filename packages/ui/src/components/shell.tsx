@@ -7,6 +7,7 @@ import { Logo, BRAND } from "./logo"
 import { PageBoundary } from "./feedback"
 import { Sheet, SheetContent, SheetTitle, TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "./overlay"
 import { UserChip } from "./data-display"
+import { docTitleText } from "../lib/actions"
 
 export type NavItem = { id: string; label: string; icon: React.ReactNode; badge?: number }
 
@@ -228,10 +229,20 @@ export function Fab({ icon = <Plus />, label, onClick, extended, className }: { 
   )
 }
 
-/** Page title block. Title/subtitle rise in; optional back button and breadcrumb line; actions hide on phone (use Fab). */
-export function PageHeader({ title, subtitle, actions, onBack, eyebrow, className }: { title: string; subtitle?: string; actions?: React.ReactNode; onBack?: () => void; eyebrow?: React.ReactNode; className?: string }) {
+/** Page title block. Title/subtitle rise in; optional back button and breadcrumb line; actions hide on phone (use Fab). docTitle also names the browser tab ("(3) ກະ · VKS HR") through React 19's <title>, so open tabs can be told apart. */
+export function PageHeader({ title, subtitle, actions, onBack, eyebrow, className, docTitle, appName, badge }: {
+  title: string; subtitle?: string; actions?: React.ReactNode; onBack?: () => void; eyebrow?: React.ReactNode; className?: string
+  /** Also set the browser tab title. true = use title; a string = that text instead. React 19 moves the <title> into <head>. */
+  docTitle?: boolean | string
+  /** App name after the page in the tab: "ກະ · VKS HR". */
+  appName?: string
+  /** Count in front of the tab title, e.g. unread items: "(3) ກະ · VKS HR". 0 hides it. */
+  badge?: number
+}) {
+  const tab = docTitle ? docTitleText(typeof docTitle === "string" ? docTitle : title, appName, badge) : null
   return (
     <div className={cn("vks-rise mb-5 flex flex-wrap items-end justify-between gap-3", className)}>
+      {tab && <title>{tab}</title>}
       <div className="flex min-w-0 items-start gap-2">
         {onBack && <button aria-label="back" onClick={onBack} className="vks-press -ml-2 flex size-11 shrink-0 items-center justify-center rounded-full text-foreground hover:bg-muted [&_svg]:size-6"><ChevronLeft /></button>}
         <div className="min-w-0">

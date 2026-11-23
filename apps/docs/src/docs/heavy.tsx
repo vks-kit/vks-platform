@@ -158,6 +158,6 @@ drawCaptureStamp(ctx, canvas.width, canvas.height, data)`,
 <SignaturePad ref={ref} onChange={(empty) => setSigned(!empty)} />
 // later
 const png = ref.current!.toDataURL()`,
-    props: [{ name: "height", type: "number", desc: "" }, { name: "onChange", type: "(empty: boolean) => void", desc: "" }, { name: "ref", type: "{ clear(); isEmpty(); toDataURL() }", desc: "" }],
+    props: [{ name: "height", type: "number", desc: "" }, { name: "onChange", type: "(empty: boolean) => void", desc: "" }, { name: "ref", type: "{ clear(); isEmpty(); toDataURL() }", desc: "A plain prop since 0.8 (React 19, no forwardRef); useRef works the same." }],
   },
 ]

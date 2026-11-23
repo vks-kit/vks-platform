@@ -15,12 +15,13 @@ import {
   ApprovalCard, SyncStatus, diffFields, type ApprovalStatus, TextInput, PhoneInput, MoneyInput, TimeInput, NumberInput, isPhoneLa, phoneLaE164,
   IconButton, ContactActions, SlotPicker, halfHours, RangeInline, DateInput, FormDialogContent, Field, FormSection, FormActions, FoldSection, SheetContent, Sheet, SheetTitle, SelectHeader, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Facts, FactGrid, WeekdayPicker, workDaysText,
   SettingsPage, defineSettings,
+  SubmitButton, useOptimisticList, ExpandCard,
   PatrolCheckpointRail, ShiftRosterGrid, IncidentEscalationCard, GuardIdBadge, ContractQuoteSummary, type Checkpoint, type Roster, type ShiftCode, type QuoteLine,
 } from "@vks-kit/ui"
 import { Share2, Pencil, Phone, Trash2, Heart, Shield, AlertTriangle, CheckCircle2, Clock, Folder, User, Copy as CopyIcon, Search as SearchIcon, ArrowRight } from "@vks-kit/ui/icons"
 import { BarSeries, LineSeries, Donut, Sparkline, ScatterSeries, RadarSeries, RadialBars, ComboSeries, Heatmap, DateGrid, LatencyTimeline, AttendanceBoard } from "@vks-kit/ui/charts"
 import { MapView } from "@vks-kit/ui/map"
-import { Kanban, type KanbanCard } from "@vks-kit/ui/kanban"
+import { Kanban, SortableList, type KanbanCard } from "@vks-kit/ui/kanban"
 import { QrScanner, PhotoCapture, CaptureStamp, stampPhoto, stampTime } from "@vks-kit/ui/scan"
 import { fmtKip, fmtKipShort, t, setLang, getLang } from "@vks-kit/core"
 import { DataDemo } from "../../docs/src/docs/more"
@@ -255,6 +256,7 @@ export function More() {
           </div>
         </Sec>
         <BusinessKit />
+        <Kit080 />
         <DomainKit />
         <Sec id="roadmap" title="Roadmap & dependency map">
           <Card><CardContent className="space-y-6 pt-5">
@@ -626,6 +628,30 @@ function DomainKit() {
       <div className="grid content-start gap-3">
         <Field label="ຄ່າບໍລິການລາຍເດືອນ (ກີບ)"><MoneyInput value={fee} onChange={setFee} /></Field>
         <Field label="ເບີໂທຜູ້ປະສານງານ"><PhoneInput value={tel} onChange={setTel} /></Field>
+      </div>
+    </div>
+  </Sec>
+}
+
+/** 0.8: React 19 form actions, optimistic scans, sortable list, expand card. */
+function Kit080() {
+  const wait = (ms: number) => new Promise((r) => setTimeout(r, ms))
+  const [err, save] = React.useActionState(async (_: string | null, f: FormData) => { await wait(800); const n = String(f.get("n") ?? "").trim(); if (!n) return "ໃສ່ຊື່ກ່ອນ"; toast.success("ບັນທຶກ " + n); return null }, null)
+  const [cps, setCps] = React.useState([{ id: "1", name: "ປະຕູໜ້າ", status: "todo" }, { id: "2", name: "ບ່ອນຈອດລົດ", status: "todo" }, { id: "3", name: "ສາງ B", status: "todo" }])
+  const [off, setOff] = React.useState(false), offRef = React.useRef(off); offRef.current = off
+  const opt = useOptimisticList(cps, async (cp, p) => { await wait(800); if (offRef.current) throw new Error("offline"); setCps((l) => l.map((x) => (x.id === cp.id ? { ...x, ...p } : x))) })
+  const [order, setOrder] = React.useState(["ປະຕູໜ້າ", "ບ່ອນຈອດລົດ B1", "ຄັງສິນຄ້າ B", "ຫຼັງຄາ"])
+  return <Sec id="kit-0-8" title="0.8: SubmitButton, optimistic scans, SortableList, ExpandCard, PageHeader docTitle">
+    <PageHeader title="ກະ" subtitle="ຊື່ແຖບ browser ປ່ຽນເປັນ (3) ກະ · VKS Gallery" docTitle appName="VKS Gallery" badge={3} />
+    <div className="grid gap-6 md:grid-cols-2">
+      <form action={save} className="grid content-start gap-3"><Field label="ຊື່ສະຖານທີ່" error={err ?? undefined}><Input name="n" invalid={!!err} /></Field><SubmitButton pendingLabel="ກຳລັງບັນທຶກ…">ບັນທຶກ</SubmitButton></form>
+      <div className="grid content-start gap-2">
+        <label className="flex min-h-11 items-center gap-2 text-sm"><input type="checkbox" checked={off} onChange={(e) => setOff(e.target.checked)} />ຈຳລອງເນັດຫຼຸດ</label>
+        {opt.items.map((cp) => <div key={cp.id} className="flex min-h-14 items-center gap-3 rounded-xl border bg-card px-3"><span className="flex-1 font-semibold">{cp.name}</span>{cp.status === "done" ? <Badge variant="success" dot>{opt.pending.includes(cp.id) ? "ກຳລັງສົ່ງ…" : "ສຳເລັດ"}</Badge> : <Button size="sm" variant="action" onClick={() => opt.mark(cp, { status: "done" })}><ScanLine />ສະແກນ</Button>}</div>)}
+      </div>
+      <SortableList items={order} getId={(x) => x} onChange={setOrder} render={(x, i) => <b>{i + 1}. {x}</b>} />
+      <div className="grid content-start gap-2 sm:grid-cols-2">
+        {["06:00–18:00", "18:00–06:00"].map((t) => <ExpandCard key={t} title={t + " · ທະນາຄານ BCEL"} summary={<><b className="text-lg tabular-nums">{t}</b><div className="text-sm text-muted-foreground">ທະນາຄານ BCEL</div></>}><p className="text-sm text-muted-foreground">4 ຈຸດກວດ · ປະຕູໜ້າ</p></ExpandCard>)}
       </div>
     </div>
   </Sec>

@@ -5,8 +5,11 @@ import { Button } from "./button"
 
 export type SignaturePadHandle = { clear: () => void; isEmpty: () => boolean; toDataURL: () => string }
 /** Draw with finger or mouse. toDataURL() gives a PNG. Uses pointer events + touch-action:none so the page does not scroll while signing. */
-export const SignaturePad = React.forwardRef<SignaturePadHandle, { height?: number; onChange?: (empty: boolean) => void; className?: string; clearLabel?: string }>(
-  function SignaturePad({ height = 180, onChange, className, clearLabel = "ລ້າງ" }, ref) {
+export function SignaturePad({ height = 180, onChange, className, clearLabel = "ລ້າງ", ref }: {
+  height?: number; onChange?: (empty: boolean) => void; className?: string; clearLabel?: string
+  /** React 19: a plain prop (no forwardRef). Gives clear(), isEmpty() and toDataURL(). */
+  ref?: React.Ref<SignaturePadHandle>
+}) {
     const cv = React.useRef<HTMLCanvasElement>(null), drawing = React.useRef(false), empty = React.useRef(true)
     const ctx = () => cv.current!.getContext("2d")!
     const fit = React.useCallback(() => {
@@ -31,4 +34,4 @@ export const SignaturePad = React.forwardRef<SignaturePadHandle, { height?: numb
         <Button type="button" variant="ghost" size="sm" onClick={clear}><Eraser />{clearLabel}</Button>
       </div>
     )
-  })
+}
