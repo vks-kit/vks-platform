@@ -204,6 +204,12 @@
   .vks-btn-solid:hover:not(:disabled) { filter: brightness(1.06); }
   .vks-btn-solid:hover:not(:disabled)::after { transform: translate3d(120%,0,0); transition: transform .75s var(--ease-out-quint); }
 }
+/* Metallic gold (Button variant="gold"): a polished plate rather than a flat fill. Light top, a reflection line across the
+ * middle, a darker gold rim, a warm lift shadow; navy text with a 1px light emboss. Keeps the solid button's press spring
+ * and hover sheen (vks-btn-solid::after). Colours are tokens (--gold-metal-*, --gold-edge) in theme.css. */
+.vks-btn-gold { background-color: var(--gold-metal); background-image: linear-gradient(180deg, var(--gold-metal-hi) 0%, var(--gold-metal) 48%, var(--gold-metal-lo) 52%, var(--gold-metal-end) 100%); box-shadow: inset 0 1px 0 rgb(255 255 255 / .7), inset 0 0 0 1px var(--gold-edge), 0 2px 3px rgb(20 23 61 / .16), 0 8px 18px -10px color-mix(in oklab, var(--gold-edge) 80%, transparent); text-shadow: 0 1px 0 rgb(255 255 255 / .35); }
+.vks-btn-gold::after { background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / .45) 50%, transparent 65%); }
+.dark .vks-btn-gold { box-shadow: inset 0 1px 0 rgb(255 255 255 / .6), inset 0 0 0 1px var(--gold-edge), 0 8px 20px -10px color-mix(in oklab, var(--gold-metal) 50%, transparent); }
 .vks-btn-soft { box-shadow: inset 0 1px 0 rgb(255 255 255 / .6), 0 1px 2px rgb(20 23 61 / .06); }
 .dark .vks-btn-soft { box-shadow: inset 0 1px 0 rgb(255 255 255 / .05), 0 1px 2px rgb(0 0 0 / .3); }
 

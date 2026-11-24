@@ -17,7 +17,7 @@ export const buttonVariants = cva(
       variant: {
         default: "vks-btn-solid bg-primary text-primary-foreground",
         action: "vks-btn-solid bg-success text-success-foreground [--vks-btn-glow:color-mix(in_oklab,var(--success)_55%,transparent)]", // scan / save / done
-        gold: "vks-btn-solid bg-gold text-gold-foreground [--vks-btn-glow:color-mix(in_oklab,var(--gold)_60%,transparent)]",
+        gold: "vks-btn-solid vks-btn-gold text-gold-foreground", // metallic plate: tokens --gold-metal-* / --gold-edge
         outline: "vks-btn-soft border border-input bg-card hover:border-[color-mix(in_oklab,var(--gold)_55%,var(--input))] hover:bg-muted/60",
         ghost: "hover:bg-muted",
         destructive: "vks-btn-solid bg-destructive text-destructive-foreground [--vks-btn-glow:color-mix(in_oklab,var(--destructive)_55%,transparent)]",

@@ -79,6 +79,15 @@ const [busy, setBusy] = React.useState(false)
 <Button disabled>ບັນທຶກ</Button>
 ```
 
+### Gold (metallic)
+
+0.8.2: a polished gold plate — light top, a reflection line across the middle, a darker gold rim — instead of a flat mustard fill. Navy text stays 7.1–11.8 : 1 in both themes. One gold button per screen: it is the special action (start the round, add a site, download the payslip).
+
+```tsx
+<Button variant="gold"><Plus />ເພີ່ມສະຖານທີ່</Button>
+<Button variant="gold" size="lg">ເລີ່ມອອກກວດ <ArrowRight /></Button>
+```
+
 ## Props
 
 | Prop | Type | Default | Notes |

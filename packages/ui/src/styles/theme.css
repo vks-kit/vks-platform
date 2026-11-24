@@ -44,6 +44,13 @@
   --gold: #b6924b;
   --gold-tint: #f8f3e8;
   --gold-foreground: #16173a;
+  /* Metallic gold button (Button variant="gold"): light top, a reflection line at the middle, a darker gold edge.
+     Navy text on every stop: 11.76 (hi) / 9.35 (mid) / 7.09 (lo) : 1. */
+  --gold-metal-hi: #f1dcaa;
+  --gold-metal: #ddbf82;
+  --gold-metal-lo: #c4a165;
+  --gold-metal-end: #d9bc80;
+  --gold-edge: #a5843f;
   --border: #dcdde6;
   --input: #c9cad4;
   --ring: #b6924b;
@@ -90,6 +97,12 @@
   --gold-tint: #26233d;
   /* text ON solid gold (Button gold, nav counts): stays navy, 9.65:1 on #d8bf8c. Text on --gold-tint uses --foreground. */
   --gold-foreground: #16173a;
+  /* Metallic gold button: the same metal on the dark page, with a deeper edge so it does not glow. */
+  --gold-metal-hi: #f1dcaa;
+  --gold-metal: #ddbf82;
+  --gold-metal-lo: #c4a165;
+  --gold-metal-end: #d9bc80;
+  --gold-edge: #8e6d2f;
   --border: #2b2e63;
   --input: #383c7a;
   --ring: #d8bf8c;
